@@ -4,6 +4,12 @@ import math
 import color_utils
 import configs
 
+# Physics values
+SPIN_SPEED = 0.04
+CONSTANT_FRICTION = 0.004
+LINEAR_FRICTION = 0.003
+
+# Wheel shape values
 Y_OFFSET = -100
 INNER_RADIUS = 300
 OUTER_RADIUS = 600
@@ -31,7 +37,7 @@ class App:
                 OUTER_RADIUS,
                 angle=angle,
                 start_angle=start_angle,
-                color=color_utils.random_color(),
+                color=color_utils.color_phase(start_angle),
                 batch=self.wheel_batch
             )
 
@@ -45,6 +51,16 @@ class App:
 
         # Create center circle cutout.
         self.background_circle = pyglet.shapes.Circle(window_size[0] / 2, Y_OFFSET, INNER_RADIUS, color=configs.BACKGROUND_COLOR)
+        self.triangle = pyglet.shapes.Triangle(
+            window_size[0] / 2 - 40, OUTER_RADIUS + Y_OFFSET + 20, 
+            window_size[0] / 2 + 40, OUTER_RADIUS + Y_OFFSET + 20, 
+            window_size[0] / 2, OUTER_RADIUS + Y_OFFSET - 40,
+            color=(255, 30, 30, 255)
+        )
+
+        self.wheel_velocity = 0
+        self.wheel_position = 0
+        self.prev_segment = 0
 
     def on_draw(self):
         self.wheel_batch.draw()
@@ -54,8 +70,27 @@ class App:
             sprite.y = math.sin(sector.start_angle + self.angle_offset) * MID_RADIUS + Y_OFFSET
             sprite.rotation = 90 - math.degrees(sector.start_angle + self.angle_offset)
             sprite.draw()
+        
+        self.triangle.draw()
+        
+    def on_click(self, x, y, button):
+        self.wheel_velocity = SPIN_SPEED
 
     def on_update(self, deltaTime):
-        for arc in self.arcs:
-            arc[0].start_angle += deltaTime
+        self.wheel_velocity -= (LINEAR_FRICTION * self.wheel_velocity + CONSTANT_FRICTION) * deltaTime
+
+        self.wheel_velocity = max(self.wheel_velocity, 0)
+        self.wheel_position += self.wheel_velocity * 2
+
+        for arc in range(len(self.arcs)):
+            self.arcs[arc][0].start_angle = self.wheel_position + arc / configs.SEGMENTS * math.tau
+        
+        current_segment = int(self.wheel_position / math.tau * configs.SEGMENTS + 0.5)
+        if (current_segment != self.prev_segment):
+            audio = pyglet.resource.media('sounds/click4.wav')
+            audio.play()
+
+        self.prev_segment = current_segment
+        
+
             
