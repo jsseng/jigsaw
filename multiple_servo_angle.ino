@@ -3,6 +3,8 @@ Servo myServo1;
 Servo myServo2;
 Servo myServo3;
 int pos = 0;
+int servoNum = 0;
+int state = 0;
 
 void setup()
 
@@ -41,15 +43,20 @@ void setup()
 
 void loop() {
 
-  for (pos = 0; pos <= 180; pos += 1)
-    if (Serial.available())
-
-
-    {
-      Serial.print("Enter servo number: ")
-      int servoNum = Serial.parseInt();
-      Serial.print("Enter servo angle: ")
-      int state = Serial.parseInt();
+  //for (pos = 0; pos <= 180; pos += 1)
+    
+    //if (Serial.available())
+    //{
+      Serial.println("Enter servo number: ");
+      while (Serial.available() == 0) {}
+      servoNum = Serial.parseInt();
+      Serial.print(">");
+      Serial.println(servoNum);
+      Serial.println("Enter servo angle: ");
+      while (Serial.available() == 0) {}
+      state = Serial.parseInt();
+      Serial.print(">");
+      Serial.println(state);
       Servo servoSelect;
 
       switch (servoNum) {
@@ -83,7 +90,9 @@ void loop() {
       {
         Serial.print(">");
         Serial.println(state);
-        Serial.print("turning servo to ");
+        Serial.print("turning servo ");
+        Serial.print(servoNum);
+        Serial.print(" to ");
         Serial.print(state);
         Serial.println(" degrees");
         servoSelect.write(state);
@@ -92,5 +101,5 @@ void loop() {
 
       }
 
-    }
+    //}
 }
