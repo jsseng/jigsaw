@@ -11,8 +11,8 @@ LINEAR_FRICTION = 0.003
 
 # Wheel shape values
 Y_OFFSET = -100
-INNER_RADIUS = 300
-OUTER_RADIUS = 600
+INNER_RADIUS = 500
+OUTER_RADIUS = 900
 MID_RADIUS = (INNER_RADIUS + OUTER_RADIUS) / 2
 
 class App:
@@ -51,11 +51,22 @@ class App:
 
         # Create center circle cutout.
         self.background_circle = pyglet.shapes.Circle(window_size[0] / 2, Y_OFFSET, INNER_RADIUS, color=configs.BACKGROUND_COLOR)
-        self.triangle = pyglet.shapes.Triangle(
+
+        self.arrow_batch = pyglet.shapes.Batch()
+
+        self.triangle1 = pyglet.shapes.Triangle(
+            window_size[0] / 2 - 43, OUTER_RADIUS + Y_OFFSET + 22, 
+            window_size[0] / 2 + 43, OUTER_RADIUS + Y_OFFSET + 22, 
+            window_size[0] / 2, OUTER_RADIUS + Y_OFFSET - 43,
+            color=(0, 0, 0, 255),
+            batch=self.arrow_batch
+        )
+        self.triangle2 = pyglet.shapes.Triangle(
             window_size[0] / 2 - 40, OUTER_RADIUS + Y_OFFSET + 20, 
             window_size[0] / 2 + 40, OUTER_RADIUS + Y_OFFSET + 20, 
             window_size[0] / 2, OUTER_RADIUS + Y_OFFSET - 40,
-            color=(255, 30, 30, 255)
+            color=(255, 30, 30, 255),
+            batch=self.arrow_batch
         )
 
         self.wheel_velocity = 0
@@ -71,7 +82,7 @@ class App:
             sprite.rotation = 90 - math.degrees(sector.start_angle + self.angle_offset)
             sprite.draw()
         
-        self.triangle.draw()
+        self.arrow_batch.draw()
         
     def on_click(self, x, y, button):
         self.wheel_velocity = SPIN_SPEED
