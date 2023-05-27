@@ -5,6 +5,7 @@ import random
 import color_utils
 import configs
 import app
+import cameraInput
 
 def main():
     gl_background_color = tuple(map(lambda x : x / 255.0, configs.BACKGROUND_COLOR))
@@ -26,9 +27,14 @@ def main():
     @window.event
     def on_mouse_press(x, y, button, modifiers):
         game_app.on_click(x, y, button)
+    
+    inputHandler = cameraInput.Input(game_app.spin)
 
+    def update_all(deltaTime):
+        inputHandler.update()
+        game_app.on_update(deltaTime)
 
-    pyglet.clock.schedule_interval(game_app.on_update, 1 / configs.FPS)
+    pyglet.clock.schedule(update_all)
     pyglet.app.run()
 
 if __name__ == "__main__":

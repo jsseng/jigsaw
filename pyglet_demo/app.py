@@ -85,6 +85,9 @@ class App:
         self.arrow_batch.draw()
         
     def on_click(self, x, y, button):
+        self.spin()
+    
+    def spin(self):
         self.wheel_velocity = SPIN_SPEED
 
     def on_update(self, deltaTime):
