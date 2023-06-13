@@ -3,6 +3,7 @@ import math
 
 import color_utils
 import configs
+from typing import Tuple
 
 # Physics values
 SPIN_SPEED = 0.04
@@ -16,7 +17,7 @@ OUTER_RADIUS = 900
 MID_RADIUS = (INNER_RADIUS + OUTER_RADIUS) / 2
 
 class App:
-    def __init__(self, window_size: tuple[int, int]):
+    def __init__(self, window_size: Tuple[int, int]):
         self.wheel_batch = pyglet.graphics.Batch()
         self.window_size = window_size
 
