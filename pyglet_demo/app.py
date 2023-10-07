@@ -1,5 +1,7 @@
 import pyglet
 import math
+import os
+import pathlib
 
 import color_utils
 import configs
@@ -19,6 +21,9 @@ class App:
     def __init__(self, window_size: tuple[int, int]):
         self.wheel_batch = pyglet.graphics.Batch()
         self.window_size = window_size
+
+        image_files = os.listdir(str(pathlib.Path(__file__).parent.absolute().resolve()) + '/images/')
+        print(image_files)
 
         image = pyglet.resource.image('images/cplogo.png')
         image.anchor_x = image.width / 2
