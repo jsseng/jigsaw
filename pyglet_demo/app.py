@@ -79,6 +79,9 @@ class App:
         self.wheel_position = 0
         self.prev_segment = 0
 
+        self.audio = pyglet.resource.media('sounds/click4.wav')
+        self.player = None
+
     def on_draw(self):
         self.wheel_batch.draw()
         self.background_circle.draw()
@@ -107,10 +110,12 @@ class App:
         
         current_segment = int(self.wheel_position / math.tau * configs.SEGMENTS + 0.5)
         if (current_segment != self.prev_segment):
-            audio = pyglet.resource.media('sounds/click4.wav')
-            audio.play()
+            if self.player is None:
+                self.player = self.audio.play()
+            else:
+                self.player.seek(0)
+                self.player.play()
+        if self.wheel_velocity == 0 and self.player is not None:
+            self.player.pause()
 
         self.prev_segment = current_segment
-        
-
-            
