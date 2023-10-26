@@ -32,8 +32,7 @@ def main():
 
     inputHandler = cameraInput.Input(game_app.spin)
     # dev board will need to be changed. not sure of the name in debian
-    serialInputHandler = serialInput.Input(
-        '/dev/tty.usbmodem1101', game_app.spin)
+    serialInputHandler = serialInput.Input(game_app.spin)
 
     def update_all(deltaTime):
         inputHandler.update()
