@@ -21,7 +21,7 @@ class Input:
     def _check_and_call(self, callback):
         if callback is not None:
             return callback
-        return lambda: None
+        return lambda *args: None
 
     def update(self):
         data = self.ser.read(self.ser.in_waiting)
