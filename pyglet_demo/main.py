@@ -12,7 +12,7 @@ import serialInput
 def main():
     gl_background_color = tuple(map(lambda x : x / 255.0, configs.BACKGROUND_COLOR))
 
-    config = pyglet.gl.Config(sample_buffers=1, samples=8)
+    config = pyglet.gl.Config(sample_buffers=1, samples=8, double_buffer=True)
     window = pyglet.window.Window(caption="Caboose Wheel", config=config, fullscreen=True)
     pyglet.gl.glClearColor(*gl_background_color, 1.0)
     pyglet.options['audio'] = ('openal', 'pulse', 'directsound', 'silent')
