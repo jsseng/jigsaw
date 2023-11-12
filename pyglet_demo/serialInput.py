@@ -1,14 +1,9 @@
 import serial
-from sys import platform
 import struct
 
 BAUD_RATE = 115_200
 
 DEV_FILE = '/dev/feather'
-
-if platform == "darwin":
-    # running on macOS. to test on Mac
-    DEV_FILE = '/dev/tty.usbmodem1101'
 
 
 class Input:
