@@ -20,6 +20,14 @@ MID_RADIUS = (INNER_RADIUS + OUTER_RADIUS) / 2
 
 
 class App:
+    def check_position(self, image, x, y):
+        img_data = image.get_region(x, y, 1, 1).get_image_data()
+        width = img_data.width
+        data = img_data.get_data("RGB", 3 * width)
+        print(data)
+        return data[0], data[1], data[2]
+        # print(data[0] + ', ' + data[1] + ', ' + data[2])
+
     def __init__(self, window_size: Tuple[int, int]):
         self.wheel_batch = pyglet.graphics.Batch()
         self.window_size = window_size
@@ -28,7 +36,7 @@ class App:
         )
         print(image_files)
 
-        image = pyglet.resource.image("images/cplogo2.png")
+        image = pyglet.resource.image("images/cat.png")
         image.anchor_x = image.width / 2
         image.anchor_y = image.height / 2
 
@@ -38,19 +46,23 @@ class App:
         self.arcs = []
         for i in range(configs.SEGMENTS):
             start_angle = i / configs.SEGMENTS * math.tau
-
+            image = pyglet.resource.image(f"images/{image_files[i]}")
+            image.anchor_x = image.width / 2
+            image.anchor_y = image.height / 2
+            print(self.check_position(image, 0, 0))
             sector = pyglet.shapes.Sector(
                 window_size[0] / 2,
                 Y_OFFSET,
                 OUTER_RADIUS,
                 angle=angle,
                 start_angle=start_angle,
-                color=color_utils.color_phase(start_angle),
+                # color=color_utils.color_phase(start_angle),
+                color=self.check_position(image, 0, 0),
                 batch=self.wheel_batch,
             )
 
             sprite = pyglet.sprite.Sprite(image)
-            sprite.scale = 0.15
+            sprite.scale = 0.3
 
             self.arcs.append((sector, sprite))
 
