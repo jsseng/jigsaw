@@ -6,6 +6,7 @@ import pathlib
 import color_utils
 import configs
 from typing import Tuple
+import random
 
 # Physics values
 SPIN_SPEED = 0.04
@@ -44,12 +45,13 @@ class App:
         angle = math.tau / configs.SEGMENTS
         self.angle_offset = angle / 2
         self.arcs = []
+        self.audio_file_name = []
         for i in range(configs.SEGMENTS):
             start_angle = i / configs.SEGMENTS * math.tau
             image = pyglet.resource.image(f"images/{image_files[i]}")
             image.anchor_x = image.width / 2
             image.anchor_y = image.height / 2
-            print(self.check_position(image, 0, 0))
+            # print(self.check_position(image, 0, 0))
             sector = pyglet.shapes.Sector(
                 window_size[0] / 2,
                 Y_OFFSET,
@@ -64,7 +66,15 @@ class App:
             sprite = pyglet.sprite.Sprite(image)
             sprite.scale = 0.3
 
-            self.arcs.append((sector, sprite))
+            self.audio_file_name.append(
+                f"sounds/{image_files[i].replace('.png', '.wav')}"
+            )
+            self.arcs.append(
+                (
+                    sector,
+                    sprite,
+                )
+            )
 
         # Create center circle cutout.
         self.background_circle = pyglet.shapes.Circle(
@@ -100,6 +110,7 @@ class App:
 
         self.audio = pyglet.resource.media("sounds/click4.wav")
         self.player = None
+        self.player2 = None
 
     def on_draw(self):
         self.wheel_batch.draw()
@@ -121,7 +132,9 @@ class App:
         self.spin()
 
     def spin(self):
-        self.wheel_velocity = SPIN_SPEED
+        rand = random.random() * 0.75 + 0.25  # random num between 0.5 and 1
+        self.wheel_velocity = SPIN_SPEED * rand
+        self.player2 = None
 
     def on_update(self, deltaTime):
         self.wheel_velocity -= (
@@ -131,10 +144,26 @@ class App:
         self.wheel_velocity = max(self.wheel_velocity, 0)
         self.wheel_position += self.wheel_velocity * 2
 
+        # cur_arc = 0
         for arc in range(len(self.arcs)):
-            self.arcs[arc][0].start_angle = (
-                self.wheel_position + arc / configs.SEGMENTS * math.tau
+            segment_angle = 1 / configs.SEGMENTS * math.tau
+            self.arcs[arc][0].start_angle = self.wheel_position + arc * segment_angle
+            diff_to_arrow = (math.pi / 2 - self.arcs[arc][0].start_angle) % (
+                2 * math.pi
             )
+            if diff_to_arrow > 0 and diff_to_arrow < segment_angle:
+                self.cur_arc = arc
+
+                # if self.cur_arc == 5:
+                #     print(
+                #         self.cur_arc,
+                #         ((self.wheel_position / segment_angle) % configs.SEGMENTS),
+                #         segment_angle,
+                #     )
+                #     exit()
+                # print("arc", arc, diff_to_arrow, segment_angle)
+                # exit()
+        # print("updating cur_arc to", self.cur_arc)
 
         current_segment = int(self.wheel_position / math.tau * configs.SEGMENTS + 0.5)
         if current_segment != self.prev_segment:
@@ -143,7 +172,22 @@ class App:
             else:
                 self.player.seek(0)
                 self.player.play()
-        if self.wheel_velocity == 0 and self.player is not None:
+        if (
+            self.wheel_velocity == 0
+            and self.player is not None
+            and self.player2 is None
+        ):
             self.player.pause()
+            # print("segment", current_segment)
+            # print(
+            #     "cur_arc",
+            #     self.cur_arc,
+            #     self.wheel_position % math.tau / math.tau * (configs.SEGMENTS - 1),
+            # )
+            # print(self.audio_file_name[self.cur_arc])
+            self.player2 = pyglet.resource.media(
+                self.audio_file_name[self.cur_arc]
+            ).play()
+            # self.player2 = pyglet.resource.media("sounds/output.wav").play()
 
         self.prev_segment = current_segment

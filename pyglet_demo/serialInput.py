@@ -1,13 +1,20 @@
 import serial
 import struct
+import sys
+from os import system
 
 BAUD_RATE = 115_200
 
-DEV_FILE = '/dev/feather'
+DEV_FILE = "/dev/feather"
 
 
 class Input:
-    def __init__(self, on_green_trigger=None, on_red_trigger=None, on_battery_change=None):
+    def __init__(
+        self,
+        on_green_trigger=None,
+        on_red_trigger=None,
+        on_battery_change=None,
+    ):
         self.ser = serial.Serial(DEV_FILE, BAUD_RATE, timeout=0)
         self.on_green_trigger = self._check_and_call(on_green_trigger)
         self.on_red_trigger = self._check_and_call(on_red_trigger)
@@ -28,7 +35,11 @@ class Input:
                 self.on_green_trigger()
             elif last_byte == 0x20:
                 self.on_red_trigger()
+            elif last_byte == 0x40:
+                system("shutdown now")
+            elif last_byte == 0x50:
+                sys.exit()
         elif len(data) == 5:
             if data[0] == 0x30:
-                [battery_level] = struct.unpack('f', data[1:])
+                [battery_level] = struct.unpack("f", data[1:])
                 self.on_battery_change(battery_level)
