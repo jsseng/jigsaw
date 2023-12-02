@@ -21,25 +21,18 @@ MID_RADIUS = (INNER_RADIUS + OUTER_RADIUS) / 2
 
 
 class App:
-    def check_position(self, image, x, y):
-        img_data = image.get_region(x, y, 1, 1).get_image_data()
-        width = img_data.width
-        data = img_data.get_data("RGB", 3 * width)
-        print(data)
-        return data[0], data[1], data[2]
-        # print(data[0] + ', ' + data[1] + ', ' + data[2])
-
     def __init__(self, window_size: Tuple[int, int]):
         self.wheel_batch = pyglet.graphics.Batch()
         self.window_size = window_size
         image_files = os.listdir(
             str(pathlib.Path(__file__).parent.absolute().resolve()) + "/images/"
         )
-        print(image_files)
 
-        image = pyglet.resource.image("images/cat.png")
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
+        images = [
+            pyglet.resource.image(f"images/{image_file}") for image_file in image_files
+        ]
+
+        ordered_images = self.order_images(images)
 
         # Generate circle arcs (pyglet sectors).
         angle = math.tau / configs.SEGMENTS
@@ -48,10 +41,9 @@ class App:
         self.audio_file_name = []
         for i in range(configs.SEGMENTS):
             start_angle = i / configs.SEGMENTS * math.tau
-            image = pyglet.resource.image(f"images/{image_files[i]}")
+            image = ordered_images[i]
             image.anchor_x = image.width / 2
             image.anchor_y = image.height / 2
-            # print(self.check_position(image, 0, 0))
             sector = pyglet.shapes.Sector(
                 window_size[0] / 2,
                 Y_OFFSET,
@@ -111,6 +103,42 @@ class App:
         self.audio = pyglet.resource.media("sounds/click4.wav")
         self.player = None
         self.player2 = None
+
+    def check_position(self, image, x, y):
+        img_data = image.get_region(x, y, 1, 1).get_image_data()
+        width = img_data.width
+        data = img_data.get_data("RGB", 3 * width)
+        print(data)
+        return data[0], data[1], data[2]
+
+    def order_images(self, images):
+        image_color_tuples = [
+            (image, self.check_position(image, 0, 0)) for image in images
+        ]
+
+        ordered_images = [image_color_tuples.pop()[0]]
+        while len(image_color_tuples) > 0:
+            image = ordered_images[-1]
+            color = self.check_position(image, 0, 0)
+
+            max_distance = 0
+            min_index = -1
+            for i in range(len(image_color_tuples)):
+                other_image, other_color = image_color_tuples[i]
+                distance = math.sqrt(
+                    (color[0] - other_color[0]) ** 2
+                    + (color[1] - other_color[1]) ** 2
+                    + (color[2] - other_color[2]) ** 2
+                )
+
+                if distance > max_distance:
+                    min_distance = distance
+                    min_index = i
+
+            next_image, next_color = image_color_tuples.pop(min_index)
+            ordered_images.append(next_image)
+
+        return ordered_images
 
     def on_draw(self):
         self.wheel_batch.draw()

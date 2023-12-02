@@ -47,7 +47,7 @@ def main():
             serialInputHandler.update()
         game_app.on_update(deltaTime)
 
-    pyglet.clock.schedule(update_all)
+    pyglet.clock.schedule_interval(update_all, 1 / 60)
     pyglet.app.run()
 
 
