@@ -1,5 +1,7 @@
 import pyglet
 from sys import platform
+from os import system
+from socket import gethostname
 
 
 import configs
@@ -31,8 +33,12 @@ def main():
         game_app.on_click(x, y, button)
 
     # dev board will need to be changed. not sure of the name in debian
-    if platform != "darwin":
-        serialInputHandler = serialInput.Input(game_app.spin)
+    if platform != "darwin" and gethostname() == "ubuntu":
+        serialInputHandler = serialInput.Input(
+            game_app.spin,
+            on_green_hold=pyglet.app.exit,
+            on_red_hold=lambda: system("shutdown now"),
+        )
     else:
         serialInputHandler = None
 
