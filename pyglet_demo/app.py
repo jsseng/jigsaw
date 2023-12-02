@@ -32,11 +32,15 @@ class App:
     def __init__(self, window_size: Tuple[int, int]):
         self.wheel_batch = pyglet.graphics.Batch()
         self.window_size = window_size
+
         image_files = os.listdir(
             str(pathlib.Path(__file__).parent.absolute().resolve()) + "/images/"
         )
         print(image_files)
 
+        self.animal_names = [
+            f"{filename[0].upper()}{filename[1:-4]}" for filename in image_files
+        ]
         image = pyglet.resource.image("images/cat.png")
         image.anchor_x = image.width / 2
         image.anchor_y = image.height / 2
@@ -64,17 +68,14 @@ class App:
             )
 
             sprite = pyglet.sprite.Sprite(image)
-            sprite.scale = 0.3
 
             self.audio_file_name.append(
                 f"sounds/{image_files[i].replace('.png', '.wav')}"
             )
-            self.arcs.append(
-                (
-                    sector,
-                    sprite,
-                )
-            )
+
+            sprite.scale = 0.4
+
+            self.arcs.append((sector, sprite))
 
         # Create center circle cutout.
         self.background_circle = pyglet.shapes.Circle(
@@ -112,6 +113,17 @@ class App:
         self.player = None
         self.player2 = None
 
+        self.label = pyglet.text.Label(
+            "",
+            font_name="Arial",
+            font_size=100,
+            x=window_size[0] // 2,
+            y=20,
+            anchor_x="center",
+            # anchor_y="bottom",
+            anchor_y="bottom",
+        )
+
     def on_draw(self):
         self.wheel_batch.draw()
         self.background_circle.draw()
@@ -126,6 +138,7 @@ class App:
             sprite.rotation = 90 - math.degrees(sector.start_angle + self.angle_offset)
             sprite.draw()
 
+        self.label.draw()
         self.arrow_batch.draw()
 
     def on_click(self, x, y, button):
@@ -135,6 +148,7 @@ class App:
         rand = random.random() * 0.75 + 0.25  # random num between 0.5 and 1
         self.wheel_velocity = SPIN_SPEED * rand
         self.player2 = None
+        self.label.text = ""
 
     def on_update(self, deltaTime):
         self.wheel_velocity -= (
@@ -163,7 +177,10 @@ class App:
                 #     exit()
                 # print("arc", arc, diff_to_arrow, segment_angle)
                 # exit()
-        # print("updating cur_arc to", self.cur_arc)
+            # print("updating cur_arc to", self.cur_arc)
+            self.arcs[arc][0].start_angle = (
+                self.wheel_position + arc / configs.SEGMENTS * math.tau
+            )
 
         current_segment = int(self.wheel_position / math.tau * configs.SEGMENTS + 0.5)
         if current_segment != self.prev_segment:
@@ -185,6 +202,7 @@ class App:
             #     self.wheel_position % math.tau / math.tau * (configs.SEGMENTS - 1),
             # )
             # print(self.audio_file_name[self.cur_arc])
+            self.label.text = self.animal_names[self.cur_arc]
             self.player2 = pyglet.resource.media(
                 self.audio_file_name[self.cur_arc]
             ).play()
