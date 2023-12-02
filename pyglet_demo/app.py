@@ -29,6 +29,8 @@ class App:
             str(pathlib.Path(__file__).parent.absolute().resolve()) + "/images/"
         )
 
+        image_files = sorted(image_files)
+
         images = [
             pyglet.resource.image(f"images/{image_file}") for image_file in image_files
         ]
