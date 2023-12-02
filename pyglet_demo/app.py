@@ -24,6 +24,7 @@ class App:
     def __init__(self, window_size: Tuple[int, int]):
         self.wheel_batch = pyglet.graphics.Batch()
         self.window_size = window_size
+
         image_files = os.listdir(
             str(pathlib.Path(__file__).parent.absolute().resolve()) + "/images/"
         )
@@ -32,16 +33,19 @@ class App:
             pyglet.resource.image(f"images/{image_file}") for image_file in image_files
         ]
 
-        ordered_images = self.order_images(images)
+        ordered_image_indexes = self.order_images(images)
+        self.animal_names = [
+            f"{image_files[i][0].upper()}{image_files[i][1:-4]}" for i in ordered_image_indexes
+        ]
 
         # Generate circle arcs (pyglet sectors).
         angle = math.tau / configs.SEGMENTS
         self.angle_offset = angle / 2
         self.arcs = []
         self.audio_file_name = []
-        for i in range(configs.SEGMENTS):
+        for i in ordered_image_indexes:
             start_angle = i / configs.SEGMENTS * math.tau
-            image = ordered_images[i]
+            image = images[i]
             image.anchor_x = image.width / 2
             image.anchor_y = image.height / 2
             sector = pyglet.shapes.Sector(
@@ -56,17 +60,14 @@ class App:
             )
 
             sprite = pyglet.sprite.Sprite(image)
-            sprite.scale = 0.3
 
             self.audio_file_name.append(
                 f"sounds/{image_files[i].replace('.png', '.wav')}"
             )
-            self.arcs.append(
-                (
-                    sector,
-                    sprite,
-                )
-            )
+
+            sprite.scale = 0.4
+
+            self.arcs.append((sector, sprite))
 
         # Create center circle cutout.
         self.background_circle = pyglet.shapes.Circle(
@@ -104,6 +105,17 @@ class App:
         self.player = None
         self.player2 = None
 
+        self.label = pyglet.text.Label(
+            "",
+            font_name="Arial",
+            font_size=100,
+            x=window_size[0] // 2,
+            y=20,
+            anchor_x="center",
+            # anchor_y="bottom",
+            anchor_y="bottom",
+        )
+
     def check_position(self, image, x, y):
         img_data = image.get_region(x, y, 1, 1).get_image_data()
         width = img_data.width
@@ -112,19 +124,23 @@ class App:
         return data[0], data[1], data[2]
 
     def order_images(self, images):
-        image_color_tuples = [
-            (image, self.check_position(image, 0, 0)) for image in images
-        ]
+        colors = [self.check_position(image, 0, 0) for image in images]
 
-        ordered_images = [image_color_tuples.pop()[0]]
-        while len(image_color_tuples) > 0:
-            image = ordered_images[-1]
+        ordered_images = [0]
+        for _ in range(len(images) - 1):
+            image_index = ordered_images[-1]
+            image = images[image_index]
             color = self.check_position(image, 0, 0)
 
             max_distance = 0
             min_index = -1
-            for i in range(len(image_color_tuples)):
-                other_image, other_color = image_color_tuples[i]
+            for i in range(len(images)):
+                if i in ordered_images:
+                    continue
+
+                other_image = images[i]
+                other_color = colors[i]
+
                 distance = math.sqrt(
                     (color[0] - other_color[0]) ** 2
                     + (color[1] - other_color[1]) ** 2
@@ -135,8 +151,7 @@ class App:
                     min_distance = distance
                     min_index = i
 
-            next_image, next_color = image_color_tuples.pop(min_index)
-            ordered_images.append(next_image)
+            ordered_images.append(min_index)
 
         return ordered_images
 
@@ -154,6 +169,7 @@ class App:
             sprite.rotation = 90 - math.degrees(sector.start_angle + self.angle_offset)
             sprite.draw()
 
+        self.label.draw()
         self.arrow_batch.draw()
 
     def on_click(self, x, y, button):
@@ -163,6 +179,7 @@ class App:
         rand = random.random() * 0.75 + 0.25  # random num between 0.5 and 1
         self.wheel_velocity = SPIN_SPEED * rand
         self.player2 = None
+        self.label.text = ""
 
     def on_update(self, deltaTime):
         self.wheel_velocity -= (
@@ -191,7 +208,10 @@ class App:
                 #     exit()
                 # print("arc", arc, diff_to_arrow, segment_angle)
                 # exit()
-        # print("updating cur_arc to", self.cur_arc)
+            # print("updating cur_arc to", self.cur_arc)
+            self.arcs[arc][0].start_angle = (
+                self.wheel_position + arc / configs.SEGMENTS * math.tau
+            )
 
         current_segment = int(self.wheel_position / math.tau * configs.SEGMENTS + 0.5)
         if current_segment != self.prev_segment:
@@ -213,6 +233,7 @@ class App:
             #     self.wheel_position % math.tau / math.tau * (configs.SEGMENTS - 1),
             # )
             # print(self.audio_file_name[self.cur_arc])
+            self.label.text = self.animal_names[self.cur_arc]
             self.player2 = pyglet.resource.media(
                 self.audio_file_name[self.cur_arc]
             ).play()
