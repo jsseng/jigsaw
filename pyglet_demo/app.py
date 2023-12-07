@@ -35,10 +35,14 @@ class App:
             pyglet.resource.image(f"images/{image_file}") for image_file in image_files
         ]
 
+        print(len(images))
+
         ordered_image_indexes = self.order_images(images)
         self.animal_names = [
             f"{image_files[i][0].upper()}{image_files[i][1:-4]}" for i in ordered_image_indexes
         ]
+
+        print(self.animal_names)
 
         # Generate circle arcs (pyglet sectors).
         angle = math.tau / configs.SEGMENTS
@@ -56,8 +60,8 @@ class App:
                 OUTER_RADIUS,
                 angle=angle,
                 start_angle=start_angle,
-                # color=color_utils.color_phase(start_angle),
-                color=self.check_position(image, 0, 0),
+                color=color_utils.color_phase(start_angle),
+                # color=self.check_position(image, 0, 0),
                 batch=self.wheel_batch,
             )
 
@@ -149,7 +153,7 @@ class App:
                     + (color[2] - other_color[2]) ** 2
                 )
 
-                if distance > max_distance:
+                if distance >= max_distance:
                     min_distance = distance
                     min_index = i
 
