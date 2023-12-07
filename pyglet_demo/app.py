@@ -28,6 +28,11 @@ class App:
         image_files = os.listdir(
             str(pathlib.Path(__file__).parent.absolute().resolve()) + "/images/"
         )
+        
+        image_files = image_files[0:min(len(image_files), configs.SEGMENTS)]
+
+        if len(image_files) != configs.SEGMENTS: 
+            print(f'Warning: Number of animals ({len(image_files)}) doesn\'t match number of defined segments in configs.py ({configs.SEGMENTS})')
 
         image_files = sorted(image_files)
 
@@ -35,14 +40,10 @@ class App:
             pyglet.resource.image(f"images/{image_file}") for image_file in image_files
         ]
 
-        print(len(images))
-
         ordered_image_indexes = self.order_images(images)
         self.animal_names = [
             f"{image_files[i][0].upper()}{image_files[i][1:-4]}" for i in ordered_image_indexes
         ]
-
-        print(self.animal_names)
 
         # Generate circle arcs (pyglet sectors).
         angle = math.tau / configs.SEGMENTS
@@ -126,7 +127,6 @@ class App:
         img_data = image.get_region(x, y, 1, 1).get_image_data()
         width = img_data.width
         data = img_data.get_data("RGB", 3 * width)
-        print(data)
         return data[0], data[1], data[2]
 
     def order_images(self, images):
