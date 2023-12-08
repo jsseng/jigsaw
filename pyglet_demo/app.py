@@ -37,7 +37,8 @@ class App:
 
         ordered_image_indexes = self.order_images(images)
         self.animal_names = [
-            f"{image_files[i][0].upper()}{image_files[i][1:-4]}" for i in ordered_image_indexes
+            f"{image_files[i][0].upper()}{image_files[i][1:-4]}"
+            for i in ordered_image_indexes
         ]
 
         # Generate circle arcs (pyglet sectors).
@@ -110,7 +111,7 @@ class App:
         self.label = pyglet.text.Label(
             "",
             font_name="Arial",
-            font_size=100,
+            font_size=128,
             x=window_size[0] // 2,
             y=20,
             anchor_x="center",
@@ -178,10 +179,11 @@ class App:
         self.spin()
 
     def spin(self):
-        rand = random.random() * 0.75 + 0.25  # random num between 0.5 and 1
-        self.wheel_velocity = SPIN_SPEED * rand
-        self.player2 = None
-        self.label.text = ""
+        if self.wheel_velocity == 0:
+            rand = random.random() * 0.5 + 0.75  # random num between 0.5 and 1
+            self.wheel_velocity = SPIN_SPEED * rand
+            self.player2 = None
+            self.label.text = ""
 
     def on_update(self, deltaTime):
         self.wheel_velocity -= (
