@@ -28,11 +28,13 @@ class App:
         image_files = os.listdir(
             str(pathlib.Path(__file__).parent.absolute().resolve()) + "/images/"
         )
-        
-        image_files = image_files[0:min(len(image_files), configs.SEGMENTS)]
 
-        if len(image_files) != configs.SEGMENTS: 
-            print(f'Warning: Number of animals ({len(image_files)}) doesn\'t match number of defined segments in configs.py ({configs.SEGMENTS})')
+        image_files = image_files[0 : min(len(image_files), configs.SEGMENTS)]
+
+        if len(image_files) != configs.SEGMENTS:
+            print(
+                f"Warning: Number of animals ({len(image_files)}) doesn't match number of defined segments in configs.py ({configs.SEGMENTS})"
+            )
 
         image_files = sorted(image_files)
 
@@ -42,7 +44,8 @@ class App:
 
         ordered_image_indexes = self.order_images(images)
         self.animal_names = [
-            f"{image_files[i][0].upper()}{image_files[i][1:-4]}" for i in ordered_image_indexes
+            f"{image_files[i][0].upper()}{image_files[i][1:-4]}"
+            for i in ordered_image_indexes
         ]
 
         # Generate circle arcs (pyglet sectors).
@@ -121,6 +124,7 @@ class App:
             anchor_x="center",
             # anchor_y="bottom",
             anchor_y="bottom",
+            color=(0, 0, 0, 255),
         )
 
     def check_position(self, image, x, y):
@@ -182,7 +186,7 @@ class App:
         self.spin()
 
     def spin(self):
-        rand = random.random() * 0.75 + 0.25  # random num between 0.5 and 1
+        rand = random.random() * 0.75 + 0.5  # random num between 0.5 and 1
         self.wheel_velocity = SPIN_SPEED * rand
         self.player2 = None
         self.label.text = ""

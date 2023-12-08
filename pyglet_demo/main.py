@@ -3,6 +3,8 @@ from sys import platform
 from os import system
 from socket import gethostname
 
+from threading import Timer
+
 
 import configs
 import app
@@ -21,23 +23,54 @@ def main():
 
     game_app = app.App((window.width, window.height))
 
+    shut_down_timer = None
+
+    shutdown_label = pyglet.text.Label(
+        "Shutting down in 10s...Press green to stop shutdown.",
+        font_name="Arial",
+        font_size=24,
+        x=0,
+        y=window.height,
+        anchor_x="left",
+        # anchor_y="bottom",
+        anchor_y="top",
+        color=(255, 0, 0, 255),
+    )
+
     @window.event
     def on_draw():
         pyglet.gl.glFlush()
         window.clear()
 
         game_app.on_draw()
+        if shut_down_timer is not None:
+            shutdown_label.draw()
 
     @window.event
     def on_mouse_press(x, y, button, modifiers):
-        game_app.on_click(x, y, button)
+        if button == 2:
+            handle_shutdown()
+        elif button == 4:
+            pyglet.app.exit()
+        else:
+            game_app.on_click(x, y, button)
+
+    def handle_shutdown(cancel_shutdown_only=False):
+        nonlocal shut_down_timer
+        if shut_down_timer is not None:
+            shut_down_timer.cancel()
+            shut_down_timer = None
+        elif not cancel_shutdown_only:
+            shut_down_timer = Timer(10, lambda: system("shutdown now"))
+            shut_down_timer.start()
 
     # dev board will need to be changed. not sure of the name in debian
     if platform != "darwin" and gethostname() == "ubuntu":
         serialInputHandler = serialInput.Input(
-            game_app.spin,
+            on_green_trigger=game_app.spin,
+            on_red_trigger=lambda: handle_shutdown(cancel_shutdown_only=True),
             on_green_hold=pyglet.app.exit,
-            on_red_hold=lambda: system("shutdown now"),
+            on_red_hold=handle_shutdown,
         )
     else:
         serialInputHandler = None
