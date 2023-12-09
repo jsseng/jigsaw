@@ -14,9 +14,9 @@ CONSTANT_FRICTION = 0.004
 LINEAR_FRICTION = 0.003
 
 # Wheel shape values
-Y_OFFSET = -100
-INNER_RADIUS = 500
-OUTER_RADIUS = 1100
+Y_OFFSET = -600
+INNER_RADIUS = 900
+OUTER_RADIUS = 1550
 MID_RADIUS = (INNER_RADIUS + OUTER_RADIUS) / 2
 
 
@@ -54,7 +54,7 @@ class App:
         self.arcs = []
         self.audio_file_name = []
         for i in ordered_image_indexes:
-            start_angle = i / configs.SEGMENTS * math.tau
+            start_angle = i / configs.SEGMENTS * math.tau + (i % 3) * math.tau / 4
             image = images[i]
             image.anchor_x = image.width / 2
             image.anchor_y = image.height / 2
@@ -64,7 +64,7 @@ class App:
                 OUTER_RADIUS,
                 angle=angle,
                 start_angle=start_angle,
-                color=color_utils.color_phase(start_angle),
+                color=color_utils.color_phase_int(start_angle),
                 # color=self.check_position(image, 0, 0),
                 batch=self.wheel_batch,
             )
