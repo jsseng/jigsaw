@@ -18,6 +18,7 @@ Y_OFFSET = -600
 INNER_RADIUS = 900
 OUTER_RADIUS = 1550
 MID_RADIUS = (INNER_RADIUS + OUTER_RADIUS) / 2
+CULLING_THRESHOLD = 0.3
 
 
 class App:
@@ -166,9 +167,16 @@ class App:
         return ordered_images
 
     def on_draw(self):
-        self.wheel_batch.draw()
-        self.background_circle.draw()
+        # self.wheel_batch.draw()
         for sector, sprite in self.arcs:
+            angle_val = (self.angle_offset + sector.start_angle) % math.tau
+
+            if not (
+                angle_val < math.pi - CULLING_THRESHOLD
+                and angle_val > CULLING_THRESHOLD
+            ):
+                continue
+
             sprite.x = (
                 math.cos(sector.start_angle + self.angle_offset) * MID_RADIUS
                 + self.window_size[0] / 2
@@ -177,8 +185,10 @@ class App:
                 math.sin(sector.start_angle + self.angle_offset) * MID_RADIUS + Y_OFFSET
             )
             sprite.rotation = 90 - math.degrees(sector.start_angle + self.angle_offset)
+            sector.draw()
             sprite.draw()
 
+        self.background_circle.draw()
         self.label.draw()
         self.arrow_batch.draw()
 
