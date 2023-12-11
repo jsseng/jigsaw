@@ -119,7 +119,7 @@ class App:
         self.label = pyglet.text.Label(
             "",
             font_name="Arial",
-            font_size=100,
+            font_size=128,
             x=window_size[0] // 2,
             y=20,
             anchor_x="center",
@@ -196,10 +196,11 @@ class App:
         self.spin()
 
     def spin(self):
-        rand = random.random() * 0.75 + 0.5  # random num between 0.5 and 1
-        self.wheel_velocity = SPIN_SPEED * rand
-        self.player2 = None
-        self.label.text = ""
+        if self.wheel_velocity == 0:
+            rand = random.random() * 0.5 + 0.75  # random num between 0.5 and 1
+            self.wheel_velocity = SPIN_SPEED * rand
+            self.player2 = None
+            self.label.text = ""
 
     def on_update(self, deltaTime):
         self.wheel_velocity -= (
