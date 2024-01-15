@@ -14,10 +14,11 @@ CONSTANT_FRICTION = 0.004
 LINEAR_FRICTION = 0.003
 
 # Wheel shape values
-Y_OFFSET = -100
-INNER_RADIUS = 500
-OUTER_RADIUS = 1100
+Y_OFFSET = -600
+INNER_RADIUS = 900
+OUTER_RADIUS = 1550
 MID_RADIUS = (INNER_RADIUS + OUTER_RADIUS) / 2
+CULLING_THRESHOLD = 0.3
 
 
 class App:
@@ -28,6 +29,13 @@ class App:
         image_files = os.listdir(
             str(pathlib.Path(__file__).parent.absolute().resolve()) + "/images/"
         )
+
+        image_files = image_files[0 : min(len(image_files), configs.SEGMENTS)]
+
+        if len(image_files) != configs.SEGMENTS:
+            print(
+                f"Warning: Number of animals ({len(image_files)}) doesn't match number of defined segments in configs.py ({configs.SEGMENTS})"
+            )
 
         image_files = sorted(image_files)
 
@@ -47,7 +55,7 @@ class App:
         self.arcs = []
         self.audio_file_name = []
         for i in ordered_image_indexes:
-            start_angle = i / configs.SEGMENTS * math.tau
+            start_angle = i / configs.SEGMENTS * math.tau + (i % 3) * math.tau / 4
             image = images[i]
             image.anchor_x = image.width / 2
             image.anchor_y = image.height / 2
@@ -57,8 +65,8 @@ class App:
                 OUTER_RADIUS,
                 angle=angle,
                 start_angle=start_angle,
-                # color=color_utils.color_phase(start_angle),
-                color=self.check_position(image, 0, 0),
+                color=color_utils.color_phase_int(start_angle),
+                # color=self.check_position(image, 0, 0),
                 batch=self.wheel_batch,
             )
 
@@ -117,13 +125,13 @@ class App:
             anchor_x="center",
             # anchor_y="bottom",
             anchor_y="bottom",
+            color=(0, 0, 0, 255),
         )
 
     def check_position(self, image, x, y):
         img_data = image.get_region(x, y, 1, 1).get_image_data()
         width = img_data.width
         data = img_data.get_data("RGB", 3 * width)
-        print(data)
         return data[0], data[1], data[2]
 
     def order_images(self, images):
@@ -150,7 +158,7 @@ class App:
                     + (color[2] - other_color[2]) ** 2
                 )
 
-                if distance > max_distance:
+                if distance >= max_distance:
                     min_distance = distance
                     min_index = i
 
@@ -159,9 +167,16 @@ class App:
         return ordered_images
 
     def on_draw(self):
-        self.wheel_batch.draw()
-        self.background_circle.draw()
+        # self.wheel_batch.draw()
         for sector, sprite in self.arcs:
+            angle_val = (self.angle_offset + sector.start_angle) % math.tau
+
+            if not (
+                angle_val < math.pi - CULLING_THRESHOLD
+                and angle_val > CULLING_THRESHOLD
+            ):
+                continue
+
             sprite.x = (
                 math.cos(sector.start_angle + self.angle_offset) * MID_RADIUS
                 + self.window_size[0] / 2
@@ -170,8 +185,10 @@ class App:
                 math.sin(sector.start_angle + self.angle_offset) * MID_RADIUS + Y_OFFSET
             )
             sprite.rotation = 90 - math.degrees(sector.start_angle + self.angle_offset)
+            sector.draw()
             sprite.draw()
 
+        self.background_circle.draw()
         self.label.draw()
         self.arrow_batch.draw()
 
