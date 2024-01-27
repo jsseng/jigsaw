@@ -26,7 +26,7 @@ def main():
     shut_down_timer = None
 
     shutdown_label = pyglet.text.Label(
-        "Shutting down in 10s...Press green to stop shutdown.",
+        "Shutting down in 10s...Press red to stop shutdown.",
         font_name="Arial",
         font_size=24,
         x=0,
