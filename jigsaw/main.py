@@ -72,10 +72,10 @@ def main():
         print("Mouse button pressed")
 
         # print rectangles on mouse press
-        line1 = shapes.Line(x, y, x + rect_width, y, width=3, color=(255, 0, 0), batch=batch)
-        line2 = shapes.Line(x + rect_width, y, x + rect_width, y + rect_height, width=3, color=(255, 0, 0), batch=batch)
-        line3 = shapes.Line(x + rect_width, y + rect_height, x, y + rect_height, width=3, color=(255, 0, 0), batch=batch)
-        line4 = shapes.Line(x, y + rect_height, x, y, width=3, color=(255, 0, 0), batch=batch)
+        line1 = shapes.Line(x - rect_width/2, y - rect_height/2, x + rect_width/2, y - rect_height/2, width=3, color=(255, 0, 0), batch=batch)
+        line2 = shapes.Line(x + rect_width/2, y - rect_height/2, x + rect_width/2, y + rect_height/2, width=3, color=(255, 0, 0), batch=batch)
+        line3 = shapes.Line(x + rect_width/2, y + rect_height/2, x - rect_width/2, y + rect_height/2, width=3, color=(255, 0, 0), batch=batch)
+        line4 = shapes.Line(x - rect_width/2, y + rect_height/2, x - rect_width/2, y - rect_height/2, width=3, color=(255, 0, 0), batch=batch)
         rectangle_list.extend([line1, line2, line3, line4])
 
     # image for icon
