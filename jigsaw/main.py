@@ -3,6 +3,8 @@ import pyglet
 import pyglet.window.key
 from pyglet import shapes
 
+# 1024 x 768
+
 def main():
     # width of window
     width = 1024
@@ -88,3 +90,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
