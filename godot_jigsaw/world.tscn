@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://t1e2oap7x5ok"]
+
+[ext_resource type="Texture2D" uid="uid://fdsqaxc6rx0h" path="res://assets/puzzles/seattle.jpg" id="1_soit5"]
+
+[sub_resource type="Theme" id="Theme_2bmes"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p54go"]
+bg_color = Color(0, 0, 0, 0.105882)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.0627451, 0.00784314, 0.00392157, 1)
+
+[node name="Tile" type="Node2D"]
+position = Vector2(72, 48)
+
+[node name="Seattle" type="Sprite2D" parent="."]
+position = Vector2(127, 126.75)
+scale = Vector2(1.26471, 1.34635)
+texture = ExtResource("1_soit5")
+hframes = 10
+vframes = 10
+frame = 34
+
+[node name="Border" type="Panel" parent="Seattle"]
+anchors_preset = -1
+anchor_left = -0.00125489
+anchor_top = 0.000442704
+anchor_right = -0.275765
+anchor_bottom = -0.343307
+offset_left = 7.24426
+offset_top = 345.53
+offset_right = 278.244
+offset_bottom = 613.53
+theme = SubResource("Theme_2bmes")
+theme_override_styles/panel = SubResource("StyleBoxFlat_p54go")
+metadata/_edit_use_anchors_ = true
+
+[node name="Seattle2" type="Sprite2D" parent="."]
+position = Vector2(1328, 552)
+texture = ExtResource("1_soit5")
