@@ -7,6 +7,6 @@
 script = ExtResource("1_qtbi5")
 
 [node name="Image" type="Sprite2D" parent="."]
-position = Vector2(1544, 256)
+position = Vector2(-408, 568)
 scale = Vector2(0.640625, 0.520833)
 texture = ExtResource("1_soit5")
