@@ -39,6 +39,8 @@ var height = 2
 
 var body_ref
 
+var droppable
+
 # The is one of Godot's "hooks" or "callbacks" - a function called at a certain
 # time in another program's execution. You can search for the functions that
 # start with an underscore "_" in the Godot documentation online. This function
@@ -121,8 +123,8 @@ func _unhandled_input(ev):
 		# sprite.
 		elif status == "dragging" and not ev.pressed:
 			# Check if within a platform, if it is then tween that shit
-			if inside:
-				tween.tween_property(self, "position", mpos, 0.2).set_ease(Tween.EASE_OUT)
+			if droppable:
+				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
 			status = "released"
 	
 	# If the card status is "clicked" and the mouse is being moved, set the
@@ -145,5 +147,15 @@ func _on_area_2d_mouse_entered():
 
 func _on_area_2d_mouse_exited():
 	inside = false
+
+	
+func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
+	body_ref = body
+	droppable = true
+	#print(droppable)
 	
 
+func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
+	if body == body_ref:
+		droppable = false
+		#print(droppable)
