@@ -165,8 +165,12 @@ func _on_area_2d_mouse_exited():
 	
 func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
 	body_ref = body
+	print(get_piece_id())
+	print(body.get_slot_id())
 	if (get_piece_id() == body.get_slot_id()):
 		droppable = true
+	else:
+		droppable = false
 	#print(droppable)
 	
 

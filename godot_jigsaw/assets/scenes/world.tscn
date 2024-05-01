@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://t1e2oap7x5ok"]
+[gd_scene load_steps=5 format=3 uid="uid://t1e2oap7x5ok"]
 
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="1_32jfw"]
 [ext_resource type="Script" path="res://assets/scripts/world.gd" id="1_qtbi5"]
 [ext_resource type="Texture2D" uid="uid://fdsqaxc6rx0h" path="res://assets/puzzles/seattle.jpg" id="1_soit5"]
+[ext_resource type="Script" path="res://assets/scenes/Camera2D.gd" id="4_ulrap"]
 
 [node name="Grid" type="Node2D" groups=["dropable"]]
 script = ExtResource("1_qtbi5")
@@ -19,3 +20,8 @@ offset_right = 1919.0
 offset_bottom = 1241.0
 texture = ExtResource("1_32jfw")
 expand_mode = 1
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(893, 489)
+zoom = Vector2(2, 2)
+script = ExtResource("4_ulrap")
