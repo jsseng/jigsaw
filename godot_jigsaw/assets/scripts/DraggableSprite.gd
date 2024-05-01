@@ -41,6 +41,10 @@ var body_ref
 
 var droppable
 
+var debug = 0
+
+var piece_id : int # Unique identifier for the piece
+
 # The is one of Godot's "hooks" or "callbacks" - a function called at a certain
 # time in another program's execution. You can search for the functions that
 # start with an underscore "_" in the Godot documentation online. This function
@@ -53,6 +57,10 @@ func _ready():
 	# Set the initial global position of the sprite to be the center of the
 	# viewport. Note GDScript supports vector math.
 	#global_position = get_viewport_rect().size / 2
+	
+	# Assign a unique ID to the puzzle piece
+	piece_id = get_tree().get_nodes_in_group("puzzle_pieces").size()
+	print(piece_id)
 
 # This is another Godot hook. It is called every single frame!
 func _process(_delta):
@@ -63,6 +71,12 @@ func _process(_delta):
 	if status == "dragging":
 		#global_position = mpos + offset
 		global_position = mpos
+	
+	#if (debug % 50) == 0:
+		#print(global_position)
+		#debug += 1
+	#else:
+		#debug += 1
 
 # Yet another Godot hook. It is called every time an input event @ev is
 # received. The input events we care about are clicks (InputEventMouseButton)
@@ -151,7 +165,8 @@ func _on_area_2d_mouse_exited():
 	
 func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
 	body_ref = body
-	droppable = true
+	if (get_piece_id() == body.get_slot_id()):
+		droppable = true
 	#print(droppable)
 	
 
@@ -159,3 +174,7 @@ func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape
 	if body == body_ref:
 		droppable = false
 		#print(droppable)
+
+# Method to get the piece ID
+func get_piece_id() -> int:
+	return piece_id
