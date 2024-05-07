@@ -8,7 +8,7 @@ func _ready():
 	
 	# Assign a unique ID to the slot
 	slot_id = get_tree().get_nodes_in_group("platform").size()
-	print(slot_id)
+	#print(slot_id)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
