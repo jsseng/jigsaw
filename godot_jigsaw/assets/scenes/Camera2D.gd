@@ -7,7 +7,7 @@ var zoom_min = 0.2
 var zoom_max = 1
 
 var zoom_pos = Vector2()
-var zoom_factor = 2.0
+var zoom_factor = 1.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -16,8 +16,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	zoom.x = lerp(zoom.x, zoom.x + zoom_factor, zoom_speed * delta)
-	zoom.y = lerp(zoom.y, zoom.y + zoom_factor, zoom_speed * delta)
+	zoom.x = lerp(zoom.x, zoom.x * zoom_factor, zoom_speed * delta)
+	zoom.y = lerp(zoom.y, zoom.y * zoom_factor, zoom_speed * delta)
 
 	zoom.x = clamp(zoom.x, zoom_min, zoom_max)
 	zoom.y = clamp(zoom.y, zoom_min, zoom_max)
@@ -31,6 +31,7 @@ func _input(event):
 	if event is InputEventKey:
 		if event.is_pressed():
 			if event.keycode == KEY_J:
+				print("Hello")
 				zoom_factor -= 0.01
 				zoom_pos = get_global_mouse_position()
 			if event.keycode == KEY_K:

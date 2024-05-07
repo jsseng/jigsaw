@@ -15,16 +15,15 @@ scale = Vector2(0.640625, 0.520833)
 texture = ExtResource("1_soit5")
 
 [node name="TextureRect" type="TextureRect" parent="." groups=["dropable"]]
-offset_left = -77.0
-offset_top = -313.0
-offset_right = 1919.0
-offset_bottom = 1241.0
+offset_left = -1597.0
+offset_top = -1433.0
+offset_right = 3608.0
+offset_bottom = 2504.0
 texture = ExtResource("1_32jfw")
 expand_mode = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(893, 489)
-zoom = Vector2(2, 2)
+position = Vector2(958, 542)
 script = ExtResource("4_ulrap")
 
 [node name="Label" type="Label" parent="."]
