@@ -6,9 +6,9 @@ var GRID_HEIGHT = PuzzleVar.row
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
-	print(PuzzleVar.row)
-	print(PuzzleVar.col)
-	print(PuzzleVar.size)
+	#print(PuzzleVar.row)
+	#print(PuzzleVar.col)
+	#print(PuzzleVar.size)
 	
 	# Load the image
 	var image_texture = $Image.texture
@@ -33,7 +33,7 @@ func _ready():
 			var platform_shape = platform.get_node("ColorRect")
 			#platform_shape.set_shape(shape)
 			
-			get_parent().call_deferred("add_child", platform)
+			#get_parent().call_deferred("add_child", platform)
 
 	# Iterate through the grid for the pieces
 	for y in range(GRID_WIDTH):

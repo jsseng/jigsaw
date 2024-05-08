@@ -148,10 +148,10 @@ func _on_area_2d_mouse_exited():
 func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
 	body_ref = body
 	droppable = true
-	print(droppable)
+	#print(droppable)
 	
 
 func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
 	if body == body_ref:
 		droppable = false
-		print(droppable)
+		#print(droppable)
