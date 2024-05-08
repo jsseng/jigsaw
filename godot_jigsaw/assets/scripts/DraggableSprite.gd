@@ -33,10 +33,6 @@ var mpos = Vector2()
 
 @onready var sprite = get_node("Sprite2D")
 
-# Define grid width and height
-var width = 2
-var height = 2
-
 var body_ref
 
 var droppable
@@ -71,7 +67,6 @@ func _process(_delta):
 # hook is called, we update the mouse position to match the position at which
 # the input event was generated.
 func _unhandled_input(ev):
-	var tween = get_tree().create_tween()
 	# This is the Godot 3.1.5 way to check event type. There is no longer a
 	# "type" property on @ev. That's going to break a lot of people's code...
 
@@ -124,6 +119,7 @@ func _unhandled_input(ev):
 		elif status == "dragging" and not ev.pressed:
 			# Check if within a platform, if it is then tween that shit
 			if droppable:
+				var tween = get_tree().create_tween()
 				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
 			status = "released"
 	
@@ -143,19 +139,19 @@ func _unhandled_input(ev):
 
 func _on_area_2d_mouse_entered():
 	inside = true
-	
+	#print(inside)
 
 func _on_area_2d_mouse_exited():
 	inside = false
-
+	#print(inside)
 	
 func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
 	body_ref = body
 	droppable = true
-	#print(droppable)
+	print(droppable)
 	
 
 func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
 	if body == body_ref:
 		droppable = false
-		#print(droppable)
+		print(droppable)
