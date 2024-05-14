@@ -21,6 +21,8 @@ func _process(delta):
 
 	zoom.x = clamp(zoom.x, zoom_min, zoom_max)
 	zoom.y = clamp(zoom.y, zoom_min, zoom_max)
+	
+	print(zoom_factor)
 
 func _input(event):
 	if abs(zoom_pos.x - get_global_mouse_position().x) > zoom_margin:
@@ -30,11 +32,16 @@ func _input(event):
 		
 	if event is InputEventKey:
 		if event.is_pressed():
-			if event.keycode == KEY_J:
-				print("Hello")
-				zoom_factor -= 0.01
+			if event.keycode == KEY_J && zoom_factor > 0.99:
+				if (zoom_factor == 1.01):
+					zoom_factor -= 0.02
+				else:
+					zoom_factor -= 0.01
 				zoom_pos = get_global_mouse_position()
-			if event.keycode == KEY_K:
-				zoom_factor += 0.01
+			if event.keycode == KEY_K && zoom_factor < 1.01:
+				if (zoom_factor == 0.99):
+					zoom_factor += 0.02
+				else:
+					zoom_factor += 0.01
 				zoom_pos = get_global_mouse_position()
 			
