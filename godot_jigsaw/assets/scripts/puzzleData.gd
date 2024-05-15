@@ -7,4 +7,4 @@ var col = 2
 
 var size = 0
 
-
+var valid_count = 0

@@ -108,7 +108,7 @@ func _unhandled_input(ev):
 		elif status == "dragging" and not ev.pressed:
 			# Check if within a platform, if it is then tween that shit
 			if droppable:
-				Global.valid_count += 1
+				PuzzleVar.valid_count += 1
 				status = "correct"
 				var tween = get_tree().create_tween()
 				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)

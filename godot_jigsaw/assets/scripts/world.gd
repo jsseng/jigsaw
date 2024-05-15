@@ -25,6 +25,7 @@ func _ready():
 		for x in range(GRID_HEIGHT):
 			# Add the platform for each puzzle piece
 			var platform = platform_scene.instantiate()
+			platform.add_to_group("platforms")
 			platform.position.x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
 			platform.position.y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
 
@@ -89,33 +90,13 @@ func _ready():
 			# Add the sprite to the Grid node	
 			get_parent().call_deferred("add_child", piece)
 
-			
-			# Add the platform for each puzzle piece
-			var platform = platform_scene.instantiate()
-			
-			platform.add_to_group("platforms")
-			
-			platform.position.x = (cell_width * x) - (cell_width / 2) + (get_viewport_rect().size.x / 2)
-			platform.position.y = (cell_height * y) - (cell_height / 2) + (get_viewport_rect().size.y / 2)
-			
-			var platform_shape = platform.get_node("ColorRect")
-			#platform_shape.set_shape(shape)
-			
-			get_parent().call_deferred("add_child", platform)
-			
-			get_parent().call_deferred("add_child", piece)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	print(Global.valid_count)
-	if Global.valid_count == 4:
+	#print(PuzzleVar.valid_count)
+	if PuzzleVar.valid_count == 4:
 		$Label.text = "YOU COMPLETED THE PUZZLE!!!"
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	pass
 
 # Handle esc
 func _input(event):
