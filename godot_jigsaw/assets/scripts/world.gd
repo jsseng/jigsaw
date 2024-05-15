@@ -43,7 +43,7 @@ func _ready():
 			
 			# Apply vertical offset based on column position
 			if y >= (GRID_WIDTH / 2):
-				pos_y += 450
+				pos_y += 500
 			else:
 				pos_y -= 450
 			
