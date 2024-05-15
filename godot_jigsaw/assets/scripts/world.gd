@@ -3,6 +3,8 @@ extends Node2D
 var GRID_WIDTH = PuzzleVar.col
 var GRID_HEIGHT = PuzzleVar.row
 
+var debug = 0
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
@@ -23,6 +25,7 @@ func _ready():
 		for x in range(GRID_HEIGHT):
 			# Add the platform for each puzzle piece
 			var platform = platform_scene.instantiate()
+			platform.add_to_group("platforms")
 			platform.position.x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
 			platform.position.y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
 
@@ -35,8 +38,8 @@ func _ready():
 	# Shuffle the grid positions
 	var grid_positions = []
 
-	for y in range(GRID_HEIGHT):
-		for x in range(GRID_WIDTH):
+	for y in range(GRID_WIDTH):
+		for x in range(GRID_HEIGHT):
 			# Calculate the position for each grid cell
 			var pos_x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
 			var pos_y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
@@ -58,6 +61,10 @@ func _ready():
 		for x in range(GRID_HEIGHT):
 			# Create a new sprite for each cell
 			var piece = sprite_scene.instantiate()
+			
+			piece.add_to_group("puzzle_pieces")
+			debug += 1;
+			#print(piece.get_piece_id())
 			
 			var sprite = piece.get_node("Sprite2D")
 			var collision = piece.get_node("Area2D/CollisionShape2D")
@@ -83,9 +90,13 @@ func _ready():
 			# Add the sprite to the Grid node	
 			get_parent().call_deferred("add_child", piece)
 
+
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	pass
+	#print(PuzzleVar.valid_count)
+	if PuzzleVar.valid_count == GRID_WIDTH * GRID_HEIGHT:
+		$Label.text = "YOU COMPLETED THE PUZZLE!!!"
 
 # Handle esc
 func _input(event):
@@ -95,3 +106,4 @@ func _input(event):
 		if event.keycode == KEY_ESCAPE:
 			# Exit the game
 			get_tree().quit()
+

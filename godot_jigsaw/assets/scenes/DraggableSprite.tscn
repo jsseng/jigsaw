@@ -4,7 +4,7 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_db6jm"]
 
-[node name="DraggableSprite" type="Node2D"]
+[node name="DraggableSprite" type="Node2D" groups=["puzzle_pieces"]]
 script = ExtResource("1_j034f")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

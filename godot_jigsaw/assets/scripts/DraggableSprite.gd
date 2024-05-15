@@ -31,6 +31,10 @@ var body_ref
 
 var droppable
 
+var debug = 0
+
+var piece_id : int # Unique identifier for the piece
+
 # The is one of Godot's "hooks" or "callbacks" - a function called at a certain
 # time in another program's execution. You can search for the functions that
 # start with an underscore "_" in the Godot documentation online. This function
@@ -39,6 +43,15 @@ func _ready():
 	#tsize = get_texture().get_size()
 
 	tsize = sprite.get_region_rect().size
+	
+	# Set the initial global position of the sprite to be the center of the
+	# viewport. Note GDScript supports vector math.
+	#global_position = get_viewport_rect().size / 2
+	
+	# Assign a unique ID to the puzzle piece
+	piece_id = get_tree().get_nodes_in_group("puzzle_pieces").size()
+	print(piece_id)
+
 
 # This is another Godot hook. It is called every single frame!
 func _process(_delta):
@@ -47,6 +60,12 @@ func _process(_delta):
 	# the mouse
 	if status == "dragging":
 		global_position = mpos
+	
+	#if (debug % 50) == 0:
+		#print(global_position)
+		#debug += 1
+	#else:
+		#debug += 1
 
 # Yet another Godot hook. It is called every time an input event @ev is
 # received. The input events we care about are clicks (InputEventMouseButton)
@@ -61,7 +80,11 @@ func _unhandled_input(ev):
 	if ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT:
 		# If the sprite is not being dragged, and if the mouse button was
 		# clicked (as opposed to released, or "unclicked"), do things.
-		if status != "dragging" and ev.pressed:
+		# Do nothing if piece was correctly placed
+		if status == "correct":
+			pass
+		elif status != "dragging" and ev.pressed:
+			
 			# Define a event position variable (scoped to this if block)
 			var evpos = ev.global_position
 			
@@ -75,7 +98,8 @@ func _unhandled_input(ev):
 				# If the sprite's rectangle was clicked, update the sprite
 				# status to "clicked", and update the offset. The offset is
 				# the vector pointing from @evpos to @gpos.
-				status = "clicked"
+				if status != "correct":
+					status = "clicked"
 				# offset = gpos - evpos
 				
 		# If the sprite is being dragged and the mouse button is being released,
@@ -84,9 +108,11 @@ func _unhandled_input(ev):
 		elif status == "dragging" and not ev.pressed:
 			# Check if within a platform, if it is then tween that shit
 			if droppable:
+				PuzzleVar.valid_count += 1
+				status = "correct"
 				var tween = get_tree().create_tween()
 				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
-			status = "released"
+			else: status = "released"
 	
 	# If the card status is "clicked" and the mouse is being moved, set the
 	# sprite status to "dragging", so the appropriate loop can run when a mouse
@@ -111,7 +137,14 @@ func _on_area_2d_mouse_exited():
 	
 func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
 	body_ref = body
-	droppable = true
+	#print(get_piece_id())
+	#print(body.get_slot_id())
+	print(get_piece_id())
+	print(body.get_slot_id())
+	if (get_piece_id() == body.get_slot_id()):
+		droppable = true
+	else:
+		droppable = false
 	#print(droppable)
 	
 
@@ -120,3 +153,8 @@ func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape
 		droppable = false
 		#print(droppable)
 
+
+# Method to get the piece ID
+func get_piece_id() -> int:
+	return piece_id
+	
