@@ -6,7 +6,7 @@ var slot_id : int # Unique identifier for the slot
 func _ready():
 	modulate = Color(Color.DIM_GRAY, 0.7)
 	# Assign a unique ID to the slot
-	slot_id = get_tree().get_nodes_in_group("platform").size()
+	slot_id = get_tree().get_nodes_in_group("platform").size() - 1
 	#print(slot_id)
 	var piece_size = Rect2(0, 0, (PuzzleVar.size.x / PuzzleVar.col), (PuzzleVar.size.y / PuzzleVar.row))
 	

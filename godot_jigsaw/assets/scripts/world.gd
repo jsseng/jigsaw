@@ -38,8 +38,8 @@ func _ready():
 	# Shuffle the grid positions
 	var grid_positions = []
 
-	for y in range(GRID_HEIGHT):
-		for x in range(GRID_WIDTH):
+	for y in range(GRID_WIDTH):
+		for x in range(GRID_HEIGHT):
 			# Calculate the position for each grid cell
 			var pos_x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
 			var pos_y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
@@ -95,7 +95,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	#print(PuzzleVar.valid_count)
-	if PuzzleVar.valid_count == 4:
+	if PuzzleVar.valid_count == GRID_WIDTH * GRID_HEIGHT:
 		$Label.text = "YOU COMPLETED THE PUZZLE!!!"
 
 # Handle esc
