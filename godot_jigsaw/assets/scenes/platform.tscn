@@ -4,7 +4,7 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_frlc7"]
 
-[node name="Platform" type="StaticBody2D" groups=["dropable"]]
+[node name="Platform" type="StaticBody2D" groups=["dropable", "platform"]]
 script = ExtResource("1_ae7xy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
