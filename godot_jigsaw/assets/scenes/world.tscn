@@ -1,25 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://t1e2oap7x5ok"]
+[gd_scene load_steps=6 format=3 uid="uid://t1e2oap7x5ok"]
 
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="1_32jfw"]
 [ext_resource type="Script" path="res://assets/scripts/world.gd" id="1_qtbi5"]
 [ext_resource type="Texture2D" uid="uid://fdsqaxc6rx0h" path="res://assets/puzzles/seattle.jpg" id="1_soit5"]
 [ext_resource type="PackedScene" uid="uid://b8ttwyjwvif6r" path="res://assets/scenes/platform.tscn" id="3_0c5qp"]
+[ext_resource type="Script" path="res://assets/scripts/Camera2D.gd" id="4_ulrap"]
 
 [node name="Grid" type="Node2D" groups=["dropable"]]
 script = ExtResource("1_qtbi5")
 
 [node name="TextureRect" type="TextureRect" parent="." groups=["dropable"]]
-offset_left = -77.0
-offset_top = -313.0
-offset_right = 1919.0
-offset_bottom = 1241.0
+offset_left = -3764.0
+offset_top = -3156.0
+offset_right = 5601.0
+offset_bottom = 3472.0
 texture = ExtResource("1_32jfw")
 expand_mode = 1
 
 [node name="Image" type="Sprite2D" parent="." groups=["dropable"]]
-position = Vector2(-447, 401)
+position = Vector2(-1010, 3985)
 scale = Vector2(0.640625, 0.520833)
 texture = ExtResource("1_soit5")
 
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(958, 542)
+script = ExtResource("4_ulrap")
+
 [node name="Platform" parent="." instance=ExtResource("3_0c5qp")]
-position = Vector2(-1149, 1075)
+position = Vector2(517, 4144)

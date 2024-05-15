@@ -24,3 +24,12 @@ func _on_row_value_changed(value):
 	
 func _on_col_value_changed(value):
 	SetCol(value)
+	
+# Handle input events
+func _input(event):
+	# Check if the event is a key press event
+	if event is InputEventKey:
+		# Check if the pressed key is the Escape key
+		if event.keycode == KEY_ESCAPE:
+			# Exit the game
+			get_tree().quit()

@@ -6,10 +6,6 @@ var GRID_HEIGHT = PuzzleVar.row
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
-	#print(PuzzleVar.row)
-	#print(PuzzleVar.col)
-	#print(PuzzleVar.size)
-	
 	# Load the image
 	var image_texture = $Image.texture
 	var image_size = image_texture.get_size()
@@ -29,11 +25,33 @@ func _ready():
 			var platform = platform_scene.instantiate()
 			platform.position.x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
 			platform.position.y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
-			
-			var platform_shape = platform.get_node("ColorRect")
+
+			#var platform_shape = platform.get_node("ColorRect")
 			#platform_shape.set_shape(shape)
 			
-			#get_parent().call_deferred("add_child", platform)
+			get_parent().call_deferred("add_child", platform)
+			
+	
+	# Shuffle the grid positions
+	var grid_positions = []
+
+	for y in range(GRID_HEIGHT):
+		for x in range(GRID_WIDTH):
+			# Calculate the position for each grid cell
+			var pos_x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
+			var pos_y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
+			
+			# Apply vertical offset based on column position
+			if y >= (GRID_WIDTH / 2):
+				pos_y += 450
+			else:
+				pos_y -= 450
+			
+			# Add the position to the list
+			grid_positions.append(Vector2(pos_x, pos_y))
+
+	# Shuffle the grid positions
+	grid_positions.shuffle()
 
 	# Iterate through the grid for the pieces
 	for y in range(GRID_WIDTH):
@@ -43,12 +61,11 @@ func _ready():
 			
 			var sprite = piece.get_node("Sprite2D")
 			var collision = piece.get_node("Area2D/CollisionShape2D")
-					
-			
+
 			sprite.texture = image_texture
 			# in script, configure the collisionshape of our sprites, so that we can use the signal
 			# to check if were inside a platform area/droppable then use tween to do the suck
-			
+
 			# Needed for Rect 2
 			sprite.set_region_enabled(true)
 			
@@ -61,11 +78,7 @@ func _ready():
 			shape.size = Vector2(cell_width, cell_height)
 			collision.set_shape(shape)
 
-			# Position the sprite in the grid
-			# viewport.size.x /2 = halfway across screen
-			# subtract x * cellwidth
-			piece.position.x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
-			piece.position.y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
+			piece.position = grid_positions.pop_back()
 			
 			# Add the sprite to the Grid node	
 			get_parent().call_deferred("add_child", piece)
@@ -73,3 +86,12 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
+
+# Handle esc
+func _input(event):
+	# Check if the event is a key press event
+	if event is InputEventKey:
+		# Check if the pressed key is the Escape key
+		if event.keycode == KEY_ESCAPE:
+			# Exit the game
+			get_tree().quit()

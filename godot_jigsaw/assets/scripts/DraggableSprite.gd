@@ -11,19 +11,13 @@
 #       to drop the sprite, release the mouse.
 #
 
-# RUN THIS CODE
-#
-# To run this code, just open Godot, create a Sprite, load icon.png from the
-# the FileSystem tab into your Sprite, name your Sprite, attach an empty script
-# to your Sprite, drop this code into it, save, and run.
-
 # This line of code is what lets you use methods and properties Sprite has,
 # like set_process_input, and global_position.
 extends Node2D
 
 # Define the status of the sprite: "none", "clicked", "released", or "dragging".
 var status = "none"
-var inside = false
+var inside
 
 # Define the vector that will contain the (width, height) of the sprite
 var tsize = Vector2()
@@ -45,19 +39,13 @@ func _ready():
 	#tsize = get_texture().get_size()
 
 	tsize = sprite.get_region_rect().size
-	
-	# Set the initial global position of the sprite to be the center of the
-	# viewport. Note GDScript supports vector math.
-	#global_position = get_viewport_rect().size / 2
 
 # This is another Godot hook. It is called every single frame!
 func _process(_delta):
 	# If the sprite is being dragged in either of the two modes, update its
 	# position every frame. To update the position, we use the position of
-	# the mouse, plus an offset. The offset is the vector pointing from the
-	# last mouse event's position to the current global_position of the sprite.
+	# the mouse
 	if status == "dragging":
-		#global_position = mpos + offset
 		global_position = mpos
 
 # Yet another Godot hook. It is called every time an input event @ev is
@@ -69,7 +57,6 @@ func _process(_delta):
 func _unhandled_input(ev):
 	# This is the Godot 3.1.5 way to check event type. There is no longer a
 	# "type" property on @ev. That's going to break a lot of people's code...
-
 	# If the event is for a left-button click, do things.
 	if ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT:
 		# If the sprite is not being dragged, and if the mouse button was
@@ -82,26 +69,6 @@ func _unhandled_input(ev):
 			# block)
 			var gpos = global_position
 			
-			# LEGACY CODE - WAS REPLACED WITH SIGNALS
-			
-			# The Sprite can be centered or not, and this can change during
-			# the game. That's why we check for it in the loop. We are creating
-			# a rect with the sprites dimensions and position in order to
-			# check if the sprite was clicked or not, so it's important to
-			# know whether or not the sprite is centered!
-			#var rect = Rect2()
-			#if sprite.is_centered():
-				## If the sprite is centered, be sure to switch the x and y
-				## coordinates of the position by half the width and half the
-				## height of the sprite, respectively.
-				#rect = Rect2(gpos.x - tsize.x / (2 * width), gpos.y - tsize.y / (2 * height), tsize.x / width, tsize.y / height)
-				##rect = Rect2(gpos.x, gpos.y, tsize.x, tsize.y)
-			#else:
-				## If the sprite is not centered, no need to shift the
-				## coordinates. We can just use the sprite's global position
-				## by itself.
-				#rect = Rect2(gpos.x, gpos.y, tsize.x, tsize.y)
-				
 			# This is where we actually check if the sprite was clicked or not,
 			# by checking if the clicked point is in the Sprite's rectangle.
 			if inside:
@@ -111,8 +78,6 @@ func _unhandled_input(ev):
 				status = "clicked"
 				# offset = gpos - evpos
 				
-			
-		
 		# If the sprite is being dragged and the mouse button is being released,
 		# set the sprite status to "released" to stop dragging and drop the
 		# sprite.
@@ -134,16 +99,15 @@ func _unhandled_input(ev):
 	# into the other "if" statements when we start handling other input events
 	# here.
 	if ev is InputEventMouseMotion:
-		mpos = ev.global_position
-
+		# matrix multiply with the 
+		mpos = get_viewport().canvas_transform.affine_inverse() * ev.position
+		#print(mpos)
 
 func _on_area_2d_mouse_entered():
 	inside = true
-	#print(inside)
 
 func _on_area_2d_mouse_exited():
 	inside = false
-	#print(inside)
 	
 func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
 	body_ref = body
@@ -155,3 +119,4 @@ func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape
 	if body == body_ref:
 		droppable = false
 		#print(droppable)
+
