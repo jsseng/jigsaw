@@ -21,9 +21,5 @@ position = Vector2(-447, 401)
 scale = Vector2(0.640625, 0.520833)
 texture = ExtResource("1_soit5")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(958, 542)
-script = ExtResource("4_ulrap")
-
 [node name="Platform" parent="." instance=ExtResource("3_0c5qp")]
 position = Vector2(-1149, 1075)

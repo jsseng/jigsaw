@@ -1,7 +1,7 @@
 extends Node2D
 
-const GRID_WIDTH = 2
-const GRID_HEIGHT = 2
+var GRID_WIDTH = PuzzleVar.col
+var GRID_HEIGHT = PuzzleVar.row
 
 var debug = 0
 
@@ -20,11 +20,42 @@ func _ready():
 	var sprite_scene = preload("res://assets/scenes/DraggableSprite.tscn")
 	var platform_scene = preload("res://assets/scenes/platform.tscn")
 	
-	# Create a tilemap node
-	var tilemap = TileMap.new()
-	get_parent().call_deferred("add_child", tilemap)
+	# Iterate through the grid for the platforms
+	for y in range(GRID_WIDTH):
+		for x in range(GRID_HEIGHT):
+			# Add the platform for each puzzle piece
+			var platform = platform_scene.instantiate()
+			platform.position.x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
+			platform.position.y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
 
-	# Iterate through the grid
+			#var platform_shape = platform.get_node("ColorRect")
+			#platform_shape.set_shape(shape)
+			
+			get_parent().call_deferred("add_child", platform)
+			
+	
+	# Shuffle the grid positions
+	var grid_positions = []
+
+	for y in range(GRID_HEIGHT):
+		for x in range(GRID_WIDTH):
+			# Calculate the position for each grid cell
+			var pos_x = (get_viewport_rect().size.x / 2) + (cell_width * x) - (image_size.x / 2) + (cell_width / 2)
+			var pos_y = (get_viewport_rect().size.y / 2) + (cell_height * y) - (image_size.y / 2) + (cell_height / 2)
+			
+			# Apply vertical offset based on column position
+			if y >= (GRID_WIDTH / 2):
+				pos_y += 500
+			else:
+				pos_y -= 450
+			
+			# Add the position to the list
+			grid_positions.append(Vector2(pos_x, pos_y))
+
+	# Shuffle the grid positions
+	grid_positions.shuffle()
+
+	# Iterate through the grid for the pieces
 	for y in range(GRID_WIDTH):
 		for x in range(GRID_HEIGHT):
 			# Create a new sprite for each cell
@@ -36,15 +67,11 @@ func _ready():
 			
 			var sprite = piece.get_node("Sprite2D")
 			var collision = piece.get_node("Area2D/CollisionShape2D")
-					
-			# ------- TILEMAP --------
-			tilemap.set_cell(0, Vector2i(0, 0))
-			# ------------------------
-			
+
 			sprite.texture = image_texture
 			# in script, configure the collisionshape of our sprites, so that we can use the signal
 			# to check if were inside a platform area/droppable then use tween to do the suck
-			
+
 			# Needed for Rect 2
 			sprite.set_region_enabled(true)
 			
@@ -57,12 +84,11 @@ func _ready():
 			shape.size = Vector2(cell_width, cell_height)
 			collision.set_shape(shape)
 
-			# Position the sprite in the grid
-			piece.position.x = (cell_width * x) - (cell_width / 2) + (get_viewport_rect().size.x / 2)
-			piece.position.y = (cell_height * y) - (cell_height / 2) + (get_viewport_rect().size.y / 2)
+			piece.position = grid_positions.pop_back()
 			
-			# Add the sprite to the Grid node
+			# Add the sprite to the Grid node	
 			get_parent().call_deferred("add_child", piece)
+
 			
 			# Add the platform for each puzzle piece
 			var platform = platform_scene.instantiate()
@@ -85,3 +111,18 @@ func _process(_delta):
 	print(Global.valid_count)
 	if Global.valid_count == 4:
 		$Label.text = "YOU COMPLETED THE PUZZLE!!!"
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta):
+	pass
+
+# Handle esc
+func _input(event):
+	# Check if the event is a key press event
+	if event is InputEventKey:
+		# Check if the pressed key is the Escape key
+		if event.keycode == KEY_ESCAPE:
+			# Exit the game
+			get_tree().quit()
+
