@@ -50,7 +50,7 @@ func _ready():
 	
 	# Assign a unique ID to the puzzle piece
 	piece_id = get_tree().get_nodes_in_group("puzzle_pieces").size()
-	print(piece_id)
+	#print(piece_id)
 
 
 # This is another Godot hook. It is called every single frame!

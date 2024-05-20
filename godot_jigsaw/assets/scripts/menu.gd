@@ -21,8 +21,6 @@ func SetCol(col : int) -> void:
 	
 func _on_row_value_changed(value):
 	SetRow(value)
-	
-func _on_col_value_changed(value):
 	SetCol(value)
 	
 # Handle input events

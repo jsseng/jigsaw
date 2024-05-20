@@ -19,8 +19,8 @@ texture = ExtResource("1_32jfw")
 expand_mode = 1
 
 [node name="Image" type="Sprite2D" parent="." groups=["dropable"]]
-position = Vector2(-1010, 3985)
-scale = Vector2(0.640625, 0.520833)
+position = Vector2(2829, 552)
+scale = Vector2(1.37158, 1.12207)
 texture = ExtResource("1_soit5")
 
 [node name="Camera2D" type="Camera2D" parent="."]
