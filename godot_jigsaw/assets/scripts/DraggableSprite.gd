@@ -35,6 +35,9 @@ var debug = 0
 
 var piece_id : int # Unique identifier for the piece
 
+var original_parent
+var original_index
+
 # The is one of Godot's "hooks" or "callbacks" - a function called at a certain
 # time in another program's execution. You can search for the functions that
 # start with an underscore "_" in the Godot documentation online. This function
@@ -100,6 +103,7 @@ func _unhandled_input(ev):
 				# the vector pointing from @evpos to @gpos.
 				if status != "correct":
 					status = "clicked"
+					bring_to_front() # Bring the piece to the front
 				# offset = gpos - evpos
 				
 		# If the sprite is being dragged and the mouse button is being released,
@@ -112,7 +116,9 @@ func _unhandled_input(ev):
 				status = "correct"
 				var tween = get_tree().create_tween()
 				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
-			else: status = "released"
+			else: 
+				status = "released"
+				restore_original_index() # Restore the original index when released
 	
 	# If the card status is "clicked" and the mouse is being moved, set the
 	# sprite status to "dragging", so the appropriate loop can run when a mouse
@@ -147,14 +153,21 @@ func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shap
 		droppable = false
 	#print(droppable)
 	
-
 func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
 	if body == body_ref:
 		droppable = false
 		#print(droppable)
 
-
 # Method to get the piece ID
 func get_piece_id() -> int:
 	return piece_id
-	
+
+func bring_to_front():
+	original_index = get_index() # Store the original index
+	var parent = get_parent()
+	parent.remove_child(self) # Remove the piece from its parent
+	parent.add_child(self) # Add the piece back to the parent, which places it at the end of the list
+
+func restore_original_index():
+	var parent = get_parent()
+	parent.move_child(self, original_index) # Move the piece back to its original index
