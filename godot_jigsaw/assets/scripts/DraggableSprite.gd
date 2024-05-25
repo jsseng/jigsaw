@@ -28,13 +28,9 @@ var mpos = Vector2()
 @onready var sprite = get_node("Sprite2D")
 
 var body_ref
-
 var droppable
-
 var debug = 0
-
 var piece_id : int # Unique identifier for the piece
-
 var original_parent
 var original_index
 
@@ -99,12 +95,10 @@ func _unhandled_input(ev):
 			# by checking if the clicked point is in the Sprite's rectangle.
 			if inside:
 				# If the sprite's rectangle was clicked, update the sprite
-				# status to "clicked", and update the offset. The offset is
-				# the vector pointing from @evpos to @gpos.
+				# status to "clicked", and bring the sprite to the front.
 				if status != "correct":
 					status = "clicked"
-					bring_to_front() # Bring the piece to the front
-				# offset = gpos - evpos
+					bring_to_front()
 				
 		# If the sprite is being dragged and the mouse button is being released,
 		# set the sprite status to "released" to stop dragging and drop the
@@ -147,6 +141,7 @@ func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shap
 	#print(body.get_slot_id())
 	print(get_piece_id())
 	print(body.get_slot_id())
+	body.modulate = Color(Color.TAN, 0.8)
 	if (get_piece_id() == body.get_slot_id()):
 		droppable = true
 	else:
@@ -154,6 +149,7 @@ func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shap
 	#print(droppable)
 	
 func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
+	body.modulate = Color(Color.DIM_GRAY, 0.8)
 	if body == body_ref:
 		droppable = false
 		#print(droppable)

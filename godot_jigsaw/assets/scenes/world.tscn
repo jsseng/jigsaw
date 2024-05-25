@@ -25,16 +25,18 @@ texture = ExtResource("1_soit5")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(958, 542)
+zoom = Vector2(0.35, 0.35)
 script = ExtResource("4_ulrap")
 
 [node name="Label" type="Label" parent="."]
-offset_left = 230.0
-offset_top = 5.0
-offset_right = 1600.0
-offset_bottom = 110.0
+offset_left = -156.0
+offset_top = -197.0
+offset_right = 2065.0
+offset_bottom = -59.0
 theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_5e1vy")
-theme_override_font_sizes/font_size = 56
+theme_override_font_sizes/font_size = 120
 horizontal_alignment = 1
 
 [node name="Platform" parent="." instance=ExtResource("3_0c5qp")]
