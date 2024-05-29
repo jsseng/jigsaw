@@ -82,12 +82,12 @@ func _unhandled_input(ev):
 		# Do nothing if piece was correctly placed
 		if status == "correct":
 			pass
-		elif status != "dragging" and ev.pressed:
+		elif status != "dragging" and ev.is_action_released("click"):
 			
 			# Define a event position variable (scoped to this if block)
 			var evpos = ev.global_position
 			
-			# Define a global sprite position variable (scoped to this if
+			# Define a global sprite position variable (scopedd to this if
 			# block)
 			var gpos = global_position
 			
@@ -117,6 +117,7 @@ func _unhandled_input(ev):
 	# If the card status is "clicked" and the mouse is being moved, set the
 	# sprite status to "dragging", so the appropriate loop can run when a mouse
 	# button click or release event is next received.
+	
 	if status == "clicked" and ev is InputEventMouseMotion:
 		status = "dragging"
 
