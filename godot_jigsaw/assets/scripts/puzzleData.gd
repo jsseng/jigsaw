@@ -8,3 +8,5 @@ var col = 2
 var size = 0
 
 var valid_count = 0
+
+var active_piece= -1

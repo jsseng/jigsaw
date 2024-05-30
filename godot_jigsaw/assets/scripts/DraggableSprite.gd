@@ -96,8 +96,9 @@ func _unhandled_input(ev):
 			if inside:
 				# If the sprite's rectangle was clicked, update the sprite
 				# status to "clicked", and bring the sprite to the front.
-				if status != "correct":
+				if status != "correct" and PuzzleVar.active_piece == -1:
 					status = "clicked"
+					PuzzleVar.active_piece = get_piece_id()
 					bring_to_front()
 				
 		# If the sprite is being dragged and the mouse button is being released,
@@ -112,6 +113,7 @@ func _unhandled_input(ev):
 				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
 			else: 
 				status = "released"
+				PuzzleVar.active_piece = -1
 				restore_original_index() # Restore the original index when released
 	
 	# If the card status is "clicked" and the mouse is being moved, set the
@@ -141,7 +143,7 @@ func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shap
 	#print(get_piece_id())
 	#print(body.get_slot_id())
 	print(get_piece_id())
-	print(body.get_slot_id())
+	#print(body.get_slot_id())
 	body.modulate = Color(Color.TAN, 0.8)
 	if (get_piece_id() == body.get_slot_id()):
 		droppable = true
