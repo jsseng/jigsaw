@@ -5,7 +5,8 @@ var format_string = "Number of Pieces: %d"
 
 func _ready():
 	# Ensure Label node exists and is accessible
-	print(self)
+	#print(self)
+	pass
 
 func _process(delta):
 	# This function runs every frame; you can update label text here if needed

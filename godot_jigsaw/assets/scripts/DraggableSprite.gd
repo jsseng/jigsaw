@@ -109,6 +109,7 @@ func _unhandled_input(ev):
 			if droppable:
 				PuzzleVar.valid_count += 1
 				status = "correct"
+				PuzzleVar.active_piece = -1
 				var tween = get_tree().create_tween()
 				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
 			else: 
@@ -142,7 +143,7 @@ func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shap
 	body_ref = body
 	#print(get_piece_id())
 	#print(body.get_slot_id())
-	print(get_piece_id())
+	#print(get_piece_id())
 	#print(body.get_slot_id())
 	body.modulate = Color(Color.TAN, 0.8)
 	if (get_piece_id() == body.get_slot_id()):
