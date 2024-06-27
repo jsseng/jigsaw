@@ -54,7 +54,7 @@ text = "Number of Pieces: "
 script = ExtResource("3_ibxn4")
 
 [node name="Seattle" type="Sprite2D" parent="."]
-position = Vector2(-1032, 584)
+position = Vector2(-804, 1167)
 texture = ExtResource("2_062ah")
 
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
