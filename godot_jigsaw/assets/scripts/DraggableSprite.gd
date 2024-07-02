@@ -116,6 +116,7 @@ func _unhandled_input(ev):
 					PuzzleVar.valid_count += 1
 					status = "correct"
 					body_ref.queue_free()
+			bring_to_front()
 	
 	# If the card status is "clicked" and the mouse is being moved, set the
 	# sprite status to "dragging", so the appropriate loop can run when a mouse
