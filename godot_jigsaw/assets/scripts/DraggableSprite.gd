@@ -106,16 +106,16 @@ func _unhandled_input(ev):
 		# sprite.
 		elif status == "dragging" and not ev.pressed:
 			# Check if within a platform, if it is then tween that shit
+			status = "released"
+			PuzzleVar.active_piece = -1
+			restore_original_index() # Restore the original index when released
 			if droppable:
-				PuzzleVar.valid_count += 1
-				status = "correct"
-				PuzzleVar.active_piece = -1
 				var tween = get_tree().create_tween()
 				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
-			else: 
-				status = "released"
-				PuzzleVar.active_piece = -1
-				restore_original_index() # Restore the original index when released
+				if (get_piece_id() == body_ref.get_slot_id()):
+					PuzzleVar.valid_count += 1
+					status = "correct"
+					body_ref.queue_free()
 	
 	# If the card status is "clicked" and the mouse is being moved, set the
 	# sprite status to "dragging", so the appropriate loop can run when a mouse
@@ -146,17 +146,15 @@ func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shap
 	#print(get_piece_id())
 	#print(body.get_slot_id())
 	body.modulate = Color(Color.TAN, 0.8)
-	if (get_piece_id() == body.get_slot_id()):
-		droppable = true
-	else:
-		droppable = false
+	droppable = true
 	#print(droppable)
 	
 func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
-	body.modulate = Color(Color.DIM_GRAY, 0.8)
-	if body == body_ref:
-		droppable = false
-		#print(droppable)
+	if body:
+		body.modulate = Color(Color.DIM_GRAY, 0.8)
+		if body == body_ref:
+			droppable = false
+			#print(droppable)
 
 # Method to get the piece ID
 func get_piece_id() -> int:
