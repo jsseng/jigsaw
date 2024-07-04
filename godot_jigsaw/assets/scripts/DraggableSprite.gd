@@ -151,7 +151,6 @@ func _on_area_2d_mouse_entered():
 func _on_area_2d_mouse_exited():
 	inside = false
 
-
 # Method to get the piece ID
 func get_piece_id() -> int:
 	return piece_id
