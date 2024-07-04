@@ -27,7 +27,6 @@ var mpos = Vector2()
 
 @onready var sprite = get_node("Sprite2D")
 
-var body_ref
 var droppable
 var debug = 0
 var piece_id : int # Unique identifier for the piece
@@ -98,6 +97,9 @@ func _unhandled_input(ev):
 				# status to "clicked", and bring the sprite to the front.
 				if status != "correct" and PuzzleVar.active_piece == -1:
 					status = "clicked"
+					if PuzzleVar.slot_ref:
+						PuzzleVar.slot_ref.set_filled(false)
+					modulate = Color(Color.WHITE, 1) #Restore the image
 					PuzzleVar.active_piece = get_piece_id()
 					bring_to_front()
 				
@@ -106,16 +108,26 @@ func _unhandled_input(ev):
 		# sprite.
 		elif status == "dragging" and not ev.pressed:
 			# Check if within a platform, if it is then tween that shit
-			if droppable:
-				PuzzleVar.valid_count += 1
-				status = "correct"
-				PuzzleVar.active_piece = -1
+			status = "released"
+			PuzzleVar.active_piece = -1
+			restore_original_index()
+			
+			if PuzzleVar.slot_ref and !PuzzleVar.slot_ref.is_filled: #If over a vacant platform
 				var tween = get_tree().create_tween()
-				tween.tween_property(self, "position", body_ref.position, 0.2).set_ease(Tween.EASE_OUT)
-			else: 
-				status = "released"
-				PuzzleVar.active_piece = -1
-				restore_original_index() # Restore the original index when released
+				tween.tween_property(self, "position", PuzzleVar.slot_ref.position, 0.2).set_ease(Tween.EASE_OUT)
+				PuzzleVar.slot_ref.set_filled(true)
+				print("PLACED")
+				if (get_piece_id() == PuzzleVar.slot_ref.get_slot_id()): #If currently
+					PuzzleVar.valid_count += 1
+					status = "correct"
+					modulate = Color(Color.DIM_GRAY, 1)
+					
+					#Destroy the platform if the piece is correct, locking piece into place
+					PuzzleVar.slot_ref.free()
+					PuzzleVar.slot_ref = null
+				else:
+					#Turn the puzzle piece red if placed incorrected
+					modulate = Color(Color.RED, 1)
 	
 	# If the card status is "clicked" and the mouse is being moved, set the
 	# sprite status to "dragging", so the appropriate loop can run when a mouse
@@ -138,25 +150,7 @@ func _on_area_2d_mouse_entered():
 
 func _on_area_2d_mouse_exited():
 	inside = false
-	
-func _on_area_2d_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
-	body_ref = body
-	#print(get_piece_id())
-	#print(body.get_slot_id())
-	#print(get_piece_id())
-	#print(body.get_slot_id())
-	body.modulate = Color(Color.TAN, 0.8)
-	if (get_piece_id() == body.get_slot_id()):
-		droppable = true
-	else:
-		droppable = false
-	#print(droppable)
-	
-func _on_area_2d_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
-	body.modulate = Color(Color.DIM_GRAY, 0.8)
-	if body == body_ref:
-		droppable = false
-		#print(droppable)
+
 
 # Method to get the piece ID
 func get_piece_id() -> int:

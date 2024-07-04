@@ -10,3 +10,5 @@ var size = 0
 var valid_count = 0
 
 var active_piece= -1
+
+var slot_ref = -1
