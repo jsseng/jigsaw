@@ -5,10 +5,12 @@ var GRID_HEIGHT = PuzzleVar.row
 
 var debug = 0
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
 	# Load the image
+	$Image.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]) #will need to tweak the sizing of the image
 	var image_texture = $Image.texture
 	var image_size = image_texture.get_size()
 	

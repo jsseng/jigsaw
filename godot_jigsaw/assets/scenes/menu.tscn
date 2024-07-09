@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="3_3yx2b"]
 [ext_resource type="Script" path="res://assets/scripts/menu_slider.gd" id="3_ibxn4"]
 
-[node name="Menu" type="Control"]
+[node name="MenuOld" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

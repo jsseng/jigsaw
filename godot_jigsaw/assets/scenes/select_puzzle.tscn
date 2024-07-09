@@ -1,0 +1,132 @@
+[gd_scene load_steps=3 format=3 uid="uid://doax16vbups3k"]
+
+[ext_resource type="Script" path="res://assets/scripts/select_puzzle.gd" id="1_lx4o5"]
+[ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="2_xyg5e"]
+
+[node name="selectpuzzle" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lx4o5")
+
+[node name="background texture" type="Sprite2D" parent="."]
+position = Vector2(1012, 675)
+scale = Vector2(0.388011, 0.380041)
+texture = ExtResource("2_xyg5e")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 797.0
+offset_top = 24.0
+offset_right = 1108.0
+offset_bottom = 93.0
+theme_override_font_sizes/font_size = 50
+text = "Select Puzzle"
+
+[node name="PageIndicator" type="Label" parent="."]
+layout_mode = 2
+offset_left = 903.0
+offset_top = 990.0
+offset_right = 1017.0
+offset_bottom = 1025.0
+theme_override_font_sizes/font_size = 25
+text = "1 out of 2"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 132.0
+offset_right = 1564.0
+offset_bottom = 946.0
+alignment = 1
+
+[node name="left button" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Left"
+
+[node name="GridContainer" type="GridContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+
+[node name="grid0" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 1"
+icon_alignment = 1
+expand_icon = true
+
+[node name="grid1" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 2"
+icon_alignment = 1
+expand_icon = true
+
+[node name="grid2" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 3"
+icon_alignment = 1
+expand_icon = true
+
+[node name="grid3" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 4"
+icon_alignment = 1
+expand_icon = true
+
+[node name="grid4" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 5"
+icon_alignment = 1
+expand_icon = true
+
+[node name="grid5" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 6"
+icon_alignment = 1
+expand_icon = true
+
+[node name="grid6" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 7"
+icon_alignment = 1
+expand_icon = true
+
+[node name="grid7" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 8"
+icon_alignment = 1
+expand_icon = true
+
+[node name="grid8" type="Button" parent="HBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Button 9"
+icon_alignment = 1
+expand_icon = true
+
+[node name="right button" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Right"
+
+[connection signal="pressed" from="HBoxContainer/left button" to="." method="_on_left_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/right button" to="." method="_on_right_button_pressed"]
