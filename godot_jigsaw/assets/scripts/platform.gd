@@ -2,7 +2,6 @@ extends StaticBody2D
 
 
 var slot_id : int # Unique identifier for the slot
-var is_filled
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,7 +22,6 @@ func _ready():
 	$ColorRect.position = center_offset
 	#print("slot: ", slot_id)
 	
-	is_filled = false
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -34,8 +32,6 @@ func _process(delta):
 func get_slot_id() -> int:
 	return slot_id
 	
-func set_filled(state : bool):
-	is_filled = state
 
 func _on_mouse_entered():
 	PuzzleVar.slot_ref = self
