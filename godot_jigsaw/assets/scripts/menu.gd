@@ -1,8 +1,10 @@
 extends Control
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var image_texture = $Seattle.texture
+	
+	var image_texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	var image_size = image_texture.get_size()
 	PuzzleVar.size = image_size
 
