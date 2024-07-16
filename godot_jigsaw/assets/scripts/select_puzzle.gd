@@ -31,9 +31,10 @@ func _ready():
 	var imgsize = float(PuzzleVar.images.size())
 	var nb = float(num_buttons)
 	total_pages = ceil(imgsize/nb) #round up always
-	left_button.hide() #for visual
+	#disable buttons initial l.ogic
+	left_button.disabled = true 
 	if total_pages == 1:
-		right_button.hide()
+		right_button.disabled = true
 	
 	self.populate_grid()
 
@@ -47,9 +48,9 @@ func _on_left_button_pressed():
 	if val > 1:
 		val -= 1
 		
-	if val == 1: #hide left button if on page 1 and show right
-		left_button.hide()
-		right_button.show()
+	if val == 1: #disable left button if on page 1 and enable right
+		left_button.disabled = true
+		right_button.disabled = false
 		
 	self.populate_grid()
 
@@ -58,13 +59,13 @@ func _on_right_button_pressed():
 	if val < total_pages:
 		val += 1
 		
-	if val == total_pages: #hide button
-		right_button.hide()
-		left_button.show()
+	if val == total_pages: #disable button
+		right_button.disabled = true
+		left_button.disabled = false
 		
 	else:
-		right_button.show()
-		left_button.show()
+		right_button.disabled = false
+		left_button.disabled = true
 		
 	self.populate_grid()
 		
