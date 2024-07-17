@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://vgmsdq7c7qp8"]
+
+[ext_resource type="Script" path="res://assets/scripts/puzzle_piece.gd" id="1_7xu5j"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iexwu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jodmh"]
+
+[node name="puzzle_piece" type="Node2D"]
+script = ExtResource("1_7xu5j")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_iexwu")
+
+[node name="Area2D1" type="Area2D" parent="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D/Area2D1"]
+shape = SubResource("RectangleShape2D_jodmh")
+
+[node name="Area2D2" type="Area2D" parent="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D/Area2D2"]
+shape = SubResource("RectangleShape2D_jodmh")
+
+[node name="Area2D3" type="Area2D" parent="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D/Area2D3"]
+shape = SubResource("RectangleShape2D_jodmh")
+
+[node name="Area2D4" type="Area2D" parent="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D/Area2D4"]
+shape = SubResource("RectangleShape2D_jodmh")
+
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

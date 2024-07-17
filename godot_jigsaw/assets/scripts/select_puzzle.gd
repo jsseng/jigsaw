@@ -76,21 +76,27 @@ func button_pressed(button): #selects the image that the button represents
 	var index = (val-1) * grid.get_child_count()
 	#need to add the value that corresponds with the button pressed add 0-8 currently
 	var name = String(button.name)
-	PuzzleVar.choice = index + int(name[-1])
+	PuzzleVar.choice = index + int(name[-1]) #how this works may seem kind of stupid but it works by taking the name of the button and taking the number from the last character as per naming convention: grid#
 	#if valid pick change the scene, otherwise do nothing
 	get_tree().change_scene_to_file("res://assets/scenes/menu.tscn") #filler for now
 	
 	
 func populate_grid():
 	var index = (val-1) * grid.get_child_count()
+	await get_tree().process_frame
 	for i in grid.get_children():
 		var button := i as BaseButton
 		if is_instance_valid(button):
 			if index < PuzzleVar.images.size():
 				var res = load(PuzzleVar.path+"/"+PuzzleVar.images[index])
-				button.icon = res
+				#button.icon = res
+				button.get_child(0).texture = res
+				#button.get_child(0).visible = false
+				#await get_tree().process_frame
+				button.get_child(0).size = button.size
+				#button.get_child(0).call_deferred("set_visible",true)
 			else:
-				button.icon = null
+				button.get_child(0).texture = null
 			index += 1 #iterate index to get next
 	
 #potentially need to handle exiting out of the scene to go back

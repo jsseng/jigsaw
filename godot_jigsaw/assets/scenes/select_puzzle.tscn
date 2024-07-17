@@ -87,6 +87,12 @@ text = "Button 1"
 icon_alignment = 1
 expand_icon = true
 
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid0"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
+
 [node name="grid1" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -95,6 +101,12 @@ theme = ExtResource("4_ctan7")
 text = "Button 2"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid1"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid2" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
@@ -105,6 +117,12 @@ text = "Button 3"
 icon_alignment = 1
 expand_icon = true
 
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid2"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
+
 [node name="grid3" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -113,6 +131,12 @@ theme = ExtResource("4_ctan7")
 text = "Button 4"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid3"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid4" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
@@ -123,6 +147,12 @@ text = "Button 5"
 icon_alignment = 1
 expand_icon = true
 
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid4"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
+
 [node name="grid5" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -131,6 +161,12 @@ theme = ExtResource("4_ctan7")
 text = "Button 6"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid5"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid6" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
@@ -141,6 +177,12 @@ text = "Button 7"
 icon_alignment = 1
 expand_icon = true
 
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid6"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
+
 [node name="grid7" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -150,6 +192,12 @@ text = "Button 8"
 icon_alignment = 1
 expand_icon = true
 
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid7"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
+
 [node name="grid8" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -158,6 +206,12 @@ theme = ExtResource("4_ctan7")
 text = "Button 9"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid8"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="right button" type="Button" parent="HBoxContainer"]
 layout_mode = 2

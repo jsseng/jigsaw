@@ -27,9 +27,16 @@ func _on_start_random_pressed():
 	#need to change to a new scene that is a random game
 	randomize()
 	
-	PuzzleVar.choice = randi_range(0,PuzzleVar.images.size()-1)
+	PuzzleVar.choice = randi_range(0,PuzzleVar.images.size()-1) #choose a random image to use
+	var val = randi_range(2,10)
+	PuzzleVar.col = val
+	PuzzleVar.row = val
 	
-	get_tree().change_scene_to_file("res://assets/scenes/menu.tscn") #this is filler for now
+	var image_texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
+	var image_size = image_texture.get_size()
+	PuzzleVar.size = image_size
+	
+	get_tree().change_scene_to_file("res://assets/scenes/world.tscn") #this is filler for now
 
 func _on_select_puzzle_pressed():
 	#need to change to do a new scene that is the selection screen for a puzzle
