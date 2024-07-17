@@ -35,12 +35,18 @@ func _on_select_puzzle_pressed():
 	#need to change to do a new scene that is the selection screen for a puzzle
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
+func _on_logout_pressed():
+	Firebase.Auth.logout()
+	get_tree().change_scene_to_file("res://assets/scenes/Authentication.tscn")
+	
 func _on_quit_pressed():
 	#quit the game
 	#get_tree().root.propogate_notification(NOTIFICATION_WM_CLOSE_REQUEST) #should figure out what this does
-	get_tree().quit()
-
+	pass
 
 func _on_tree_exiting():
 	#place a destructor here maybe
 	pass
+
+
+
