@@ -1,6 +1,6 @@
-extends Control
+extends Control 
 
-
+var COLLECTION_ID = "user_info"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -36,8 +36,13 @@ func _on_select_puzzle_pressed():
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
 func _on_logout_pressed():
+	var timestamp = Time.get_unix_time_from_system()
+	var add_task : FirestoreTask = collection.update("DOCUMENT_ID", {'name': 'Document 1', 'Timestamp': timestamp})
+	var document : FirestoreDocument = await(add_task, "task_finished")
 	Firebase.Auth.logout()
 	get_tree().change_scene_to_file("res://assets/scenes/Authentication.tscn")
+	
+	
 	
 func _on_quit_pressed():
 	#quit the game
@@ -47,6 +52,3 @@ func _on_quit_pressed():
 func _on_tree_exiting():
 	#place a destructor here maybe
 	pass
-
-
-
