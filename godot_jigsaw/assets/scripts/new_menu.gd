@@ -1,6 +1,6 @@
 extends Control 
 
-var COLLECTION_ID = "user_info"
+var collection_id = 'Time'
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,8 +22,15 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+	
 
 func _on_start_random_pressed():
+	var timestamp = Time.get_unix_time_from_system()
+	var collection: FirestoreCollection = Firebase.Firestore.collection(collection_id)
+	var data = {
+		'timestamp': timestamp
+	}
+	var task = await collection.update(data)
 	#need to change to a new scene that is a random game
 	randomize()
 	
@@ -36,10 +43,6 @@ func _on_select_puzzle_pressed():
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
 func _on_logout_pressed():
-	var firestore_collection : FirestoreCollection = Firebase.Firestore.collection('COLLECTION_NAME')
-	var timestamp = Time.get_unix_time_from_system()
-	var document = await firestore_collection.add("DOCUMENT_ID", {'name': 'Document 1', 'Timestamp': timestamp})
-	var new_document = await firestore_collection.update(timestamp)
 	Firebase.Auth.logout()
 	get_tree().change_scene_to_file("res://assets/scenes/Authentication.tscn")
 	
