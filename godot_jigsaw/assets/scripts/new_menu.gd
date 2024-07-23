@@ -36,9 +36,10 @@ func _on_select_puzzle_pressed():
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
 func _on_logout_pressed():
+	var firestore_collection : FirestoreCollection = Firebase.Firestore.collection('COLLECTION_NAME')
 	var timestamp = Time.get_unix_time_from_system()
-	var add_task : FirestoreTask = collection.update("DOCUMENT_ID", {'name': 'Document 1', 'Timestamp': timestamp})
-	var document : FirestoreDocument = await(add_task, "task_finished")
+	var document = await firestore_collection.add("DOCUMENT_ID", {'name': 'Document 1', 'Timestamp': timestamp})
+	var new_document = await firestore_collection.update(timestamp)
 	Firebase.Auth.logout()
 	get_tree().change_scene_to_file("res://assets/scenes/Authentication.tscn")
 	
