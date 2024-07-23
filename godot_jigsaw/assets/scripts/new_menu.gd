@@ -103,5 +103,5 @@ func _input(event):
 func _on_row_value_changed(value):
 	PuzzleVar.row = value
 	PuzzleVar.col = value
-	%PieceNumberLabel.format_string = "Number of Pieces: %d" % (value * value)
+	%PieceNumberLabel.text = "Number of Pieces: %d" % (value * value)
 	
