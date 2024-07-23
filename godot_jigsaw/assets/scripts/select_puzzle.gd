@@ -92,5 +92,12 @@ func populate_grid():
 				button.icon = null
 			index += 1 #iterate index to get next
 	
-#potentially need to handle exiting out of the scene to go back
+	# Handle esc
+func _input(event):
+	# Check if the event is a key press event
+	if event is InputEventKey:
+		# Check if the pressed key is the Escape key
+		if event.keycode == KEY_ESCAPE:
+			# Exit the game
+			get_tree().quit()
 
