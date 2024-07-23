@@ -12,7 +12,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0jmf4")
 
-[node name="background texture" type="Sprite2D" parent="."]
+[node name="BackgroundTexture" type="Sprite2D" parent="."]
+unique_name_in_owner = true
 position = Vector2(1012, 675)
 scale = Vector2(0.388011, 0.380041)
 texture = ExtResource("2_ae42l")
@@ -33,7 +34,7 @@ horizontal_alignment = 1
 [node name="start random" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
-text = "Start Random Game"
+text = "Start Game"
 
 [node name="select puzzle" type="Button" parent="VBoxContainer"]
 layout_mode = 2
@@ -45,7 +46,43 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Quit Game"
 
+[node name="Row" type="HSlider" parent="VBoxContainer"]
+layout_mode = 2
+min_value = 2.0
+max_value = 10.0
+value = 2.0
+tick_count = 9
+
+[node name="PieceNumberLabel" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "Number of Pieces: "
+
+[node name="JoinButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 653.0
+offset_top = 838.0
+offset_right = 959.0
+offset_bottom = 922.0
+tooltip_text = "Join an existing puzzle"
+text = "JOIN A PUZZLE
+"
+
+[node name="HostButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 996.0
+offset_top = 836.0
+offset_right = 1306.0
+offset_bottom = 921.0
+tooltip_text = "Join an existing puzzle"
+text = "HOST A PUZZLE"
+
 [connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
 [connection signal="pressed" from="VBoxContainer/start random" to="." method="_on_start_random_pressed"]
 [connection signal="pressed" from="VBoxContainer/select puzzle" to="." method="_on_select_puzzle_pressed"]
 [connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_quit_pressed"]
+[connection signal="value_changed" from="VBoxContainer/Row" to="." method="_on_row_value_changed"]
+[connection signal="button_down" from="JoinButton" to="." method="_on_join_button_button_down"]
+[connection signal="button_down" from="HostButton" to="." method="_on_host_button_button_down"]

@@ -12,6 +12,3 @@ func _process(delta):
 	# This function runs every frame; you can update label text here if needed
 	self.text = format_string % val
 
-func _on_row_value_changed(value):
-	# Example function to show how to modify 'val'
-	val = value * value

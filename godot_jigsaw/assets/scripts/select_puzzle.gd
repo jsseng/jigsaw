@@ -77,7 +77,7 @@ func button_pressed(button): #selects the image that the button represents
 	var name = String(button.name)
 	PuzzleVar.choice = index + int(name[-1])
 	#if valid pick change the scene, otherwise do nothing
-	get_tree().change_scene_to_file("res://assets/scenes/menu.tscn") #filler for now
+	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn") #filler for now
 	
 	
 func populate_grid():
