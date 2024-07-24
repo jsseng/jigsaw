@@ -61,6 +61,7 @@ theme_override_font_sizes/font_size = 24
 text = "Number of Pieces: 4"
 
 [node name="JoinButton" type="Button" parent="."]
+unique_name_in_owner = true
 layout_mode = 0
 offset_left = 653.0
 offset_top = 838.0
@@ -71,6 +72,7 @@ text = "JOIN A PUZZLE
 "
 
 [node name="HostButton" type="Button" parent="."]
+unique_name_in_owner = true
 layout_mode = 0
 offset_left = 996.0
 offset_top = 836.0

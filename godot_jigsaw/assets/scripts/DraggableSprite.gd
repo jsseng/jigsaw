@@ -115,7 +115,7 @@ func _unhandled_input(ev):
 				tween.tween_property(self, "position", PuzzleVar.slot_ref.position, 0.2).set_ease(Tween.EASE_OUT)
 				print("PLACED")
 				if (get_piece_id() == PuzzleVar.slot_ref.get_slot_id()): #If currently
-					PuzzleVar.valid_count += 1
+					PuzzleVar.correct_pieces.append(get_piece_id())
 					status = "correct"
 					modulate = Color(Color.DIM_GRAY, 1)
 					

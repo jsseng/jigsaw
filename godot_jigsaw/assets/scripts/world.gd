@@ -96,9 +96,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	#print(PuzzleVar.valid_count)
-	if PuzzleVar.valid_count == GRID_WIDTH * GRID_HEIGHT:
-		$Label.text = "YOU COMPLETED THE PUZZLE!!!"
+	if PuzzleVar.correct_pieces.size() == GRID_WIDTH * GRID_HEIGHT:
+		$VictoryLabel.text = "YOU COMPLETED THE PUZZLE!!!"
 
 # Handle esc
 func _input(event):
