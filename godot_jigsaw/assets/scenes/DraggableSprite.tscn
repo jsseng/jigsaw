@@ -1,8 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://bq8leeh8a0cfd"]
+[gd_scene load_steps=4 format=3 uid="uid://bq8leeh8a0cfd"]
 
 [ext_resource type="Script" path="res://assets/scripts/DraggableSprite.gd" id="1_j034f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_db6jm"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_dpykx"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:modulate")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [node name="DraggableSprite" type="Node2D" groups=["puzzle_pieces"]]
 script = ExtResource("1_j034f")
@@ -13,6 +21,9 @@ script = ExtResource("1_j034f")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_db6jm")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_dpykx")
 
 [connection signal="body_shape_entered" from="Area2D" to="." method="_on_area_2d_body_shape_entered"]
 [connection signal="body_shape_exited" from="Area2D" to="." method="_on_area_2d_body_shape_exited"]

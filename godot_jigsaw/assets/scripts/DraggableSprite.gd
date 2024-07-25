@@ -22,9 +22,6 @@ var inside
 # Define the vector that will contain the (width, height) of the sprite
 var tsize = Vector2()
 
-# Define the mouse position.
-var mpos = Vector2()
-
 @onready var sprite = get_node("Sprite2D")
 
 var droppable
@@ -49,6 +46,7 @@ func _ready():
 	# Assign a unique ID to the puzzle piece
 	piece_id = get_tree().get_nodes_in_group("puzzle_pieces").size()
 	#print(piece_id)
+	
 
 
 # This is another Godot hook. It is called every single frame!
@@ -57,7 +55,7 @@ func _process(_delta):
 	# position every frame. To update the position, we use the position of
 	# the mouse
 	if status == "dragging":
-		global_position = mpos
+		global_position = get_global_mouse_position()
 	
 	#if (debug % 50) == 0:
 		#print(global_position)
@@ -82,14 +80,7 @@ func _unhandled_input(ev):
 		if status == "correct":
 			pass
 		elif status != "dragging" and ev.is_action_released("click"):
-			
-			# Define a event position variable (scoped to this if block)
-			var evpos = ev.global_position
-			
-			# Define a global sprite position variable (scopedd to this if
-			# block)
-			var gpos = global_position
-			
+		
 			# This is where we actually check if the sprite was clicked or not,
 			# by checking if the clicked point is in the Sprite's rectangle.
 			if inside:
@@ -111,17 +102,10 @@ func _unhandled_input(ev):
 			restore_original_index()
 			
 			if PuzzleVar.slot_ref: #If over a vacant platform
-				var tween = get_tree().create_tween()
-				tween.tween_property(self, "position", PuzzleVar.slot_ref.position, 0.2).set_ease(Tween.EASE_OUT)
-				print("PLACED")
+				slot_in_piece.rpc(PuzzleVar.slot_ref.position)
+				
 				if (get_piece_id() == PuzzleVar.slot_ref.get_slot_id()): #If currently
-					PuzzleVar.correct_pieces.append(get_piece_id())
-					status = "correct"
-					modulate = Color(Color.DIM_GRAY, 1)
-					
-					#Destroy the platform if the piece is correct, locking piece into place
-					PuzzleVar.slot_ref.free()
-					PuzzleVar.slot_ref = null
+					validate_piece.rpc(PuzzleVar.slot_ref.get_slot_id())
 				else:
 					#Turn the puzzle piece red if placed incorrected
 					modulate = Color(Color.RED, 1)
@@ -133,14 +117,21 @@ func _unhandled_input(ev):
 	if status == "clicked" and ev is InputEventMouseMotion:
 		status = "dragging"
 
-	# Not matter what, every time an input event is received, update the mouse
-	# position with the event's global position. This may need to be moved
-	# into the other "if" statements when we start handling other input events
-	# here.
-	if ev is InputEventMouseMotion:
-		# matrix multiply with the 
-		mpos = get_viewport().canvas_transform.affine_inverse() * ev.position
-		#print(mpos)
+		
+@rpc("any_peer","call_local")
+func slot_in_piece(target_pos):
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "position", target_pos, 0.2).set_ease(Tween.EASE_OUT)
+	
+@rpc("any_peer","call_local")
+func validate_piece(target_slot_id):
+	PuzzleVar.correct_pieces.append(get_piece_id())
+	status = "correct"
+	modulate = Color(Color.DIM_GRAY, 1)
+	
+	#Destroy the platform locking piece into place
+	PuzzleVar.slot_ref.free()
+	PuzzleVar.slot_ref = null
 
 func _on_area_2d_mouse_entered():
 	inside = true
