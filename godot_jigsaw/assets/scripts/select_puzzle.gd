@@ -35,7 +35,7 @@ func _ready():
 	left_button.disabled = true 
 	if total_pages == 1:
 		right_button.disabled = true
-	
+	await get_tree().process_frame
 	self.populate_grid()
 
 
@@ -76,14 +76,16 @@ func button_pressed(button): #selects the image that the button represents
 	var index = (val-1) * grid.get_child_count()
 	#need to add the value that corresponds with the button pressed add 0-8 currently
 	var name = String(button.name)
-	PuzzleVar.choice = index + int(name[-1]) #how this works may seem kind of stupid but it works by taking the name of the button and taking the number from the last character as per naming convention: grid#
-	#if valid pick change the scene, otherwise do nothing
-	get_tree().change_scene_to_file("res://assets/scenes/menu.tscn") #filler for now
+	var chosen = index + int(name[-1])
+	if chosen < PuzzleVar.images.size():
+		PuzzleVar.choice = index + int(name[-1]) #how this works may seem kind of stupid but it works by taking the name of the button and taking the number from the last character as per naming convention: grid#
+		#if valid pick change the scene, otherwise do nothing
+		get_tree().change_scene_to_file("res://assets/scenes/menu.tscn") #filler for now
 	
 	
 func populate_grid():
 	var index = (val-1) * grid.get_child_count()
-	await get_tree().process_frame
+	#await get_tree().process_frame #figure out where to place this to stop the lag
 	for i in grid.get_children():
 		var button := i as BaseButton
 		if is_instance_valid(button):

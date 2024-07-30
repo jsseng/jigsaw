@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dkkrw0sk13kgp"]
 
-[ext_resource type="Script" path="res://assets/jigsaw_puzzle.gd" id="1_dsx5g"]
+[ext_resource type="Script" path="res://assets/scripts/jigsaw_puzzle.gd" id="1_dsx5g"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="1_p7ni7"]
 [ext_resource type="Script" path="res://assets/scenes/Camera2D.gd" id="2_0akkp"]
 [ext_resource type="Texture2D" uid="uid://fdsqaxc6rx0h" path="res://assets/puzzles/seattle.jpg" id="2_e2adf"]

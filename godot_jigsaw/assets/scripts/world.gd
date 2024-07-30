@@ -68,7 +68,7 @@ func _ready():
 			
 			piece.add_to_group("puzzle_pieces")
 			debug += 1;
-			#print(piece.get_piece_id())
+			print(piece.get_piece_id())
 			
 			var sprite = piece.get_node("Sprite2D")
 			var collision = piece.get_node("Area2D/CollisionShape2D")
