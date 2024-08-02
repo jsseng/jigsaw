@@ -97,6 +97,8 @@ func _unhandled_input(ev):
 				# status to "clicked", and bring the sprite to the front.
 				if status != "correct" and PuzzleVar.active_piece == -1:
 					status = "clicked"
+					if PuzzleVar.slot_ref:
+						PuzzleVar.slot_ref.set_filled(false)
 					modulate = Color(Color.WHITE, 1) #Restore the image
 					PuzzleVar.active_piece = get_piece_id()
 					bring_to_front()
@@ -110,9 +112,10 @@ func _unhandled_input(ev):
 			PuzzleVar.active_piece = -1
 			restore_original_index()
 			
-			if PuzzleVar.slot_ref: #If over a vacant platform
+			if PuzzleVar.slot_ref and !PuzzleVar.slot_ref.is_filled: #If over a vacant platform
 				var tween = get_tree().create_tween()
 				tween.tween_property(self, "position", PuzzleVar.slot_ref.position, 0.2).set_ease(Tween.EASE_OUT)
+				PuzzleVar.slot_ref.set_filled(true)
 				print("PLACED")
 				if (get_piece_id() == PuzzleVar.slot_ref.get_slot_id()): #If currently
 					PuzzleVar.valid_count += 1

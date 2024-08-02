@@ -8,6 +8,8 @@ var debug = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	#load up reference
+	$referenceImage.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	
 	# Load the image
 	$Image.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]) #will need to tweak the sizing of the image
@@ -66,7 +68,7 @@ func _ready():
 			
 			piece.add_to_group("puzzle_pieces")
 			debug += 1;
-			#print(piece.get_piece_id())
+			print(piece.get_piece_id())
 			
 			var sprite = piece.get_node("Sprite2D")
 			var collision = piece.get_node("Area2D/CollisionShape2D")

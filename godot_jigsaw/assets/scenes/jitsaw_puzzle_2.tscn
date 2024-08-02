@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=3 uid="uid://dqkm4io40s8kq"]
+
+[ext_resource type="Script" path="res://assets/scripts/jitsaw_puzzle_2.gd" id="1_um0me"]
+[ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="2_pewy6"]
+[ext_resource type="Script" path="res://assets/scenes/Camera2D.gd" id="3_1arkm"]
+[ext_resource type="FontFile" uid="uid://dbfwm247cqnhw" path="res://assets/scripts/LinLibertine_I.otf" id="4_c72wb"]
+[ext_resource type="Texture2D" uid="uid://cbhvejn6803tj" path="res://assets/puzzles/jigsawpuzzleimages/Great-Wall-New-Pic-228551391689622.jpg" id="5_ks3p8"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_um0me")
+
+[node name="TextureRect" type="TextureRect" parent="." groups=["dropable"]]
+offset_left = -4180.0
+offset_top = -3209.0
+offset_right = 5933.0
+offset_bottom = 4177.0
+texture = ExtResource("2_pewy6")
+expand_mode = 1
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(958, 542)
+zoom = Vector2(0.35, 0.35)
+script = ExtResource("3_1arkm")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -156.0
+offset_top = -197.0
+offset_right = 2065.0
+offset_bottom = -59.0
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_c72wb")
+theme_override_font_sizes/font_size = 120
+horizontal_alignment = 1
+
+[node name="referenceImage" type="TextureRect" parent="."]
+offset_left = 2438.0
+offset_top = -805.0
+offset_right = 3444.0
+offset_bottom = 70.0
+texture = ExtResource("5_ks3p8")
+expand_mode = 1
+stretch_mode = 5
