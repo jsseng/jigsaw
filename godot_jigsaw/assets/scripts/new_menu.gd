@@ -1,7 +1,11 @@
 extends Control
 
+var auth = Firebase.Auth.auth
+var timestamp = Time.get_unix_time_from_system()
+var collection: FirestoreCollection = Firebase.Firestore.collection('time')
+var document_name = auth.localid
 
-
+var document_time = await collection.get_doc(auth.localid)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
@@ -24,10 +28,10 @@ func _process(delta):
 	pass
 
 func _on_start_random_pressed():
-	var auth = Firebase.Auth.auth
-	var timestamp = Time.get_unix_time_from_system()
-	var collection: FirestoreCollection = Firebase.Firestore.collection(auth.localid)
-	var add_task = await collection.add("user", {'time': timestamp, 'name': auth.localid})
+	var add_task = await collection.add(document_name, {'time': timestamp, 'name': document_name})
+	var document = await collection.get_doc(document_name)
+	document.add_or_update_field('time', timestamp)
+	var update: FirestoreDocument = await collection.update(document)
 	#need to change to a new scene that is a random game
 	randomize()
 	
@@ -48,3 +52,4 @@ func _on_quit_pressed():
 func _on_tree_exiting():
 	#place a destructor here maybe
 	pass
+
