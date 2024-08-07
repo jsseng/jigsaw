@@ -13,7 +13,7 @@ func _process(delta):
 	pass
 
 func _on_start_button_pressed():
-	get_tree().change_scene_to_file("res://assets/scenes/world.tscn")
+	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tcsn")
 
 func SetRow(row : int) -> void:
 	PuzzleVar.row = row
