@@ -24,6 +24,10 @@ func _process(delta):
 	pass
 
 func _on_start_random_pressed():
+	var auth = Firebase.Auth.auth
+	var timestamp = Time.get_unix_time_from_system()
+	var collection: FirestoreCollection = Firebase.Firestore.collection(auth.localid)
+	var add_task = await collection.add("user", {'time': timestamp, 'name': auth.localid})
 	#need to change to a new scene that is a random game
 	randomize()
 	
