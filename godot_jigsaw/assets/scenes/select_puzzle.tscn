@@ -1,7 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://doax16vbups3k"]
+[gd_scene load_steps=9 format=3 uid="uid://doax16vbups3k"]
 
 [ext_resource type="Script" path="res://assets/scripts/select_puzzle.gd" id="1_lx4o5"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="2_xyg5e"]
+[ext_resource type="Texture2D" uid="uid://dx0jdku47mvhc" path="res://assets/puzzles/new_background.jpg" id="3_3k1lu"]
+[ext_resource type="FontFile" uid="uid://0gktlfmg4dws" path="res://assets/fonts/ArchitectsDaughter.ttf" id="4_3hl4u"]
+[ext_resource type="Theme" uid="uid://bkvtkuva05g1w" path="res://assets/themes/display_puzzles_buttons.tres" id="4_ctan7"]
+[ext_resource type="Texture2D" uid="uid://5vvgw6t768m7" path="res://assets/images/left_arrow.png" id="5_2ca8n"]
+[ext_resource type="Texture2D" uid="uid://datv8gflkxj8" path="res://assets/images/right_arrow.png" id="7_8n5hu"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tswy4"]
+texture = ExtResource("5_2ca8n")
+modulate_color = Color(0.823529, 0.976471, 0.427451, 1)
 
 [node name="selectpuzzle" type="Control"]
 layout_mode = 3
@@ -17,35 +26,52 @@ position = Vector2(1012, 675)
 scale = Vector2(0.388011, 0.380041)
 texture = ExtResource("2_xyg5e")
 
+[node name="new background" type="TextureRect" parent="background texture"]
+offset_left = -2847.86
+offset_top = -1947.16
+offset_right = 2843.14
+offset_bottom = 1946.84
+texture = ExtResource("3_3k1lu")
+
 [node name="Title" type="Label" parent="."]
 layout_mode = 0
-offset_left = 797.0
-offset_top = 24.0
-offset_right = 1108.0
-offset_bottom = 93.0
+offset_left = 764.0
+offset_top = 29.0
+offset_right = 1150.0
+offset_bottom = 116.0
+theme_override_colors/font_color = Color(1, 0.741176, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.478431, 0.215686, 0.0588235, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_3hl4u")
 theme_override_font_sizes/font_size = 50
 text = "Select Puzzle"
 
 [node name="PageIndicator" type="Label" parent="."]
 layout_mode = 2
-offset_left = 903.0
-offset_top = 990.0
-offset_right = 1017.0
-offset_bottom = 1025.0
-theme_override_font_sizes/font_size = 25
+offset_left = 866.0
+offset_top = 935.0
+offset_right = 1070.0
+offset_bottom = 998.0
+theme_override_colors/font_color = Color(1, 0.741176, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.533333, 0.294118, 0.12549, 1)
+theme_override_fonts/font = ExtResource("4_3hl4u")
+theme_override_font_sizes/font_size = 36
 text = "1 out of 2"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 380.0
-offset_top = 132.0
-offset_right = 1564.0
-offset_bottom = 946.0
+offset_left = 165.0
+offset_top = 138.0
+offset_right = 1758.0
+offset_bottom = 910.0
 alignment = 1
 
 [node name="left button" type="Button" parent="HBoxContainer"]
 layout_mode = 2
-text = "Left"
+theme_override_styles/normal = SubResource("StyleBoxTexture_tswy4")
+icon = ExtResource("5_2ca8n")
+flat = true
+icon_alignment = 1
 
 [node name="GridContainer" type="GridContainer" parent="HBoxContainer"]
 layout_mode = 2
@@ -56,77 +82,141 @@ columns = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 1"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid0"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid1" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 2"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid1"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid2" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 3"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid2"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid3" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 4"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid3"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid4" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 5"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid4"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid5" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 6"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid5"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid6" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 7"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid6"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid7" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 8"
 icon_alignment = 1
 expand_icon = true
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid7"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
 
 [node name="grid8" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("4_ctan7")
 text = "Button 9"
 icon_alignment = 1
 expand_icon = true
 
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/GridContainer/grid8"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 1
+
 [node name="right button" type="Button" parent="HBoxContainer"]
 layout_mode = 2
-text = "Right"
+icon = ExtResource("7_8n5hu")
+flat = true
 
 [connection signal="pressed" from="HBoxContainer/left button" to="." method="_on_left_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/right button" to="." method="_on_right_button_pressed"]

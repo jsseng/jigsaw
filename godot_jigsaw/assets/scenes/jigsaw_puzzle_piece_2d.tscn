@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bigxvfq23efv5"]
+
+[ext_resource type="Script" path="res://assets/scripts/jigsaw_puzzle_piece_2d.gd" id="1_17qdr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rneks"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_17qdr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="Area2D" type="Area2D" parent="Sprite2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/Area2D"]
+shape = SubResource("RectangleShape2D_rneks")
+
+[connection signal="input_event" from="Sprite2D/Area2D" to="." method="_on_area_2d_input_event"]
