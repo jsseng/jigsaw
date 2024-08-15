@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7wkk54a07fd4"]
+[gd_scene load_steps=4 format=3 uid="uid://b7wkk54a07fd4"]
 
 [ext_resource type="Script" path="res://assets/scripts/Piece_2d.gd" id="1_g0ylo"]
+[ext_resource type="AudioStream" uid="uid://6nx6r171vxkd" path="res://assets/sounds/finger-snap-179180.mp3" id="2_8cxfp"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l3ee6"]
 
@@ -13,5 +14,8 @@ script = ExtResource("1_g0ylo")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/Area2D"]
 shape = SubResource("RectangleShape2D_l3ee6")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_8cxfp")
 
 [connection signal="input_event" from="Sprite2D/Area2D" to="." method="_on_area_2d_input_event"]

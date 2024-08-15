@@ -45,6 +45,9 @@ func _process(delta):
 
 
 func _on_left_button_pressed():
+	
+	$AudioStreamPlayer.play()
+	
 	if val > 1:
 		val -= 1
 		
@@ -56,6 +59,9 @@ func _on_left_button_pressed():
 
 
 func _on_right_button_pressed():
+	
+	$AudioStreamPlayer.play()
+	
 	if val < total_pages:
 		val += 1
 		
@@ -73,6 +79,9 @@ func button_pressed(button): #selects the image that the button represents
 	#should make this return an integer that will represent the index of the image that needs to be loaded in
 	#need to take val into account
 	#do stuff to pick image
+	
+	#$AudioStreamPlayer.play() #this doesn't seem to work for some reason
+	
 	var index = (val-1) * grid.get_child_count()
 	#need to add the value that corresponds with the button pressed add 0-8 currently
 	var name = String(button.name)

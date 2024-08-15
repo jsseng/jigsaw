@@ -60,21 +60,6 @@ func _ready():
 			
 			# Add the sprite to the Grid node	
 			get_parent().call_deferred("add_child", piece)
-	
-	
-	
-	#testing
-	#var wash = load("res://assets/puzzles/jigsawpuzzleimages/1200px-Mount_Washington_Cascades.jpg")
-	#instantiate the size of the puzzle piece
-	#PuzzleVar.pieceWidth = wash.get_width()
-	#PuzzleVar.pieceHeight = wash.get_height()
-	#var jigsawpp = preload("res://assets/scenes/jigsaw_puzzle_piece_2d.tscn")
-	#var jigsaw_puzzle_piece = jigsawpp.instantiate()
-	#jigsaw_puzzle_piece.get_child(0).texture = wash
-	#get_parent().call_deferred("add_child", jigsaw_puzzle_piece)
-	
-	
-	
 
 
 
@@ -88,8 +73,14 @@ func _process(delta):
 # Handle esc
 func _input(event):
 	# Check if the event is a key press event
-	if event is InputEventKey:
+	if event is InputEventKey and event.is_pressed() and event.echo == false:
 		# Check if the pressed key is the Escape key
 		if event.keycode == KEY_ESCAPE:
 			# Exit the game
 			get_tree().quit()
+			
+		if event.keycode == 76: #if key press is l
+			print("load pieces")
+			pass #load the puzzle pieces here from the database
+		
+			

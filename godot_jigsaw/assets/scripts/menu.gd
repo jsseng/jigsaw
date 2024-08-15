@@ -34,3 +34,5 @@ func _input(event):
 		if event.keycode == KEY_ESCAPE:
 			# Exit the game
 			get_tree().quit()
+		
+		

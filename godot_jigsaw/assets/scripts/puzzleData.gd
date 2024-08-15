@@ -20,3 +20,5 @@ var images = [] #this will be loaded up in the new menu scene
 
 var pieceWidth #these are the actual size of the puzzle piece, I am putting them in here so that jigsaw_puzzle_piece_2d can access them and use them for sizing upon instantiation
 var pieceHeight
+
+var debug = false

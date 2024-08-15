@@ -6,6 +6,9 @@ extends Control
 func _ready():
 	
 	#this is where the images in the folder get put into the array for reference
+	
+	#for some reason there is a leak at exit, the issue is somewhere, but I'm not sure
+	
 	load(PuzzleVar.path) #use @GD load
 	var dir = DirAccess.open(PuzzleVar.path)
 	if dir:
@@ -26,6 +29,9 @@ func _process(delta):
 
 func _on_start_random_pressed():
 	#need to change to a new scene that is a random game
+	
+	$AudioStreamPlayer.play() #works
+	
 	randomize()
 	
 	PuzzleVar.choice = randi_range(0,PuzzleVar.images.size()-1) #choose a random image to use
@@ -42,13 +48,26 @@ func _on_start_random_pressed():
 
 func _on_select_puzzle_pressed():
 	#need to change to do a new scene that is the selection screen for a puzzle
+	$AudioStreamPlayer.play() #doesn't work
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
 func _on_quit_pressed():
 	#quit the game
 	#get_tree().root.propogate_notification(NOTIFICATION_WM_CLOSE_REQUEST) #should figure out what this does
+	$AudioStreamPlayer.play() #doesn't work
 	get_tree().quit()
 
+func _input(event):
+	if event is InputEventKey and event.pressed and event.echo == false:
+		#print(event.keycode)
+		if event.keycode == 68: #if key is d
+				PuzzleVar.debug = !PuzzleVar.debug
+				if PuzzleVar.debug:
+					$Label.show()
+				else:
+					$Label.hide()
+				#print("debug mode activated")
+				print("debug mode is: "+str(PuzzleVar.debug))
 
 func _on_tree_exiting():
 	#place a destructor here maybe

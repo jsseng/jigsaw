@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://dye8ygfcvmig0"]
+[gd_scene load_steps=8 format=3 uid="uid://dye8ygfcvmig0"]
 
 [ext_resource type="Script" path="res://assets/scripts/new_menu.gd" id="1_0jmf4"]
 [ext_resource type="Texture2D" uid="uid://dx0jdku47mvhc" path="res://assets/puzzles/new_background.jpg" id="2_1empl"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="2_ae42l"]
 [ext_resource type="Theme" uid="uid://0xk2aimn5x6r" path="res://assets/themes/main_menu_buttons.tres" id="3_ro0bn"]
 [ext_resource type="FontFile" uid="uid://cvnii1vc7befk" path="res://assets/fonts/KiriFont.ttf" id="4_6yxl4"]
+[ext_resource type="AudioStream" uid="uid://6nx6r171vxkd" path="res://assets/sounds/finger-snap-179180.mp3" id="6_7rt3t"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_75luh"]
 font = ExtResource("4_6yxl4")
@@ -76,6 +77,19 @@ layout_mode = 2
 theme = ExtResource("3_ro0bn")
 theme_override_font_sizes/font_size = 50
 text = "Quit Game"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_7rt3t")
+
+[node name="Label" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 25.0
+offset_top = 19.0
+offset_right = 220.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 50
+text = "Debug"
 
 [connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
 [connection signal="pressed" from="VBoxContainer/start random" to="." method="_on_start_random_pressed"]
