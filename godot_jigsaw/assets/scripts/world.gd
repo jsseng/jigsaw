@@ -6,7 +6,6 @@ var GRID_HEIGHT = PuzzleVar.row
 var debug = 0
 
 
-var collection1: FirestoreCollection = Firebase.Firestore.collection('Coordinates')
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#load up reference
@@ -99,13 +98,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	print(p2.Ncoord)
-	#print(PuzzleVar.valid_count)
-	#var add_task = await collection1.add('Coords', {'Ncoord': str(p2.NCoord), 'WCoord': str(p2.WCoord)})
-	#var document = await collection1.get_doc("document_name")
-	#document.add_or_update_field('Ncoord', str(p2.NCoord))
-	#document.add_or_update_field('Wcoord', str(p2.WCoord))
-	#var update: FirestoreDocument = await collection1.update(document)
+	print(PuzzleVar.valid_count)
 	if PuzzleVar.valid_count == GRID_WIDTH * GRID_HEIGHT:
 		$Label.text = "YOU COMPLETED THE PUZZLE!!!"
 
