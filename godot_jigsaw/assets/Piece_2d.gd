@@ -5,10 +5,6 @@ var SCoord: Vector2
 var ECoord: Vector2
 var WCoord: Vector2
 
-var NCoord_name = var_to_str(NCoord) #calculate these using the width and height of the block
-var SCoord_name = var_to_str(SCoord)
-var ECoord_name = var_to_str(ECoord)
-var WCoord_name = var_to_str(WCoord)
 
 #ID's that associate with the jigsaw puzzle piece
 var NID #if null that means that it doesn't have a matching piece, it is an edge piece
