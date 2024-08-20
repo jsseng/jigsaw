@@ -4,7 +4,6 @@ var auth = Firebase.Auth.auth
 var timestamp = Time.get_unix_time_from_system()
 var collection: FirestoreCollection = Firebase.Firestore.collection('time')
 var document_name = auth.localid
-
 var document_time = await collection.get_doc(auth.localid)
 # Called when the node enters the scene tree for the first time.
 func _ready():

@@ -1,10 +1,14 @@
 extends Node2D
-
 #coords of where the borders of the piece are
 var NCoord: Vector2 #calculate these using the width and height of the block
 var SCoord: Vector2
 var ECoord: Vector2
 var WCoord: Vector2
+
+var NCoord_name = var_to_str(NCoord) #calculate these using the width and height of the block
+var SCoord_name = var_to_str(SCoord)
+var ECoord_name = var_to_str(ECoord)
+var WCoord_name = var_to_str(WCoord)
 
 #ID's that associate with the jigsaw puzzle piece
 var NID #if null that means that it doesn't have a matching piece, it is an edge piece
@@ -48,7 +52,6 @@ func _ready():
 	set_appropriate_node_id()
 	prev_position = position #for velocity
 	
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	#handle the coordinate changes here
@@ -74,7 +77,7 @@ func _process(delta):
 		for nodes in group:
 			if nodes.group_number == group_number:
 				nodes.global_position += distance
-
+				
 
 func _on_area_2d_input_event(viewport, event, shape_idx):
 	if not PuzzleVar.active_piece:
@@ -141,6 +144,7 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 
 
 func snap_and_connect(group: Array, direction: String) -> bool:
+	
 	var connected = false
 	
 	var coord
@@ -178,7 +182,7 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 				#print("shift")
 				nodes.group_number = group_number
 				#print("if change: "+str(nodes.ID)+" and "+str(nodes.group_number))
-		
+	
 	return connected
 
 
