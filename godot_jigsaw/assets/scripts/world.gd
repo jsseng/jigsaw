@@ -1,5 +1,5 @@
 extends Node2D
-
+var collection1: FirestoreCollection = Firebase.Firestore.collection('coordinates')
 var GRID_WIDTH = PuzzleVar.col
 var GRID_HEIGHT = PuzzleVar.row
 
@@ -69,6 +69,7 @@ func _ready():
 			piece.add_to_group("puzzle_pieces")
 			debug += 1;
 			print(piece.get_piece_id())
+			var add_task = await collection1.add('piece_id', {'NCoord': '1'})
 			
 			var sprite = piece.get_node("Sprite2D")
 			var collision = piece.get_node("Area2D/CollisionShape2D")
@@ -101,6 +102,9 @@ func _process(_delta):
 	print(PuzzleVar.valid_count)
 	if PuzzleVar.valid_count == GRID_WIDTH * GRID_HEIGHT:
 		$Label.text = "YOU COMPLETED THE PUZZLE!!!"
+	var document1 = await collection1.get_doc('piece_id')
+	document1.add_or_update_field('NCoord', '3')
+	var update: FirestoreDocument = await collection1.update(document1)
 
 # Handle esc
 func _input(event):

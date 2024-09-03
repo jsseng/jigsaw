@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dr6qnsfg5v8bf"]
+[gd_scene load_steps=7 format=3 uid="uid://djl12v5t65c31"]
 
 [ext_resource type="Script" path="res://assets/scripts/jigsaw_puzzle_1.gd" id="1_p57kp"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="2_glgob"]

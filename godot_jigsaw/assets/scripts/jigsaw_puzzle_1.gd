@@ -34,7 +34,7 @@ func _ready():
 			piece.add_to_group("puzzle_pieces")
 			debug += 1;
 			#print(piece.get_piece_id())
-			
+			#var add_task = await collection1.add(piece.get_piece_id(), {'NCoord': '1'})
 			var sprite = piece.get_node("Sprite2D")
 			#var collision = piece.get_node("Area2D/CollisionShape2D")
 
@@ -83,7 +83,7 @@ func _process(delta):
 	#print(PuzzleVar.valid_count)
 	#if PuzzleVar.valid_count == GRID_WIDTH * GRID_HEIGHT:
 		#$Label.text = "YOU COMPLETED THE PUZZLE!!!"
-	pass
+		pass
 
 # Handle esc
 func _input(event):

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://t1e2oap7x5ok"]
+[gd_scene load_steps=7 format=3 uid="uid://t1e2oap7x5ok"]
 
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="1_32jfw"]
 [ext_resource type="Script" path="res://assets/scripts/world.gd" id="1_qtbi5"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://assets/scenes/Camera2D.gd" id="4_ulrap"]
 [ext_resource type="FontFile" uid="uid://dbfwm247cqnhw" path="res://assets/scripts/LinLibertine_I.otf" id="5_5e1vy"]
 [ext_resource type="Texture2D" uid="uid://cbhvejn6803tj" path="res://assets/puzzles/jigsawpuzzleimages/Great-Wall-New-Pic-228551391689622.jpg" id="6_8h7lh"]
-[ext_resource type="Script" path="res://assets/scenes/database.gd" id="7_nswwd"]
 
 [node name="Grid" type="Node2D" groups=["dropable"]]
 script = ExtResource("1_qtbi5")
@@ -48,10 +47,3 @@ offset_bottom = 70.0
 texture = ExtResource("6_8h7lh")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="database" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("7_nswwd")
