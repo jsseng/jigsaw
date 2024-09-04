@@ -41,7 +41,6 @@ func _ready():
 	
 	# Shuffle the grid positions
 	var grid_positions = []
-
 	for y in range(GRID_WIDTH):
 		for x in range(GRID_HEIGHT):
 			# Calculate the position for each grid cell
@@ -59,7 +58,7 @@ func _ready():
 
 	# Shuffle the grid positions
 	grid_positions.shuffle()
-
+	var puzzle = {}
 	# Iterate through the grid for the pieces
 	for y in range(GRID_WIDTH):
 		for x in range(GRID_HEIGHT):
@@ -67,9 +66,9 @@ func _ready():
 			var piece = sprite_scene.instantiate()
 			
 			piece.add_to_group("puzzle_pieces")
+			puzzle[str(piece)] = '1'
 			debug += 1;
-			print(piece.get_piece_id())
-			var add_task = await collection1.add('piece_id', {'NCoord': '1'})
+			#print(piece.get_piece_id())
 			
 			var sprite = piece.get_node("Sprite2D")
 			var collision = piece.get_node("Area2D/CollisionShape2D")
@@ -94,17 +93,18 @@ func _ready():
 			
 			# Add the sprite to the Grid node	
 			get_parent().call_deferred("add_child", piece)
-
-
+	print(puzzle)
+	var add_task = await collection1.add('pieces', puzzle)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	print(PuzzleVar.valid_count)
+	#print(PuzzleVar.valid_count)
 	if PuzzleVar.valid_count == GRID_WIDTH * GRID_HEIGHT:
 		$Label.text = "YOU COMPLETED THE PUZZLE!!!"
-	var document1 = await collection1.get_doc('piece_id')
-	document1.add_or_update_field('NCoord', '3')
-	var update: FirestoreDocument = await collection1.update(document1)
+	#if Input.is_action_just_pressed("click"):
+		#var document1 = await collection1.get_doc('piece_id')
+		#document1.add_or_update_field('NCoord', '3')
+		#var update: FirestoreDocument = await collection1.update(document1)
 
 # Handle esc
 func _input(event):

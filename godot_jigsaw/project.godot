@@ -19,7 +19,6 @@ config/icon="res://icon.svg"
 
 PuzzleVar="*res://assets/scripts/puzzleData.gd"
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
-p2="*res://assets/scenes/piece2d.gd"
 
 [display]
 
