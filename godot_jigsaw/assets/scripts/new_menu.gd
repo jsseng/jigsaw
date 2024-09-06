@@ -72,3 +72,18 @@ func _input(event):
 func _on_tree_exiting():
 	#place a destructor here maybe
 	pass
+
+
+func _on_multiplayer_pressed():
+	#for now, default to choose a size of 16 and the great wall
+	PuzzleVar.col = 4
+	PuzzleVar.row = 4
+	
+	PuzzleVar.choice = 4
+	
+	var image_texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
+	var image_size = image_texture.get_size()
+	PuzzleVar.size = image_size
+	
+	get_tree().change_scene_to_file("res://assets/scenes/MultiplayerController.tscn")
+	pass # Replace with function body.

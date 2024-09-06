@@ -71,6 +71,11 @@ theme = ExtResource("3_ro0bn")
 theme_override_font_sizes/font_size = 50
 text = "Select Puzzle"
 
+[node name="multiplayer" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Multiplayer"
+
 [node name="quit" type="Button" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
@@ -94,4 +99,5 @@ text = "Debug"
 [connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
 [connection signal="pressed" from="VBoxContainer/start random" to="." method="_on_start_random_pressed"]
 [connection signal="pressed" from="VBoxContainer/select puzzle" to="." method="_on_select_puzzle_pressed"]
+[connection signal="pressed" from="VBoxContainer/multiplayer" to="." method="_on_multiplayer_pressed"]
 [connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_quit_pressed"]

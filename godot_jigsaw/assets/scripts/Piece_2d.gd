@@ -52,6 +52,9 @@ func _ready():
 	
 	update_coordinates_for_self() #initially update the coordinates, reupdate when released after dragging
 	
+	#for i in GameManager.Players:
+		#print(GameManager.Players[i].id)
+		#$MultiplayerSynchronizer.set_multiplayer_authority(GameManager.Players[i].id) #sets it so that all players have authority over piece2d
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -71,6 +74,9 @@ func _process(delta):
 		set_appropriate_node()
 			
 	if selected:
+		
+		#move_puzzle_piece.rpc()
+		
 		#print(velocity)
 		var distance = get_global_mouse_position() - global_position
 		#iterate through all the nodes and get group_number to move the appropriate ones
@@ -79,15 +85,60 @@ func _process(delta):
 		for nodes in group:
 			if nodes.group_number == group_number:
 				nodes.global_position += distance
+				
+#@rpc("any_peer", "call_local")
+#func move_puzzle_piece():
+	#var group = get_tree().get_nodes_in_group("puzzle_pieces")
+	#var distance = get_global_mouse_position() - global_position
+		##iterate through all the nodes and get group_number to move the appropriate ones
+		##if they have the same group number as the one that has been selected then all the nodes in the same group move
+		##print(NCoord) #test
+	#for nodes in group:
+		#if nodes.group_number == group_number:
+			#nodes.global_position += distance
 
 
 func _on_area_2d_input_event(viewport, event, shape_idx):
+	
+	var group = get_tree().get_nodes_in_group("puzzle_pieces")
+	
 	if not PuzzleVar.active_piece:
-		if Input.is_action_just_pressed("click"):
-			bring_to_front() #maybe bring all the pieces in the group to front later once other errors have been figured out
+		if Input.is_action_just_pressed("click") and selected == false:
+			
+			for nodes in group:
+				if nodes.group_number == group_number:
+					nodes.bring_to_front()
 			PuzzleVar.active_piece = self
 			selected = true
-	
+	else:
+		if Input.is_action_just_pressed("click") and selected == true:
+			#print("release")
+			#the issue is here
+			
+			#var piece = PuzzleVar.active_piece #see if this will be needed
+			selected = false
+			#print(piece.ID)
+			PuzzleVar.active_piece = 0
+			
+			var num = group_number
+			
+			
+			for nodes in group:
+				#print("getting group")
+				
+				#nodes.global_position = Vector2(nodes.global_position.x, nodes.global_position.y)
+				
+				#nodes.global_position = Vector2(round(nodes.global_position.x),round(nodes.global_position.y)) #rounds it so that they are all 
+				nodes.update_coordinates_for_self() #you only need to update the coordinates here to check
+				
+				#here check debug flag and then right the piece positions to the database
+				if PuzzleVar.debug:
+					#write all piece positions in group to database here
+					print("write to database")
+				
+				if nodes.group_number == num: #change this so that it just checks all its children
+					#print("check group")
+					nodes.check_connections(group)
 	
 	
 	
@@ -134,38 +185,39 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				##PuzzleVar.active_piece = 0
 				##selected = false
 
-func _input(event):
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed and PuzzleVar.active_piece:
-			print("release")
-			#the issue is here
-			
-			var piece = PuzzleVar.active_piece #see if this will be needed
-			piece.selected = false
-			#print(piece.ID)
-			PuzzleVar.active_piece = 0
-			
-			var num = piece.group_number
-			var group = get_tree().get_nodes_in_group("puzzle_pieces")
-			
-			for nodes in group:
-				#print("getting group")
-				
-				#nodes.global_position = Vector2(nodes.global_position.x, nodes.global_position.y)
-				
-				#nodes.global_position = Vector2(round(nodes.global_position.x),round(nodes.global_position.y)) #rounds it so that they are all 
-				nodes.update_coordinates_for_self() #you only need to update the coordinates here to check
-				
-				#here check debug flag and then right the piece positions to the database
-				if PuzzleVar.debug:
-					#write all piece positions in group to database here
-					print("write to database")
-				
-				
-				
-				if nodes.group_number == num: #change this so that it just checks all its children
-					#print("check group")
-					nodes.check_connections(group)
+#the code below is for a click drag implementation
+#func _input(event):
+	#if event is InputEventMouseButton:
+		#if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed and PuzzleVar.active_piece:
+			#print("release")
+			##the issue is here
+			#
+			#var piece = PuzzleVar.active_piece #see if this will be needed
+			#piece.selected = false
+			##print(piece.ID)
+			#PuzzleVar.active_piece = 0
+			#
+			#var num = piece.group_number
+			#var group = get_tree().get_nodes_in_group("puzzle_pieces")
+			#
+			#for nodes in group:
+				##print("getting group")
+				#
+				##nodes.global_position = Vector2(nodes.global_position.x, nodes.global_position.y)
+				#
+				##nodes.global_position = Vector2(round(nodes.global_position.x),round(nodes.global_position.y)) #rounds it so that they are all 
+				#nodes.update_coordinates_for_self() #you only need to update the coordinates here to check
+				#
+				##here check debug flag and then right the piece positions to the database
+				#if PuzzleVar.debug:
+					##write all piece positions in group to database here
+					#print("write to database")
+				#
+				#
+				#
+				#if nodes.group_number == num: #change this so that it just checks all its children
+					##print("check group")
+					#nodes.check_connections(group)
 
 
 
