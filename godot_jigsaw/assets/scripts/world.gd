@@ -65,7 +65,7 @@ func _ready():
 			var piece = sprite_scene.instantiate()
 			
 			piece.add_to_group("puzzle_pieces")
-			puzzle[str(piece)] = (str(x) + "," +str(y))
+			puzzle[str(piece)] = (piece.position)
 			debug += 1;
 			#print(piece.get_piece_id())
 			
@@ -89,10 +89,9 @@ func _ready():
 			collision.set_shape(shape)
 
 			piece.position = grid_positions.pop_back()
-			
+			puzzle[str(piece)] = (str(piece.position))
 			# Add the sprite to the Grid node	
 			get_parent().call_deferred("add_child", piece)
-	print(puzzle)
 	var add_task = await collection1.add('pieces', puzzle)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
