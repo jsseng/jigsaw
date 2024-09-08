@@ -10,7 +10,6 @@ var debug = 0
 func _ready():
 	#load up reference
 	$referenceImage.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
-	
 	# Load the image
 	$Image.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]) #will need to tweak the sizing of the image
 	var image_texture = $Image.texture
@@ -66,7 +65,7 @@ func _ready():
 			var piece = sprite_scene.instantiate()
 			
 			piece.add_to_group("puzzle_pieces")
-			puzzle[str(piece)] = '1'
+			puzzle[str(piece)] = (str(x) + "," +str(y))
 			debug += 1;
 			#print(piece.get_piece_id())
 			
