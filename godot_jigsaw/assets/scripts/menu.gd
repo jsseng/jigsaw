@@ -1,9 +1,12 @@
 extends Control
 
+# this menu is used to determine the size of the puzzle that the player wants
+# to play, currently 2x2 to 10x10 puzzles are supported
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
+	# loads the image textures and the sizes needed into variables so that
+	# they can be chopped up properly into pieces
 	var image_texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	var image_size = image_texture.get_size()
 	PuzzleVar.size = image_size
@@ -13,8 +16,7 @@ func _process(delta):
 	pass
 
 func _on_start_button_pressed():
-	get_tree().change_scene_to_file("res://assets/scenes/jigsaw_puzzle_1.tscn") #change depending on which scene works or not
-	#get_tree().change_scene_to_file("res://assets/scenes/world.tscn") #for testing
+	get_tree().change_scene_to_file("res://assets/scenes/jigsaw_puzzle_1.tscn")
 
 func SetRow(row : int) -> void:
 	PuzzleVar.row = row

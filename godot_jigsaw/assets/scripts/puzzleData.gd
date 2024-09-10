@@ -1,5 +1,7 @@
 extends Node2D
 
+# these are global variables
+
 class_name PuzzleData
 
 var row = 2
@@ -7,18 +9,20 @@ var col = 2
 
 var size = 0
 
-var valid_count = 0
+# I coopted active_piece into a boolean value for Piece_2d in order to isolate
+# the pieces so that you couldn't hold two at a time if there was overlap
+var active_piece= -1
 
-var active_piece= -1 #I coopted this into a boolean value for jigsaw puzzle piece 2d in order to isolate the pieces
+# choice corresponds to the index of a piece in the list images
+var choice = -1
 
-var slot_ref = -1
+var path = "res://assets/puzzles/jigsawpuzzleimages" # path for the images
+var images = [] # this will be loaded up in the new menu scene
 
-var choice = -1 #this is how you will choose which puzzle to do
-
-var path = "res://assets/puzzles/jigsawpuzzleimages" #path for the images
-var images = [] #this will be loaded up in the new menu scene
-
-var pieceWidth #these are the actual size of the puzzle piece, I am putting them in here so that jigsaw_puzzle_piece_2d can access them and use them for sizing upon instantiation
+# these are the actual size of the puzzle piece, I am putting them in here so
+# that piece_2d can access them and use them for sizing upon instantiation
+var pieceWidth
 var pieceHeight
 
+# boolean value to trigger debug mode
 var debug = false

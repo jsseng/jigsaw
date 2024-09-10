@@ -1,5 +1,9 @@
 extends Node
 
+# this script keeps track of the players
+
+# the array Players is used to keep track of each player and their attributes
+# specifically the Player's ID so that they can be differentiated
 var Players = {}
 
 # Called when the node enters the scene tree for the first time.
