@@ -27,8 +27,8 @@ grow_vertical = 2
 script = ExtResource("1_0jmf4")
 
 [node name="background texture" type="Sprite2D" parent="."]
-position = Vector2(1012, 675)
-scale = Vector2(0.388011, 0.380041)
+position = Vector2(1012, 603.125)
+scale = Vector2(0.388011, 0.343116)
 texture = ExtResource("2_ae42l")
 
 [node name="new background" type="TextureRect" parent="."]
@@ -36,15 +36,15 @@ layout_mode = 0
 offset_left = -93.0
 offset_top = -64.0
 offset_right = 2124.0
-offset_bottom = 1413.0
+offset_bottom = 1270.0
 texture = ExtResource("2_1empl")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 600.0
-offset_top = 180.0
+offset_top = 71.0
 offset_right = 1353.0
-offset_bottom = 985.0
+offset_bottom = 1085.0
 pivot_offset = Vector2(307, 718)
 theme_override_constants/separation = 50
 alignment = 1
@@ -58,26 +58,28 @@ label_settings = SubResource("LabelSettings_75luh")
 horizontal_alignment = 1
 
 [node name="start random" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 125)
 layout_mode = 2
 theme = ExtResource("3_ro0bn")
 theme_override_font_sizes/font_size = 50
 text = "Start Random Game"
 
 [node name="select puzzle" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 125)
 layout_mode = 2
 theme = ExtResource("3_ro0bn")
 theme_override_font_sizes/font_size = 50
 text = "Select Puzzle"
 
 [node name="multiplayer" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 125)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme = ExtResource("3_ro0bn")
+theme_override_font_sizes/font_size = 50
 text = "Multiplayer"
 
 [node name="quit" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 125)
 layout_mode = 2
 theme = ExtResource("3_ro0bn")
 theme_override_font_sizes/font_size = 50

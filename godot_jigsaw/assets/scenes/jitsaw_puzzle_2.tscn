@@ -16,6 +16,7 @@ grow_vertical = 2
 script = ExtResource("1_um0me")
 
 [node name="TextureRect" type="TextureRect" parent="." groups=["dropable"]]
+layout_mode = 0
 offset_left = -4180.0
 offset_top = -3209.0
 offset_right = 5933.0
@@ -29,6 +30,7 @@ zoom = Vector2(0.35, 0.35)
 script = ExtResource("3_1arkm")
 
 [node name="Label" type="Label" parent="."]
+layout_mode = 0
 offset_left = -156.0
 offset_top = -197.0
 offset_right = 2065.0
@@ -40,6 +42,7 @@ theme_override_font_sizes/font_size = 120
 horizontal_alignment = 1
 
 [node name="referenceImage" type="TextureRect" parent="."]
+layout_mode = 0
 offset_left = 2438.0
 offset_top = -805.0
 offset_right = 3444.0
