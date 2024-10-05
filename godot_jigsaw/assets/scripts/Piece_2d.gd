@@ -174,6 +174,8 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 	if dist < snap_distance and dist != 0:
 		connected = true
 		
+		show_image_on_snap()
+		
 		$AudioStreamPlayer.play()
 		
 		dist = calc_components(coord, matching)
@@ -314,3 +316,21 @@ func set_appropriate_node():
 	if WID:
 		WNode = group[WID-1]
 		
+
+func show_image_on_snap(): # Peter Nguyen wrote this function
+	var popup = Sprite2D.new()
+	popup.texture = preload("res://assets/images/checkmark.jpg")
+	# Center the sprite in the viewport
+	popup.position = get_viewport().get_size() / 2
+	# Make the sprite larger
+	popup.scale = Vector2(2, 2) 
+	 # Ensure visibility
+	popup.visible = true
+	# This adds it to the main scene
+	get_tree().current_scene.add_child(popup)  
+	# Make image be at the top
+	popup.z_index = 10
+	# Optional: Make the image disappear after a while
+	# Show image for 2 seconds
+	await get_tree().create_timer(2.0).timeout
+	popup.queue_free()
