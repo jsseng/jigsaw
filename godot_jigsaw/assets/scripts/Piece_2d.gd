@@ -319,11 +319,12 @@ func set_appropriate_node():
 
 func show_image_on_snap(): # Peter Nguyen wrote this function
 	var popup = Sprite2D.new()
-	popup.texture = preload("res://assets/images/checkmark.jpg")
+	# Load texture
+	popup.texture = preload("res://assets/images/checkmark2.0.png")
 	# Center the sprite in the viewport
-	popup.position = get_viewport().get_size() / 2
+	popup.position = get_viewport().get_visible_rect().size / 2
 	# Make the sprite larger
-	popup.scale = Vector2(2, 2) 
+	popup.scale = Vector2(1.5, 1.5) 
 	 # Ensure visibility
 	popup.visible = true
 	# This adds it to the main scene
