@@ -154,4 +154,3 @@ func populate_grid():
 			# iterates the index to get the next image after the image is
 			# loaded in
 			index += 1
-
