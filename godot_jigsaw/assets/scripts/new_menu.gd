@@ -28,6 +28,10 @@ func _process(delta):
 	pass
 
 func _on_start_random_pressed():
+	Firebase.Auth.login_anonymous()
+	var collection: FirestoreCollection = Firebase.Firestore.collection("data")
+	var document = await collection.get_doc("6ZzeMZjY0Jukj8pniGAr")
+	print(document)
 	$AudioStreamPlayer.play()
 	randomize() # initialize a random seed for the random number generator
 	# choose a random image from the list PuzzleVar.images
