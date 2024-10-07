@@ -19,12 +19,17 @@ config/icon="res://icon.svg"
 
 PuzzleVar="*res://assets/scripts/puzzleData.gd"
 GameManager="*res://GameManager.gd"
+Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/stretch/mode="viewport"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-firebase/plugin.cfg", "res://addons/http-sse-client/plugin.cfg")
 
 [input]
 
