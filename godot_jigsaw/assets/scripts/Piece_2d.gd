@@ -148,25 +148,33 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 	
 	var new_group_number = group_number
 	
+	# Get the global position of the current node
+	var current_global_pos = self.get_global_position()
+	var matching_global_pos
+	
 	if direction == "n":
 		coord = NCoord
 		matching = NNode.SCoord
 		prev_group_number = NNode.group_number
+		matching_global_pos = NNode.get_global_position()
 		
 	elif direction == "s":
 		coord = SCoord
 		matching = SNode.NCoord
 		prev_group_number = SNode.group_number
+		matching_global_pos = SNode.get_global_position()
 		
 	elif direction == "e":
 		coord = ECoord
 		matching = ENode.WCoord
 		prev_group_number = ENode.group_number
+		matching_global_pos = ENode.get_global_position()
 		
 	else: #if west
 		coord = WCoord
 		matching = WNode.ECoord
 		prev_group_number = WNode.group_number
+		matching_global_pos = WNode.get_global_position()
 	
 	# this if statement determines whether the appropriate
 	# sides are within the correct distance of each other to snap and connect
@@ -174,11 +182,15 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 	if dist < snap_distance and dist != 0:
 		connected = true
 		
-		show_image_on_snap()
+		# Calculate the midpoint between the two connecting sides
+		var midpoint = (current_global_pos + matching_global_pos) / 2
+		# Pass the midpoint to show_image_on_snap() so the image appears at the connection
+		show_image_on_snap(midpoint)
 		
 		$AudioStreamPlayer.play()
 		
 		dist = calc_components(coord, matching)
+		
 		
 		# here is the code to decide which group to move
 		# this code will have it so that the smaller group will always
@@ -317,15 +329,19 @@ func set_appropriate_node():
 		WNode = group[WID-1]
 		
 
-func show_image_on_snap(): # Peter Nguyen wrote this function
+func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	var popup = Sprite2D.new()
 	# Load texture
 	popup.texture = preload("res://assets/images/checkmark2.0.png")
+	
 	# Center the sprite in the viewport
-	popup.position = get_viewport().get_visible_rect().size / 2
+	# popup.position = get_viewport().get_visible_rect().size / 2
+	# Using midpoint between connecting nodes
+	popup.position = position
+	
 	# Make the sprite larger
 	popup.scale = Vector2(1.5, 1.5) 
-	 # Ensure visibility
+	# Ensure visibility
 	popup.visible = true
 	# This adds it to the main scene
 	get_tree().current_scene.add_child(popup)  
