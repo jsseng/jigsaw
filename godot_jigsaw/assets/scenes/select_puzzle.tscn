@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://doax16vbups3k"]
+[gd_scene load_steps=11 format=3 uid="uid://doax16vbups3k"]
 
 [ext_resource type="Script" path="res://assets/scripts/select_puzzle.gd" id="1_lx4o5"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="2_xyg5e"]
@@ -7,7 +7,8 @@
 [ext_resource type="Theme" uid="uid://bkvtkuva05g1w" path="res://assets/themes/display_puzzles_buttons.tres" id="4_ctan7"]
 [ext_resource type="Texture2D" uid="uid://5vvgw6t768m7" path="res://assets/images/left_arrow.png" id="5_2ca8n"]
 [ext_resource type="AudioStream" uid="uid://6nx6r171vxkd" path="res://assets/sounds/finger-snap-179180.mp3" id="5_7prs1"]
-[ext_resource type="Texture2D" uid="uid://datv8gflkxj8" path="res://assets/images/right_arrow.png" id="7_8n5hu"]
+[ext_resource type="Texture2D" uid="uid://bud73sy775w43" path="res://assets/images/Left_Arrow_Light copy.png" id="7_http0"]
+[ext_resource type="Texture2D" uid="uid://dco3blqxkk7ue" path="res://assets/images/Right_Arrow_Light.png" id="9_i8mdc"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tswy4"]
 texture = ExtResource("5_2ca8n")
@@ -64,16 +65,17 @@ stream = ExtResource("5_7prs1")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 165.0
+offset_left = 140.0
 offset_top = 138.0
-offset_right = 1758.0
+offset_right = 1840.0
 offset_bottom = 910.0
 alignment = 1
 
 [node name="left button" type="Button" parent="HBoxContainer"]
+clip_contents = true
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_tswy4")
-icon = ExtResource("5_2ca8n")
+icon = ExtResource("7_http0")
 flat = true
 icon_alignment = 1
 
@@ -219,7 +221,8 @@ expand_mode = 1
 
 [node name="right button" type="Button" parent="HBoxContainer"]
 layout_mode = 2
-icon = ExtResource("7_8n5hu")
+focus_mode = 0
+icon = ExtResource("9_i8mdc")
 flat = true
 
 [connection signal="pressed" from="HBoxContainer/left button" to="." method="_on_left_button_pressed"]
