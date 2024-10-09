@@ -82,7 +82,6 @@ func _process(delta):
 @rpc("any_peer", "call_local")
 func move(distance: Vector2):
 	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	print(FireAuth.get_user_id()	)
 	for nodes in group:
 		if nodes.group_number == group_number:
 			nodes.global_position += distance
