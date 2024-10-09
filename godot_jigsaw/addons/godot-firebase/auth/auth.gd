@@ -592,6 +592,10 @@ func get_user_data() -> void:
 		if err != OK:
 			is_busy = false
 			Firebase._printerr("Error getting user data: %s" % err)
+			
+			
+func get_user_id() -> String:
+	return auth.localid
 
 
 # Function used to delete the account of the currently authenticated user
