@@ -1,11 +1,21 @@
 extends Control
 
 # this menu is the start screen
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# this is where the images in the folder get put into the
 	# list PuzzleVar.images for reference
+	
+	# if the user doesn't need to log in, check their stored auth data
+	if not FireAuth.needs_login():		
+		FireAuth.check_auth_file()
+		print("\n Account Found: ", FireAuth.get_user_id())
+
+	else:
+		# attempt anonymous login if login is required
+		print("Making new account")
+		FireAuth.attempt_anonymous_login()
+		
 	load(PuzzleVar.path)
 	var dir = DirAccess.open(PuzzleVar.path)
 	if dir:
@@ -21,6 +31,8 @@ func _ready():
 		
 	else:
 		print("An error occured trying to access the path")
+	
+	
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -44,6 +56,8 @@ func _on_start_random_pressed():
 	# change to actual game scene
 	get_tree().change_scene_to_file("res://assets/scenes/jigsaw_puzzle_1.tscn")
 
+func _on_logged_in() -> void:
+	pass
 
 func _on_select_puzzle_pressed():
 	$AudioStreamPlayer.play() # doesn't work, switches scenes too fast
