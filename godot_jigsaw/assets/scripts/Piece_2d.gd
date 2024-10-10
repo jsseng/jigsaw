@@ -125,12 +125,22 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				
 				if nodes.group_number == num and connection_found == false:
 					connection_found = await nodes.check_connections(group)
+				
+				# Set to original color from gray/transparent movement, Peter Nguyen
+				nodes.modulate = Color(1, 1, 1, 1)
 
 # this is where the actual movement of the puzzle piece is handled
 # when the mouse moves
 func _input(event):
 	if event is InputEventMouseMotion and selected == true:
 		var group = get_tree().get_nodes_in_group("puzzle_pieces")
+		
+		for nodes in group: # Peter Nguyen adding transparent effect
+			# Only modify pieces that belong to the current group
+			if nodes.group_number == group_number:
+				# Set to gray and semi-transparent
+				nodes.modulate = Color(0.7, 0.7, 0.7, 0.5)
+				
 		var distance = get_global_mouse_position() - global_position
 		# move is called as an rpc function so that both the host and client
 		# in a multiplayer game can see the movement
