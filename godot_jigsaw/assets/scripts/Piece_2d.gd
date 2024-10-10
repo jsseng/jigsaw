@@ -126,8 +126,8 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				if nodes.group_number == num and connection_found == false:
 					connection_found = await nodes.check_connections(group)
 				
-				# Set to original color from gray/transparent movement, Peter Nguyen
-				nodes.modulate = Color(1, 1, 1, 1)
+			# Set to original color from gray/transparent movement for all players, Peter Nguyen
+			rpc("remove_transparency")
 
 # this is where the actual movement of the puzzle piece is handled
 # when the mouse moves
@@ -135,12 +135,9 @@ func _input(event):
 	if event is InputEventMouseMotion and selected == true:
 		var group = get_tree().get_nodes_in_group("puzzle_pieces")
 		
-		for nodes in group: # Peter Nguyen adding transparent effect
-			# Only modify pieces that belong to the current group
-			if nodes.group_number == group_number:
-				# Set to gray and semi-transparent
-				nodes.modulate = Color(0.7, 0.7, 0.7, 0.5)
-				
+		# Peter Nguyen adding transparent effect
+		rpc("apply_transparency")
+		
 		var distance = get_global_mouse_position() - global_position
 		# move is called as an rpc function so that both the host and client
 		# in a multiplayer game can see the movement
@@ -360,3 +357,21 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	# Show image for 2 seconds
 	await get_tree().create_timer(2.0).timeout
 	popup.queue_free()
+
+# This function is called to apply the transparency effect to the pieces for all players to see
+# Written by Peter Nguyen
+@rpc("any_peer", "call_local")
+func apply_transparency():
+	var group = get_tree().get_nodes_in_group("puzzle_pieces")
+	for nodes in group:
+		if nodes.group_number == group_number:
+			nodes.modulate = Color(0.7, 0.7, 0.7, 0.5)
+
+# This function is called to remove the transparency effect of the pieces for all players to see
+# Written by Peter Nguyen
+@rpc("any_peer", "call_local")
+func remove_transparency():
+	var group = get_tree().get_nodes_in_group("puzzle_pieces")
+	for nodes in group:
+		if nodes.group_number == group_number:
+			nodes.modulate = Color(1, 1, 1, 1)
