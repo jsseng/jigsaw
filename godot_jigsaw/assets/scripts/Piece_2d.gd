@@ -118,24 +118,24 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					# clear active piece reference
 					PuzzleVar.active_piece = 0
 			
-			var num = group_number
-			var connection_found = false
+				var num = group_number
+				var connection_found = false
 			
-			# the following loop is where the actual match checking occurs
-			for nodes in group:
+				# the following loop is where the actual match checking occurs
+				for nodes in group:
 				
-				nodes.update_coordinates_for_self() # you only need to update the coordinates here to check
+					nodes.update_coordinates_for_self() # you only need to update the coordinates here to check
 				
 				# TODO: here check debug flag and then right the piece positions to the database
-				if PuzzleVar.debug:
+					if PuzzleVar.debug:
 					# write all piece positions in group to database here
-					print("write to database")
+						print("write to database")
 				
-				if nodes.group_number == num and connection_found == false:
-					connection_found = await nodes.check_connections(group)
+					if nodes.group_number == num and connection_found == false:
+						connection_found = await nodes.check_connections(group)
 				
 			# Set to original color from gray/transparent movement for all players, Peter Nguyen
-			rpc("remove_transparency")
+				rpc("remove_transparency")
 
 # this is where the actual movement of the puzzle piece is handled
 # when the mouse moves
