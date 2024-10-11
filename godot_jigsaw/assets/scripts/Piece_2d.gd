@@ -193,7 +193,8 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 		# Pass the midpoint to show_image_on_snap() so the image appears at the connection
 		show_image_on_snap(midpoint)
 		
-		$AudioStreamPlayer.play()
+		#$AudioStreamPlayer.play()
+		play_sound()
 		
 		dist = calc_components(coord, matching)
 		
@@ -375,3 +376,13 @@ func remove_transparency():
 	for nodes in group:
 		if nodes.group_number == group_number:
 			nodes.modulate = Color(1, 1, 1, 1)
+
+func play_sound(): # Peter Nguyen
+	var snap_sound = preload("res://assets/sounds/ding.mp3")
+	var audio_player = AudioStreamPlayer.new()
+	audio_player.stream = snap_sound
+	add_child(audio_player)
+	audio_player.play()
+	# Manually queue_free after sound finishes
+	await audio_player.finished
+	audio_player.queue_free()
