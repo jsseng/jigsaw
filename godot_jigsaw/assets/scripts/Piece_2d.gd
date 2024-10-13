@@ -369,6 +369,7 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	await get_tree().create_timer(2.0).timeout
 	popup.queue_free()
 
+#Logic for showing the winning labels and buttons
 func show_win_screen():
 	#-------------------------LABEL LOGIC------------------------#
 	var label = Label.new()
@@ -387,6 +388,7 @@ func show_win_screen():
 	# Change label poistion and add the label to the current scene
 	label.position = Vector2(-1000, -400)
 	get_tree().current_scene.add_child(label)
+
 	#-------------------------BUTTON LOGIC-----------------------#
 	var button = Button.new()
 	# Change the position, size, text, and image of button
@@ -427,11 +429,12 @@ func show_win_screen():
 	#Add button to the scene
 	get_tree().current_scene.add_child(button)
  
-	# Function to change scenes
+# Function to change scenes when button is pressed
 func on_button_pressed():
 	# Load the new scene
 	await get_tree().create_timer(2.0).timeout
 	#_ready()
+	reset_puzzle_state()
 	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn")
 	get_tree().reload_current_scene()
 
@@ -452,3 +455,16 @@ func remove_transparency():
 	for nodes in group:
 		if nodes.group_number == group_number:
 			nodes.modulate = Color(1, 1, 1, 1)
+
+#This function clears all puzzle pieces and resets global variables
+func reset_puzzle_state():
+	# Get all puzzle pieces and remove them
+	var group = get_tree().get_nodes_in_group("puzzle_pieces")
+	for nodes in group:
+		nodes.queue_free() # Removes puzzle pieces from the scene
+	
+	# Reset global variables related to the puzzle
+	PuzzleVar.active_piece = 0
+	Node_association_complete = false
+	prev_position = Vector2()
+	velocity = Vector2()

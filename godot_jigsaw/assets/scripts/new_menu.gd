@@ -17,23 +17,26 @@ func _ready():
 	# this is where the images in the folder get put into the
 	# list PuzzleVar.images for reference
 	
-	load(PuzzleVar.path)
-	var dir = DirAccess.open(PuzzleVar.path)
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		# the below code is to parse through the image folder in order to put
-		# the appropriate image files into the list for reference for the puzzle
-		while file_name != "":
-			if !file_name.begins_with(".") and file_name.ends_with(".import"):
-				# apend the image into the image list
-				PuzzleVar.images.append(file_name.replace(".import",""))
-			file_name = dir.get_next()
-		
-	else:
-		print("An error occured trying to access the path")
-	
-	
+	# Prevents pieces from being loaded multiple times
+	if(PuzzleVar.open_first_time):
+		load(PuzzleVar.path)
+		var dir = DirAccess.open(PuzzleVar.path)
+		if dir:
+			dir.list_dir_begin()
+			var file_name = dir.get_next()
+			# the below code is to parse through the image folder in order to put
+			# the appropriate image files into the list for reference for the puzzle
+			while file_name != "":
+				if !file_name.begins_with(".") and file_name.ends_with(".import"):
+					# apend the image into the image list
+					PuzzleVar.images.append(file_name.replace(".import",""))
+				file_name = dir.get_next()
+			
+		else:
+			print("An error occured trying to access the path")
+			
+		PuzzleVar.open_first_time = false
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
