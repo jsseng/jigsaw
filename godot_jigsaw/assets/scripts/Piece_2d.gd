@@ -52,6 +52,9 @@ var group_number
 var prev_position = Vector2()
 var velocity = Vector2()
 
+# Figure out if user finished the puzzle
+#var finished = false
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -65,7 +68,6 @@ func _ready():
 	prev_position = position # this is to calculate velocity
 	update_coordinates_for_self() # initially update the coordinates
 	
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	velocity = (position - prev_position) / delta # velocity is calculated here
@@ -74,7 +76,7 @@ func _process(delta):
 	# this if statement will only run once and is for when all the pieces
 	# are instantiated. When they are instantiated, they will be associated
 	# with each other so that they can snap to each other properly
-	if Node_association_complete == false and group.size() == PuzzleVar.col * PuzzleVar.row:
+	if (Node_association_complete == false and group.size() == PuzzleVar.col * PuzzleVar.row):
 		set_appropriate_node()
 
 
@@ -128,7 +130,6 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				
 			# Set to original color from gray/transparent movement for all players, Peter Nguyen
 			rpc("remove_transparency")
-
 # this is where the actual movement of the puzzle piece is handled
 # when the mouse moves
 func _input(event):
@@ -220,6 +221,16 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 		# this is an rpc call so that the movement and joining of the group
 		# is reflected for all players in a multiplayer game
 		move_pieces_to_connect.rpc(dist, prev_group_number, new_group_number)
+		
+		var finished = true
+		
+		for nodes in group:
+			if nodes.group_number != group_number:
+				finished = false
+				break
+		
+		if (finished):
+			show_win_screen()
 		
 	return connected
 
@@ -341,7 +352,7 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	popup.texture = preload("res://assets/images/checkmark2.0.png")
 	
 	# Center the sprite in the viewport
-	# popup.position = get_viewport().get_visible_rect().size / 2
+	popup.position = get_viewport().get_visible_rect().size / 2
 	# Using midpoint between connecting nodes
 	popup.position = position
 	
@@ -357,6 +368,72 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	# Show image for 2 seconds
 	await get_tree().create_timer(2.0).timeout
 	popup.queue_free()
+
+func show_win_screen():
+	#-------------------------LABEL LOGIC------------------------#
+	var label = Label.new()
+	
+	# Set the text for the Label
+	label.text = "You've Finished the Puzzle!"
+	
+	# Set the font size as well as the color
+	label.add_theme_font_size_override("font_size", 200)
+	label.add_theme_color_override("font_color", Color(0, 204, 0))
+	
+	# Load the font file 
+	var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
+	label.add_theme_font_override("font", font)
+	
+	# Change label poistion and add the label to the current scene
+	label.position = Vector2(-1000, -400)
+	get_tree().current_scene.add_child(label)
+	#-------------------------BUTTON LOGIC-----------------------#
+	var button = Button.new()
+	# Change the position, size, text, and image of button
+	button.text = "Main Menu"
+	## Set the font type for the Button
+	button.add_theme_font_override("font", font)
+	button.add_theme_font_size_override("font_size", 150)
+	
+	#Load button texture
+	var button_texture = StyleBoxTexture.new()
+	var texture = preload("res://assets/images/wood_button_normal.png")
+	
+	# Adjust the content margins of the style box
+	button_texture.content_margin_left = 350  # Adjust left margin
+	button_texture.content_margin_top = 350   # Adjust top margin
+	button_texture.content_margin_right = 350  # Adjust right margin
+	button_texture.content_margin_bottom = 350  # Adjust bottom margin
+
+	# Load the button_pressed texture
+	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
+
+	# Configure hovered state style box
+	var hover_stylebox = StyleBoxTexture.new()
+	hover_stylebox.texture = hover_texture
+	hover_stylebox.content_margin_left = 350
+	hover_stylebox.content_margin_top = 350
+	hover_stylebox.content_margin_right = 350
+	hover_stylebox.content_margin_bottom = 350
+	button.add_theme_stylebox_override("hover", hover_stylebox)
+
+	#Apply the texture to the button and stylebox
+	button_texture.texture = texture
+	button.add_theme_stylebox_override("normal", button_texture)
+	button.position = Vector2(0, -200)
+	
+	# Connect the button's pressed signal to the scene change function
+	button.connect("pressed", Callable(self, "on_button_pressed")) 
+	#Add button to the scene
+	get_tree().current_scene.add_child(button)
+ 
+	# Function to change scenes
+func on_button_pressed():
+	# Load the new scene
+	await get_tree().create_timer(2.0).timeout
+	#_ready()
+	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn")
+	get_tree().reload_current_scene()
 
 # This function is called to apply the transparency effect to the pieces for all players to see
 # Written by Peter Nguyen

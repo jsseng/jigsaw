@@ -3,7 +3,6 @@ extends Control
 # this menu is the start screen
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
 	# below is where the user anonymous login happens
 	# if the user doesn't need to log in, check their stored auth data
 	if not FireAuth.needs_login():		
@@ -17,6 +16,7 @@ func _ready():
 		
 	# this is where the images in the folder get put into the
 	# list PuzzleVar.images for reference
+	
 	load(PuzzleVar.path)
 	var dir = DirAccess.open(PuzzleVar.path)
 	if dir:
