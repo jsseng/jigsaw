@@ -4,6 +4,9 @@ extends Node2D
 
 class_name PuzzleData
 
+var open_first_time = true
+
+
 var row = 2
 var col = 2
 
