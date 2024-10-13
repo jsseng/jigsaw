@@ -93,43 +93,53 @@ func move(distance: Vector2):
 #	Example events include a key press within the area of the piece or
 #	a piece being clicked or even mouse movement
 func _on_area_2d_input_event(viewport, event, shape_idx):
-	
+	# get all nodes from puzzle pieces
 	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	
-	if not PuzzleVar.active_piece:
-		if Input.is_action_just_pressed("click") and selected == false:
-			
-			# The following loop is to bring all the pieces within the selected
-			# group to the foreground
-			for nodes in group:
-				if nodes.group_number == group_number:
-					nodes.bring_to_front()
+	# check if the event is a mouse button and see if it is pressed
+	if event is InputEventMouseButton and event.pressed:
+		# check if it was the left button pressed
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			# if no other puzzle piece is currently active
+			if not PuzzleVar.active_piece:
+				# if this piece is currently not selected
+				if selected == false:
+					# grab all pieces in the same group number
+					for nodes in group:
+						if nodes.group_number == group_number:
+							nodes.bring_to_front()
+					# set this piece as the active puzzle piece
+					PuzzleVar.active_piece = self
+					# mark as selected
+					selected = true
 					
-			PuzzleVar.active_piece = self
-			selected = true
-	else:
-		if Input.is_action_just_pressed("click") and selected == true:
-			selected = false
-			PuzzleVar.active_piece = 0
+			# if a piece is already selected
+			else:
+				if selected == true:
+					# deselect the current piece
+					selected = false
+					# clear active piece reference
+					PuzzleVar.active_piece = 0
 			
-			var num = group_number
-			var connection_found = false
+				var num = group_number
+				var connection_found = false
 			
-			# the following loop is where the actual match checking occurs
-			for nodes in group:
+				# the following loop is where the actual match checking occurs
+				for nodes in group:
 				
-				nodes.update_coordinates_for_self() # you only need to update the coordinates here to check
+					nodes.update_coordinates_for_self() # you only need to update the coordinates here to check
 				
 				# TODO: here check debug flag and then right the piece positions to the database
-				if PuzzleVar.debug:
+					if PuzzleVar.debug:
 					# write all piece positions in group to database here
-					print("write to database")
+						print("write to database")
 				
-				if nodes.group_number == num and connection_found == false:
-					connection_found = await nodes.check_connections(group)
+					if nodes.group_number == num and connection_found == false:
+						connection_found = await nodes.check_connections(group)
 				
 			# Set to original color from gray/transparent movement for all players, Peter Nguyen
 			rpc("remove_transparency")
+
+
 # this is where the actual movement of the puzzle piece is handled
 # when the mouse moves
 func _input(event):
@@ -194,7 +204,8 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 		# Pass the midpoint to show_image_on_snap() so the image appears at the connection
 		show_image_on_snap(midpoint)
 		
-		$AudioStreamPlayer.play()
+		#$AudioStreamPlayer.play()
+		play_sound()
 		
 		dist = calc_components(coord, matching)
 		
@@ -468,3 +479,13 @@ func reset_puzzle_state():
 	Node_association_complete = false
 	prev_position = Vector2()
 	velocity = Vector2()
+  
+func play_sound(): # Peter Nguyen
+	var snap_sound = preload("res://assets/sounds/ding.mp3")
+	var audio_player = AudioStreamPlayer.new()
+	audio_player.stream = snap_sound
+	add_child(audio_player)
+	audio_player.play()
+	# Manually queue_free after sound finishes
+	await audio_player.finished
+	audio_player.queue_free()
