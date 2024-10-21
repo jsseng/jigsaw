@@ -59,10 +59,9 @@ var unmute_button : Button
 # Figure out if user finished the puzzle
 #var finished = false
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Sprite2D/Area2D/CollisionShape2D.shape.extents = Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight)/2 #collision box size set here
+	#$Sprite2D/Area2D/CollisionShape2D.shape.extents = Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight)/2 #collision box size set here
 	PuzzleVar.active_piece = 0 # 0 is false, any other number is true
 	# piece ID is set here
 	ID = get_tree().get_nodes_in_group("puzzle_pieces").size()
@@ -346,6 +345,7 @@ func update_coordinates_for_self():
 	SCoord = global_position + Vector2(PuzzleVar.pieceWidth/2,PuzzleVar.pieceHeight)
 	ECoord = global_position + Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight/2)
 	WCoord = global_position + Vector2(0,PuzzleVar.pieceHeight/2)
+
 
 # this function associates the proper node to each side of the piece
 # based on the ID 
