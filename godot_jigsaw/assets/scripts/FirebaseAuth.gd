@@ -56,3 +56,41 @@ func _on_login_failed(code: String, message: String) -> void:
 func generate_id_from_string(input: String) -> int:
 	return hash(input)
 	
+	
+func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void:
+	# add puzzle to active puzzle or add user to currently active puzzle
+	var puzzleCollection: FirestoreCollection = Firebase.Firestore.collection("puzzles")
+	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
+	if (await puzzleCollection.get_doc(str(puzzleId)) == null):
+		# add doc here
+		puzzleCollection.add(str(puzzleId), {'complete': false, 'users': [FireAuth.get_user_id()], 'pieces': [], 'xDimension': GRID_WIDTH, 'yDimension': GRID_HEIGHT, 'size': GRID_HEIGHT*GRID_WIDTH})
+	else:
+		# get current doc and add new user
+		var puzzleDoc = await puzzleCollection.get_doc(str(puzzleId))
+		var userField = await puzzleDoc.document.get("users")
+		var usersArray = []
+		if userField and "arrayValue" in userField:
+			for value in userField["arrayValue"]["values"]:
+				if "stringValue" in value:
+					usersArray.append(value["stringValue"])
+		
+		var currentUser = FireAuth.get_user_id()
+		if currentUser not in usersArray:
+			usersArray.append(FireAuth.get_user_id())
+			puzzleDoc.add_or_update_field("users", usersArray)
+			puzzleCollection.update(puzzleDoc)
+	
+	# add to user active puzzle list
+	var userDoc = await FireAuth.get_user_puzzle_list(FireAuth.get_user_id())
+	var userActivePuzzleField = userDoc.document.get("activePuzzles")
+	var activePuzzleList = []
+	if userActivePuzzleField and "arrayValue" in userActivePuzzleField:
+			for value in userActivePuzzleField["arrayValue"]["values"]:
+				if "stringValue" in value:
+					activePuzzleList.append(value["stringValue"])
+				
+	if str(puzzleId) not in activePuzzleList:
+		activePuzzleList.append(str(puzzleId))
+		userDoc.add_or_update_field("activePuzzles", activePuzzleList)
+		userCollection.update(userDoc)
+	
