@@ -2,7 +2,7 @@ extends Control
 
 # this menu is the start screen
 # Called when the node enters the scene tree for the first time.
-func _ready():
+func _ready():	
 	# below is where the user anonymous login happens	
 	# if the user doesn't need to log in, check their stored auth data
 	if not FireAuth.needs_login():		
@@ -13,6 +13,7 @@ func _ready():
 		print("Making new account")
 		FireAuth.attempt_anonymous_login()
 		
+	
 		
 	# this is where the images in the folder get put into the
 	# list PuzzleVar.images for reference
@@ -36,6 +37,8 @@ func _ready():
 			print("An error occured trying to access the path")
 			
 		PuzzleVar.open_first_time = false
+	
+
 
 
 
@@ -64,6 +67,7 @@ func _on_logged_in() -> void:
 	pass
 
 func _on_select_puzzle_pressed():
+	await FireAuth.update_playing_time(FireAuth.get_user_id())
 	$AudioStreamPlayer.play() # doesn't work, switches scenes too fast
 	# switches to a new scene  that will ask you to
 	# actually select what image you want to solve

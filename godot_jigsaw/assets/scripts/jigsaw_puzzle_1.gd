@@ -100,4 +100,3 @@ func _input(event):
 			print("load pieces")
 			pass # load the puzzle pieces here from the database
 		
-			

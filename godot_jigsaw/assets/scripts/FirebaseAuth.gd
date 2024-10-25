@@ -20,7 +20,8 @@ func attempt_anonymous_login() -> void:
 
 # check if there's an existing auth session
 func check_auth_file() -> void:
-	Firebase.Auth.check_auth_file()
+	await Firebase.Auth.check_auth_file()
+	FireAuth.write_last_login_time(FireAuth.get_user_id())
 
 # check if login is needed
 func needs_login() -> bool:
@@ -43,10 +44,16 @@ func _on_signup_succeeded(auth_info: Dictionary) -> void:
 	
 	# add user to firebase
 	var collection: FirestoreCollection = Firebase.Firestore.collection("users")
-	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': "", "totalPlayingTime": 0})
+	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0})
 	print("Anonymous login succeeded. User ID: ", user_id)
-	
-
+		
+# write the current time to the db
+func write_last_login_time(user_id: String) -> void:
+	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
+	var userTimeDoc = await userCollection.get_doc(user_id)
+	userTimeDoc.add_or_update_field("lastLogin", Time.get_datetime_string_from_system())
+	userCollection.update(userTimeDoc)
+		
 # handle login failure
 func _on_login_failed(code: String, message: String) -> void:
 	login_failed.emit()
@@ -56,7 +63,15 @@ func _on_login_failed(code: String, message: String) -> void:
 func generate_id_from_string(input: String) -> int:
 	return hash(input)
 	
+func write_playing_time() -> void:
+	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
+	var userDoc = await userCollection.get_doc(FireAuth.get_user_id())
+	var currentUserTotalTime = int(userDoc.document.get("totalPlayingTime")["integerValue"])
+	var newTime = currentUserTotalTime + 1
+	userDoc.add_or_update_field("totalPlayingTime", newTime)
+	userCollection.update(userDoc)
 	
+# add active puzzle to firebase
 func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void:
 	# add puzzle to active puzzle or add user to currently active puzzle
 	var puzzleCollection: FirestoreCollection = Firebase.Firestore.collection("puzzles")
