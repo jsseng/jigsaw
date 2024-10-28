@@ -67,7 +67,6 @@ func _on_logged_in() -> void:
 	pass
 
 func _on_select_puzzle_pressed():
-	await FireAuth.update_playing_time(FireAuth.get_user_id())
 	$AudioStreamPlayer.play() # doesn't work, switches scenes too fast
 	# switches to a new scene  that will ask you to
 	# actually select what image you want to solve
