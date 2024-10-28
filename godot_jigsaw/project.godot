@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 PuzzleVar="*res://assets/scripts/puzzleData.gd"
-GameManager="*res://GameManager.gd"
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 FireAuth="*res://assets/scripts/FirebaseAuth.gd"
 GlobalTimer="*res://assets/scripts/Timer.gd"
