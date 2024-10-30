@@ -68,8 +68,7 @@ func _ready():
 			get_parent().call_deferred("add_child", piece)
 			
 	var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
-	FireAuth.add_active_puzzle(puzzleId, GRID_WIDTH, GRID_HEIGHT)
-	
+	FireAuth.add_active_puzzle(puzzleId, GRID_WIDTH, GRID_HEIGHT)	
 	
 	
 
