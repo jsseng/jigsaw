@@ -13,8 +13,7 @@ func _ready():
 		print("Making new account")
 		FireAuth.attempt_anonymous_login()
 		
-	
-		
+			
 	# this is where the images in the folder get put into the
 	# list PuzzleVar.images for reference
 	
