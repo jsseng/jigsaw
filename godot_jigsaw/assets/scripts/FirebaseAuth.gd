@@ -5,6 +5,7 @@ signal signup_succeeded
 signal login_failed
 
 var user_id = ""
+var currentPuzzle = ""
 
 # Firebase Data Model Below
 # https://lucid.app/lucidchart/af25e9e6-c77e-4969-81fa-34510e32dcd6/edit?viewport_loc=-1197%2C-1440%2C3604%2C2292%2C0_0&invitationId=inv_20e62aec-9604-4bed-b2af-4882babbe404
@@ -30,6 +31,9 @@ func needs_login() -> bool:
 # get current user id
 func get_user_id() -> String:
 	return Firebase.Auth.get_user_id()
+	
+func get_current_puzzle() -> String:
+	return str(currentPuzzle)
 	
 # get current user puzzle list
 func get_user_puzzle_list(user_id: String) -> FirestoreDocument:
@@ -73,6 +77,8 @@ func write_playing_time() -> void:
 	
 # add active puzzle to firebase
 func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void:
+	currentPuzzle = puzzleId
+	print(get_current_puzzle())
 	# add puzzle to active puzzle or add user to currently active puzzle
 	var puzzleCollection: FirestoreCollection = Firebase.Firestore.collection("puzzles")
 	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
@@ -108,4 +114,9 @@ func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void
 		activePuzzleList.append(str(puzzleId))
 		userDoc.add_or_update_field("activePuzzles", activePuzzleList)
 		userCollection.update(userDoc)
+	
+
+		
+	
+	
 	
