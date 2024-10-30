@@ -78,7 +78,6 @@ func write_playing_time() -> void:
 # add active puzzle to firebase
 func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void:
 	currentPuzzle = puzzleId
-	print(get_current_puzzle())
 	# add puzzle to active puzzle or add user to currently active puzzle
 	var puzzleCollection: FirestoreCollection = Firebase.Firestore.collection("puzzles")
 	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
