@@ -247,6 +247,7 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 		
 		if (finished):
 			show_win_screen()
+			FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
 		
 	return connected
 

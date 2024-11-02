@@ -113,6 +113,38 @@ func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void
 		activePuzzleList.append(str(puzzleId))
 		userDoc.add_or_update_field("activePuzzles", activePuzzleList)
 		userCollection.update(userDoc)
+
+func remove_current_user_from_activePuzzle(puzzleID: String):
+	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
+	var puzzleCollection: FirestoreCollection = Firebase.Firestore.collection("puzzles")
+	
+	var userDoc = await userCollection.get_doc(FireAuth.get_user_id())
+	var puzzleDoc = await puzzleCollection.get_doc(puzzleID)
+	
+	# ideally when multiplayer works, doc should be deleted if one player completes
+	# which will eventually replace the code below
+	
+	# delete finished puzzle from current user active puzzle
+	var userActivePuzzleField = userDoc.document.get("activePuzzles")
+	var activePuzzleList = []
+	if userActivePuzzleField and "arrayValue" in userActivePuzzleField:
+		for value in userActivePuzzleField["arrayValue"]["values"]:
+				if "stringValue" in value and puzzleID != value["stringValue"]:
+					activePuzzleList.append(value["stringValue"])
+	
+	userDoc.add_or_update_field("activePuzzles", activePuzzleList)
+	userCollection.update(userDoc)
+	
+	# delete current user from current activePuzzle
+	var puzzleUserField = puzzleDoc.document.get("users")
+	var puzzleActiveUserList = []
+	if puzzleUserField and "arrayValue" in puzzleUserField:
+		for value in puzzleUserField["arrayValue"]["values"]:
+			if "stringValue" in value and FireAuth.get_user_id() != value["stringValue"]:
+				puzzleActiveUserList.append(value["stringValue"])
+	
+	puzzleDoc.add_or_update_field("users", puzzleActiveUserList)
+	puzzleCollection.update(puzzleDoc)
 	
 # add favorite puzzles to firebase
 func add_favorite_puzzle(puzzleId: String) -> void:
