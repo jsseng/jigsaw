@@ -48,7 +48,7 @@ func _on_signup_succeeded(auth_info: Dictionary) -> void:
 	
 	# add user to firebase
 	var collection: FirestoreCollection = Firebase.Firestore.collection("users")
-	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0})
+	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': []})
 	print("Anonymous login succeeded. User ID: ", user_id)
 		
 # write the current time to the db
@@ -89,7 +89,7 @@ func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void
 		var puzzleDoc = await puzzleCollection.get_doc(str(puzzleId))
 		var userField = await puzzleDoc.document.get("users")
 		var usersArray = []
-		if userField and "arrayValue" in userField:
+		if userField and "arrayValue" in userField and userField["arrayValue"]:
 			for value in userField["arrayValue"]["values"]:
 				if "stringValue" in value:
 					usersArray.append(value["stringValue"])
