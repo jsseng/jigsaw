@@ -114,8 +114,68 @@ func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void
 		userDoc.add_or_update_field("activePuzzles", activePuzzleList)
 		userCollection.update(userDoc)
 	
-
-		
+# add favorite puzzles to firebase
+func add_favorite_puzzle(puzzleId: String) -> void:
+	# grab the use collection and user doc
+	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
+	var userDoc = await userCollection.get_doc(FireAuth.get_user_id())
 	
+	# get the user's favorite puzzle field from FireBase
+	var favoritePuzzleField = userDoc.document.get("favoritePuzzles")
+	var favoritePuzzleList = []
 	
+	# check if the favoritePuzzles field is present
+	if favoritePuzzleField and "arrayValue" in favoritePuzzleField:
+		# go through each puzzle ID
+		for puzzle in favoritePuzzleField["arrayValue"]["values"]:
+			# each entry is a value from a hashmap
+			if "mapValue" in puzzle:
+				var puzzleData = puzzle["mapValue"]["fields"]
+				# add the values from the database to our list
+				favoritePuzzleList.append({
+					"puzzleId": puzzleData["puzzleId"]["stringValue"],
+					"timesPlayed": int(puzzleData["timesPlayed"]["integerValue"]),
+					# default rank is 0
+					"rank": int(puzzleData.get("rank", {"integerValue": "0"})["integerValue"])
+					})
+	
+	# flag to check if the puzzle is already in favorite puzzles
+	var puzzleFound = false
+	
+	# check if the current puzzle ID is already in our list
+	for puzzle in favoritePuzzleList:
+		if puzzle["puzzleId"] == puzzleId:
+			# increment the current puzzle "timesPLayed" value
+			puzzle["timesPlayed"] += 1
+			# set flag to true
+			puzzleFound = true
+			# get out of the loop
+			break
+	
+	# if this is a new puzzle to the user
+	if not puzzleFound:
+		# add current puzzle to our list
+		favoritePuzzleList.append({
+			"puzzleId": puzzleId,
+			"timesPlayed": 1,
+			"rank": 0
+			})
+			
+	# sorting by "timesPlayed" with BubbleSort
+	for i in range(favoritePuzzleList.size()):
+		for j in range(0, favoritePuzzleList.size() - i - 1):
+			if favoritePuzzleList[j]["timesPlayed"] < favoritePuzzleList[j + 1]["timesPlayed"]:
+				var temp = favoritePuzzleList[j]
+				favoritePuzzleList[j] = favoritePuzzleList[j + 1]
+				favoritePuzzleList[j + 1] = temp
+	
+	# assign ranks based on sorted order
+	for i in range(favoritePuzzleList.size()):
+		# ranking starts at 1 being the most played
+		favoritePuzzleList[i]["rank"] = i + 1 
+	
+	# update our list to firebase
+	userDoc.add_or_update_field("favoritePuzzles", favoritePuzzleList)
+	await userCollection.update(userDoc)
+	print("Updated favorite puzzles for user:", FireAuth.get_user_id(), "with puzzle:", puzzleId)
 	

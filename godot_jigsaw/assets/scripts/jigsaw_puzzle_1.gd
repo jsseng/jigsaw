@@ -69,6 +69,7 @@ func _ready():
 			
 	var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
 	FireAuth.add_active_puzzle(puzzleId, GRID_WIDTH, GRID_HEIGHT)
+	FireAuth.add_favorite_puzzle(str(puzzleId))
 	
 	
 	
