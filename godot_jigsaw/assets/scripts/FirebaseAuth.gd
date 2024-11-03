@@ -48,7 +48,7 @@ func _on_signup_succeeded(auth_info: Dictionary) -> void:
 	
 	# add user to firebase
 	var collection: FirestoreCollection = Firebase.Firestore.collection("users")
-	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': []})
+	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': ["temp"]})
 	print("Anonymous login succeeded. User ID: ", user_id)
 		
 # write the current time to the db
