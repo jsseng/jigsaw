@@ -5,6 +5,8 @@ extends Control
 func _ready():	
 	# below is where the user anonymous login happens	
 	# if the user doesn't need to log in, check their stored auth data
+	
+	
 	if not FireAuth.needs_login():		
 		FireAuth.check_auth_file()
 		print("\n Account Found: ", FireAuth.get_user_id())

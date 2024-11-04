@@ -45,10 +45,10 @@ func _on_signup_succeeded(auth_info: Dictionary) -> void:
 	user_id = auth_info.get("localid") # extract the user id
 	Firebase.Auth.save_auth(auth_info)  # save auth information locally
 	logged_in.emit()
-	
+	var favorite_puzzles = [{"puzzleId": "temp", "rank": 1, "timesPlayed": 0}]
 	# add user to firebase
 	var collection: FirestoreCollection = Firebase.Firestore.collection("users")
-	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': ["temp"]})
+	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': favorite_puzzles})
 	print("Anonymous login succeeded. User ID: ", user_id)
 		
 # write the current time to the db
@@ -209,5 +209,4 @@ func add_favorite_puzzle(puzzleId: String) -> void:
 	# update our list to firebase
 	userDoc.add_or_update_field("favoritePuzzles", favoritePuzzleList)
 	await userCollection.update(userDoc)
-	print("Updated favorite puzzles for user:", FireAuth.get_user_id(), "with puzzle:", puzzleId)
 	
