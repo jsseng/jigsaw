@@ -10,7 +10,7 @@ extends Control
 # you can emulate two games in godot connecting to each other
 
 #IP for connecting to AWS server changes every time it is ran
-#IP for AWS hosting: "0.0.0.0"
+#IP for dedicated AWS server: "0.0.0.0"
 
 #Change value upon exporting build
 @export var Address = "13.56.82.129"
