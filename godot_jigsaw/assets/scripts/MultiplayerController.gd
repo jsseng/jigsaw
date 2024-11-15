@@ -8,7 +8,12 @@ extends Control
 
 # the port is placeholder and the address is simply a local address so that
 # you can emulate two games in godot connecting to each other
-@export var Address = "127.0.0.1"
+
+#IP for connecting to AWS server changes every time it is ran
+#IP for AWS hosting: "0.0.0.0"
+
+#Change value upon exporting build
+@export var Address = "13.56.82.129"
 @export var port = 8910
 
 var peer
@@ -19,10 +24,9 @@ func _ready():
 	multiplayer.peer_disconnected.connect(peer_disconnected)
 	multiplayer.connected_to_server.connect(connected_to_server)
 	multiplayer.connection_failed.connect(connection_failed)
-	#if "--server" in OS.get_cmdline_args(): # if want to emulate a dedicated server using cmd line
-		#hostGame()
+	if "--server" in OS.get_cmdline_args(): # if want to emulate a dedicated server using cmd line
+		hostGame()
 	pass # Replace with function body.
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -41,11 +45,9 @@ func connected_to_server():
 	print("connected to Server")
 	SendPlayerInformation.rpc_id(1, multiplayer.get_unique_id())
 	
-
 # called only from clients
 func connection_failed():
 	print("connection failed")
-	
 	
 @rpc("any_peer")
 func SendPlayerInformation(id):
@@ -57,43 +59,34 @@ func SendPlayerInformation(id):
 		for i in GameManager.Players:
 			SendPlayerInformation.rpc(GameManager.Players[i].id,i)
 
-
 @rpc("any_peer", "call_local")
 func StartGame():
 	var scene = load("res://assets/scenes/jigsaw_puzzle_1.tscn").instantiate()
 	get_tree().root.add_child(scene)
 	self.hide()
 
-#func hostGame():
-	#peer = ENetMultiplayerPeer.new()
-	#var error = peer.create_server(port, 5) # five players for the jigsaw game, max could be 32
-	#if error != OK:
-		#print("cannot host:" + error)
-		#return
-	##compression needs to be the same across the board, so if change host compression, need to change join compression as well
-	#peer.get_host().compress(ENetConnection.COMPRESS_RANGE_CODER) #may replace with no compression
-	#
-	#multiplayer.set_multiplayer_peer(peer)
-	#print("Waiting for Players!")
-	#SendPlayerInformation(multiplayer.get_unique_id())
-
-
-func _on_host_button_down():
+func hostGame():
 	peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(port, 5) # five players for the jigsaw game, max could be 32
+	var error = peer.create_server(port, 2) # two players for the jigsaw game, max could be 32
 	if error != OK:
 		print("cannot host:" + error)
 		return
-	# compression needs to be the same across the board, so if change host compression, need to change join compression as well
-	peer.get_host().compress(ENetConnection.COMPRESS_RANGE_CODER)
-	
+	#compression needs to be the same across the board, so if change host compression, need to change join compression as well
+	peer.get_host().compress(ENetConnection.COMPRESS_RANGE_CODER) #may replace with no compression
 	multiplayer.set_multiplayer_peer(peer)
 	print("Waiting for Players!")
-	SendPlayerInformation(multiplayer.get_unique_id())
-	#hostGame()
-	#SendPlayerInformation(multiplayer.get_unique_id())
-	pass # Replace with function body.
 
+func _on_host_button_down():
+	#peer = ENetMultiplayerPeer.new()
+	#var error = peer.create_server(port, 2) # two players for the jigsaw game, max could be 32
+	#if error != OK:
+		#print("cannot host:" + str(error))
+		#return
+	## compression needs to be the same across the board, so if change host compression, need to change join compression as well
+	#peer.get_host().compress(ENetConnection.COMPRESS_RANGE_CODER)
+	hostGame()
+	SendPlayerInformation(multiplayer.get_unique_id())
+	pass # Replace with function body.
 
 func _on_join_button_down():
 	peer = ENetMultiplayerPeer.new()
@@ -101,11 +94,8 @@ func _on_join_button_down():
 	# this needs to match the compression of the host
 	peer.get_host().compress(ENetConnection.COMPRESS_RANGE_CODER) 
 	multiplayer.set_multiplayer_peer(peer)
-	
 	pass # Replace with function body.
-
 
 func _on_start_game_button_down():
 	StartGame.rpc() # call all people
-	
 	pass # Replace with function body.

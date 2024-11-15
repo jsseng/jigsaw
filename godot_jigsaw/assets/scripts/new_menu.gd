@@ -6,6 +6,8 @@ func _ready():
 	# below is where the user anonymous login happens	
 	# if the user doesn't need to log in, check their stored auth data
 	
+	if "--server" in OS.get_cmdline_args(): # if want to emulate a dedicated server using cmd line
+		get_tree().change_scene_to_file("res://assets/scenes/MultiplayerController.tscn")
 	
 	if not FireAuth.needs_login():		
 		FireAuth.check_auth_file()
