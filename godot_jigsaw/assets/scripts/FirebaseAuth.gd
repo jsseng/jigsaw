@@ -45,10 +45,10 @@ func _on_signup_succeeded(auth_info: Dictionary) -> void:
 	user_id = auth_info.get("localid") # extract the user id
 	Firebase.Auth.save_auth(auth_info)  # save auth information locally
 	logged_in.emit()
-	var favorite_puzzles = [{"puzzleId": "temp", "rank": 1, "timesPlayed": 0}]
+	
 	# add user to firebase
 	var collection: FirestoreCollection = Firebase.Firestore.collection("users")
-	var document = await collection.add(user_id, {'activePuzzles': ["temp"], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': favorite_puzzles})
+	var document = await collection.add(user_id, {'activePuzzles': [{"puzzleId": "0", "timeStarted": "0"}], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': ["temp"], 'completedPuzzles': ["temp"]})
 	print("Anonymous login succeeded. User ID: ", user_id)
 		
 # write the current time to the db
@@ -104,13 +104,24 @@ func add_active_puzzle(puzzleId: int, GRID_WIDTH: int, GRID_HEIGHT: int) -> void
 	var userDoc = await FireAuth.get_user_puzzle_list(FireAuth.get_user_id())
 	var userActivePuzzleField = userDoc.document.get("activePuzzles")
 	var activePuzzleList = []
+	var curPuzzleAddedFlag = 0
+	
+	# check if the activePuzzles field exists and has array values
 	if userActivePuzzleField and "arrayValue" in userActivePuzzleField:
-			for value in userActivePuzzleField["arrayValue"]["values"]:
-				if "stringValue" in value:
-					activePuzzleList.append(value["stringValue"])
+		for puzzle in userActivePuzzleField["arrayValue"]["values"]:
+			if "mapValue" in puzzle:
+				var puzzleData = puzzle["mapValue"]["fields"]
 				
-	if str(puzzleId) not in activePuzzleList:
-		activePuzzleList.append(str(puzzleId))
+				if puzzleData["puzzleId"]["stringValue"] == str(puzzleId):
+					curPuzzleAddedFlag = 1
+					
+				activePuzzleList.append({
+					"puzzleId": puzzleData["puzzleId"]["stringValue"],
+					"timeStarted": puzzleData["timeStarted"]["stringValue"]
+				})
+				
+	if not curPuzzleAddedFlag:
+		activePuzzleList.append({"puzzleId": str(puzzleId), "timeStarted": Time.get_datetime_string_from_system()})
 		userDoc.add_or_update_field("activePuzzles", activePuzzleList)
 		userCollection.update(userDoc)
 
@@ -127,13 +138,22 @@ func remove_current_user_from_activePuzzle(puzzleID: String):
 	# delete finished puzzle from current user active puzzle
 	var userActivePuzzleField = userDoc.document.get("activePuzzles")
 	var activePuzzleList = []
+	var completedPuzzleData = {}
 	if userActivePuzzleField and "arrayValue" in userActivePuzzleField:
-		for value in userActivePuzzleField["arrayValue"]["values"]:
-				if "stringValue" in value and puzzleID != value["stringValue"]:
-					activePuzzleList.append(value["stringValue"])
+		for puzzle in userActivePuzzleField["arrayValue"]["values"]:
+			if "mapValue" in puzzle:
+				var puzzleData = puzzle["mapValue"]["fields"]
+				if puzzleData["puzzleId"]["stringValue"] != puzzleID:
+					activePuzzleList.append({
+						"puzzleId": puzzleData["puzzleId"]["stringValue"],
+						"timeStarted": puzzleData["timeStarted"]["stringValue"]
+					})
+				else:
+					completedPuzzleData = puzzleData
+					
 	
 	userDoc.add_or_update_field("activePuzzles", activePuzzleList)
-	userCollection.update(userDoc)
+	await userCollection.update(userDoc)
 	
 	# delete current user from current activePuzzle
 	var puzzleUserField = puzzleDoc.document.get("users")
@@ -144,7 +164,35 @@ func remove_current_user_from_activePuzzle(puzzleID: String):
 				puzzleActiveUserList.append(value["stringValue"])
 	
 	puzzleDoc.add_or_update_field("users", puzzleActiveUserList)
-	puzzleCollection.update(puzzleDoc)
+	await puzzleCollection.update(puzzleDoc)
+	
+	# add to user completed puzzles
+	add_user_completed_puzzles(completedPuzzleData)
+	
+func add_user_completed_puzzles(completedPuzzle: Dictionary) -> void:
+	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
+	var userDoc = await userCollection.get_doc(FireAuth.get_user_id())
+
+	var userCompletedPuzzleField = userDoc.document.get("completedPuzzles")
+	var completedPuzzlesList = []
+	
+	for puzzle in userCompletedPuzzleField["arrayValue"]["values"]:
+			if "mapValue" in puzzle:
+				var puzzleData = puzzle["mapValue"]["fields"]
+				completedPuzzlesList.append({
+					"puzzleId": puzzleData["puzzleId"]["stringValue"],
+					"timeStarted": puzzleData["timeStarted"]["stringValue"],
+					"timeFinished": puzzleData["timeFinished"]["stringValue"]
+					})
+					
+	completedPuzzlesList.append({
+					"puzzleId": completedPuzzle["puzzleId"]["stringValue"],
+					"timeStarted": completedPuzzle["timeStarted"]["stringValue"],
+					"timeFinished": Time.get_datetime_string_from_system()
+					})
+					
+	userDoc.add_or_update_field("completedPuzzles", completedPuzzlesList)
+	userCollection.update(userDoc)
 	
 # add favorite puzzles to firebase
 func add_favorite_puzzle(puzzleId: String) -> void:
@@ -209,4 +257,5 @@ func add_favorite_puzzle(puzzleId: String) -> void:
 	# update our list to firebase
 	userDoc.add_or_update_field("favoritePuzzles", favoritePuzzleList)
 	await userCollection.update(userDoc)
+	print("Updated favorite puzzles for user:", FireAuth.get_user_id(), "with puzzle:", puzzleId)
 	
