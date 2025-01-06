@@ -15,7 +15,6 @@ func _ready():
 		print("Making new account")
 		FireAuth.attempt_anonymous_login()
 	
-	#Firebase.Auth.remove_auth()
 		
 			
 	# this is where the images in the folder get put into the
