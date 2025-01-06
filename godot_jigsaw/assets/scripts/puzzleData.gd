@@ -6,7 +6,6 @@ class_name PuzzleData
 
 var open_first_time = true
 
-
 var row = 2
 var col = 2
 
@@ -29,3 +28,8 @@ var pieceHeight
 
 # boolean value to trigger debug mode
 var debug = false
+
+var global_coordinates_list = {} #a dictionary of global coordinates for each piece
+var adjacent_pieces_list = {} #a dictionary of adjacent pieces for each piece
+var image_file_names = {} #a dictionary containing a mapping of selection numbers to image names
+var global_num_pieces = 0 #the number of pieces in the current puzzle

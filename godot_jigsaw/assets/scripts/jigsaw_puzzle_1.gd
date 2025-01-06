@@ -5,11 +5,6 @@ extends Node2D
 var GRID_WIDTH = PuzzleVar.col
 var GRID_HEIGHT = PuzzleVar.row
 
-var global_coordinates_list = {} #a dictionary of global coordinates for each piece
-var adjacent_pieces_list = {} #a dictionary of adjacent pieces for each piece
-var image_file_names = {}
-var global_num_pieces = 0
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 			
@@ -37,11 +32,11 @@ func _ready():
 	
 	parse_pieces_json()
 	parse_adjacent_json()
-	print (image_file_names)
+	print (PuzzleVar.image_file_names)
 	
 	# Iterate through and create puzzle pieces
-	print (global_num_pieces)
-	for x in range(global_num_pieces):
+	print (PuzzleVar)
+	for x in range(PuzzleVar.global_num_pieces):
 		# Create a new sprite for each cell
 		var piece = sprite_scene.instantiate()
 			
@@ -57,8 +52,15 @@ func _ready():
 		print ("full path:  " + piece_image_path)
 		piece_image_path = piece_image_path.split('.') # remove the trailing .jpg extension
 		piece_image_path = piece_image_path[0] + "/size-100/raster/" + str(x) + ".png" 
+		piece.ID = x # set the piece ID here
 		print ("piece_image_path: " + piece_image_path)
 		sprite.texture = load(piece_image_path)
+		
+		#set the collision box for the sprite
+		var collision_box = piece.get_node("Sprite2D/Area2D/CollisionShape2D")
+
+		#set the collision box to the bounding box of the sprite
+		collision_box.shape.extents = Vector2(sprite.texture.get_width() / 2, sprite.texture.get_height() / 2)
 			
 		var spawnarea = get_viewport_rect()
 
@@ -141,8 +143,10 @@ func _input(event):
 func parse_pieces_json():
 	print("Calling parse_pieces_json")
 	
+	PuzzleVar.image_file_names["3"] = "peacock"
+	
 	# Load the JSON file for the pieces.json
-	var json_path = "res://assets/puzzles/jigsawpuzzleimages/peacock/size-100/pieces.json"
+	var json_path = "res://assets/puzzles/jigsawpuzzleimages/" + PuzzleVar.image_file_names[str(PuzzleVar.choice)] + "/size-100/pieces.json"
 	var file = FileAccess.open(json_path, FileAccess.READ)
 
 	if file:
@@ -159,20 +163,18 @@ func parse_pieces_json():
 			print ("Number of pieces" + str(num_pieces))
 			for n in num_pieces:
 				#print (str(n) + ":   " + str(json_parser.data[str(n)]))
-				global_coordinates_list[str(n)] =  json_parser.data[str(n)]
+				PuzzleVar.global_coordinates_list[str(n)] =  json_parser.data[str(n)]
 			
 			#print (global_coordinates_list)
-			
-			image_file_names["3"] = "peacock"
 			
 func parse_adjacent_json():
 	print("Calling parse_adjacent_json")
 	
 	# Load the JSON file for the pieces.json
-	var json_path = "res://assets/puzzles/jigsawpuzzleimages/peacock/adjacent.json"
+	var json_path = "res://assets/puzzles/jigsawpuzzleimages/" + PuzzleVar.image_file_names[str(PuzzleVar.choice)] + "/adjacent.json"
 	var file = FileAccess.open(json_path, FileAccess.READ)
 
-	if file:
+	if file: #if the file was opened successfully
 		var json = file.get_as_text()
 		file.close()
 
@@ -183,10 +185,10 @@ func parse_adjacent_json():
 		if data == OK:
 			var temp_id = 0
 			var num_pieces = json_parser.data.size()
-			global_num_pieces = num_pieces
+			PuzzleVar.global_num_pieces = num_pieces
 			print ("Number of pieces" + str(num_pieces))
 			for n in num_pieces:
 				#print (str(n) + ":   " + str(json_parser.data[str(n)]))
-				adjacent_pieces_list[str(n)] =  json_parser.data[str(n)]
+				PuzzleVar.adjacent_pieces_list[str(n)] =  json_parser.data[str(n)]
 			
 			#print (adjacent_pieces_list)			

@@ -64,16 +64,23 @@ var unmute_button : Button
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Sprite2D/Area2D/CollisionShape2D.shape.extents = Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight)/2 #collision box size set here
+	#don't set the collision box to a grid
+	#$Sprite2D/Area2D/CollisionShape2D.shape.extents = Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight)/2 #collision box size set here
+	
 	PuzzleVar.active_piece = 0 # 0 is false, any other number is true
+	
 	# piece ID is set here
-	ID = get_tree().get_nodes_in_group("puzzle_pieces").size()
+	#ID = get_tree().get_nodes_in_group("puzzle_pieces").size() - 1
 	group_number = ID
 	#instantiate the associated ID matches with the function below
 	set_appropriate_node_id()
 	prev_position = position # this is to calculate velocity
 	update_coordinates_for_self() # initially update the coordinates
 	mute_sound()
+		
+	print (str(ID) + ":  " + str(PuzzleVar.adjacent_pieces_list[str(ID)]))
+	neighbor_list = 	PuzzleVar.adjacent_pieces_list[str(ID)]
+
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
