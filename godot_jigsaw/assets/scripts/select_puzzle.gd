@@ -1,7 +1,5 @@
 extends Control
 
-var piece_list = {}
-
 # this menu is used to select which puzzle the player wants to play
 
 # these are variables for changing PageIndicator which is used
@@ -142,8 +140,6 @@ func populate_grid():
 	# when populating the grid with 9 images
 	var index = (page_num-1) * grid.get_child_count()
 	
-	parse_pieces_json()
-	
 	# iterates through each child (button) of the grid and sets the buttons
 	# texture to the appropriate image
 	for i in grid.get_children():
@@ -159,31 +155,3 @@ func populate_grid():
 			# loaded in
 			index += 1
 			
-func parse_pieces_json():
-	print("Calling parse_pieces_json")
-	
-	var snap_points = {
-		"north": Vector2(),
-		"south": Vector2(),
-		"east": Vector2(),
-		"west": Vector2()
-	}
-	# Load the JSON file for the current piece
-	var json_path = "res://assets/puzzles/test1/size-100/pieces.json"
-	var file = FileAccess.open(json_path, FileAccess.READ)
-
-	if file:
-		var json = file.get_as_text()
-		file.close()
-
-		# Parse the JSON data
-		var json_parser = JSON.new()
-		var data = json_parser.parse(json)
-		print("starting reading pieces.json")
-		if data == OK:
-			var temp_id = 0
-			print (json_parser.data[str(temp_id)])
-		#	if json_parser.data["snap_points"]["north"].size() > 0:
-		#		snap_points["north"] = get_vector_difference(Vector2(json_parser.data["snap_points"]["north"][0]["x"], json_parser.data["snap_points"]["north"][0]["y"]), Vector2(json_parser.data["center_point"][0]["x"], json_parser.data["center_point"][0]["y"]))
-		#	if json_parser.data["snap_points"]["south"].size() > 0:
-		#		snap_points["south"] = get_vector_difference(Vector2(json_parser.data["snap_points"]["south"][0]["x"], json_parser.data["snap_points"]["south"][0]["y"]), Vector2(json_parser.data["center_point"][0]["x"], json_parser.data["center_point"][0]["y"]))

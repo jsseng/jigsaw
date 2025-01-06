@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://b7wkk54a07fd4"]
 
-[ext_resource type="Script" path="res://assets/scripts/Piece_2d.gd" id="1_g0ylo"]
+[ext_resource type="Script" uid="uid://bxaw51cjaem6" path="res://assets/scripts/Piece_2d.gd" id="1_g0ylo"]
 [ext_resource type="AudioStream" uid="uid://6nx6r171vxkd" path="res://assets/sounds/finger-snap-179180.mp3" id="2_8cxfp"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l3ee6"]
