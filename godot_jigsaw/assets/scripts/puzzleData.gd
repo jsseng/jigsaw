@@ -33,3 +33,4 @@ var global_coordinates_list = {} #a dictionary of global coordinates for each pi
 var adjacent_pieces_list = {} #a dictionary of adjacent pieces for each piece
 var image_file_names = {} #a dictionary containing a mapping of selection numbers to image names
 var global_num_pieces = 0 #the number of pieces in the current puzzle
+var ordered_pieces_array = []

@@ -78,7 +78,7 @@ func _ready():
 	update_coordinates_for_self() # initially update the coordinates
 	mute_sound()
 		
-	print (str(ID) + ":  " + str(PuzzleVar.adjacent_pieces_list[str(ID)]))
+	#print (str(ID) + ":  " + str(PuzzleVar.adjacent_pieces_list[str(ID)]))
 	neighbor_list = 	PuzzleVar.adjacent_pieces_list[str(ID)]
 
 	
@@ -102,11 +102,69 @@ func move(distance: Vector2):
 		if nodes.group_number == group_number:
 			nodes.global_position += distance
 
-
 #this is called whenever an event occurs within the area of the piece
 #	Example events include a key press within the area of the piece or
 #	a piece being clicked or even mouse movement
 func _on_area_2d_input_event(viewport, event, shape_idx):
+	# get all nodes from puzzle pieces
+	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+	# check if the event is a mouse button and see if it is pressed
+	if event is InputEventMouseButton and event.pressed:
+		# check if it was the left button pressed
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			# if no other puzzle piece is currently active
+			if not PuzzleVar.active_piece:
+				# if this piece is currently not selected
+				if selected == false:
+					# grab all pieces in the same group number
+					for piece in all_pieces:
+						if piece.group_number == group_number:
+							piece.bring_to_front()
+					# set this piece as the active puzzle piece
+					PuzzleVar.active_piece = self
+					# mark as selected
+					selected = true
+					
+			# if a piece is already selected
+			else:
+				if selected == true:
+					# deselect the current piece
+					selected = false
+					# clear active piece reference
+					PuzzleVar.active_piece = 0
+			
+				var num = group_number
+				print ("current group number: " + str(num))
+				var connection_found = false
+			
+				#run through each of the pieces that should be adjacent to the selected piece
+				for adjacent_piece in neighbor_list:
+					print (adjacent_piece)
+					var adjacent_node = PuzzleVar.ordered_pieces_array[int(adjacent_piece)]
+					print ("adjacent node:" + str(adjacent_node.ID))
+					check_connections(adjacent_node.ID)
+
+				# the following loop is where the actual match checking occurs
+				for piece in all_pieces:
+				
+					#piece.update_coordinates_for_self() # you only need to update the coordinates here to check
+				
+				# TODO: here check debug flag and then right the piece positions to the database
+					if PuzzleVar.debug:
+					# write all piece positions in group to database here
+						print("write to database")
+				
+					#if piece.group_number == num and connection_found == false:
+					#	connection_found = await piece.check_connections(all_pieces)
+				
+			# Set to original color from gray/transparent movement for all players, Peter Nguyen
+			rpc("remove_transparency")
+
+
+#this is called whenever an event occurs within the area of the piece
+#	Example events include a key press within the area of the piece or
+#	a piece being clicked or even mouse movement
+func _on_area_2d_input_event_old(viewport, event, shape_idx):
 	# get all nodes from puzzle pieces
 	var group = get_tree().get_nodes_in_group("puzzle_pieces")
 	# check if the event is a mouse button and see if it is pressed
@@ -167,10 +225,7 @@ func _input(event):
 		# move is called as an rpc function so that both the host and client
 		# in a multiplayer game can see the movement
 		move.rpc(distance)
-
-		#JS
-		#for nodes in group:
-		#	print (nodes.ID)
+		
 
 # this is a basic function to check if a side can snap to another side of a
 # puzzle piece
@@ -226,7 +281,6 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 		
 		dist = calc_components(coord, matching)
 		
-		
 		# here is the code to decide which group to move
 		# this code will have it so that the smaller group will always
 		# move to the larger group to snap and connect
@@ -279,10 +333,24 @@ func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group
 			nodes.set_global_position(nodes.get_global_position() - distance)
 			nodes.group_number = new_group_number
 
+func check_connections(adjacent_piece_ID: int) -> bool:
+	# this if statement below is so that the piece stops moving so that the
+	# position remains constant when it checks for an available connection
+	if velocity != Vector2(0,0):
+		await get_tree().create_timer(.05).timeout
+		
+	#get bounding box for current piece
+	var current_bounding_box = PuzzleVar.global_coordinates_list[str(ID)]
+	
+	#get bounding board for adjacent piece
+	#var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
+	var adjacent_bounding_box = PuzzleVar.global_coordinates_list[str(adjacent_piece_ID)]
+	
+	return false
 
 # this function checks each of the four sides of the piece to determine
 # if there is a connection that can be made to another piece
-func check_connections(group: Array) -> bool:
+func check_connections_old(group: Array) -> bool:
 	# this if statement below is so that the piece stops moving so that the
 	# position remains constant when it checks for an available connection
 	if velocity != Vector2(0,0):

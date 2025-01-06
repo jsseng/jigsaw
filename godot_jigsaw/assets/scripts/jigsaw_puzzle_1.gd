@@ -42,6 +42,7 @@ func _ready():
 			
 		# add the piece to the group puzzle_pieces so that connection logic can work
 		piece.add_to_group("puzzle_pieces")
+		PuzzleVar.ordered_pieces_array.append(piece)
 		
 		#sets the texture of the sprite to the image
 		var sprite = piece.get_node("Sprite2D")
@@ -49,11 +50,11 @@ func _ready():
 		# Set the texture rect for the sprite
 		# Load the image
 		var piece_image_path = PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]
-		print ("full path:  " + piece_image_path)
+		#print ("full path:  " + piece_image_path)
 		piece_image_path = piece_image_path.split('.') # remove the trailing .jpg extension
 		piece_image_path = piece_image_path[0] + "/size-100/raster/" + str(x) + ".png" 
 		piece.ID = x # set the piece ID here
-		print ("piece_image_path: " + piece_image_path)
+		#print ("piece_image_path: " + piece_image_path)
 		sprite.texture = load(piece_image_path)
 		
 		#set the collision box for the sprite
