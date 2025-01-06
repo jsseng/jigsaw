@@ -34,7 +34,6 @@ var WNode
 #	other pieces for matching
 var Node_association_complete = false
 
-
 # distance that pieces will snap together within
 var snap_distance = 75
 
