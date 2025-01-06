@@ -3,6 +3,9 @@ extends Node2D
 # this scene is each individual puzzle piece that can snap together to form
 # the jigsaw
 
+# neighbor list
+var neighbor_list = {} # This is the list of neighboring IDs for a piece.
+
 # these are the (x,y) coords of the midpoints of the four sides of the piece
 var NCoord: Vector2 # midpoint of the top side
 var SCoord: Vector2 # midpoint of the bottom side
@@ -158,6 +161,9 @@ func _input(event):
 		# in a multiplayer game can see the movement
 		move.rpc(distance)
 
+		#JS
+		#for nodes in group:
+		#	print (nodes.ID)
 
 # this is a basic function to check if a side can snap to another side of a
 # puzzle piece
