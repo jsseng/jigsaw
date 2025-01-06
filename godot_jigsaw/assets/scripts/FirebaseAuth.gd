@@ -257,5 +257,4 @@ func add_favorite_puzzle(puzzleId: String) -> void:
 	# update our list to firebase
 	userDoc.add_or_update_field("favoritePuzzles", favoritePuzzleList)
 	await userCollection.update(userDoc)
-	print("Updated favorite puzzles for user:", FireAuth.get_user_id(), "with puzzle:", puzzleId)
 	
