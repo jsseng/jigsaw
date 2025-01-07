@@ -32,6 +32,7 @@ func _ready():
 	
 	parse_pieces_json()
 	parse_adjacent_json()
+	build_grid()
 	#print (PuzzleVar.image_file_names)
 	
 	# Iterate through and create puzzle pieces
@@ -155,3 +156,68 @@ func parse_adjacent_json():
 			print ("Number of pieces" + str(num_pieces))
 			for n in num_pieces: # for each piece, add the adjacent pieces to the list
 				PuzzleVar.adjacent_pieces_list[str(n)] =  json_parser.data[str(n)]
+
+# The purpose of this function is to build a grid of the puzzle piece numbers
+func build_grid(): 
+	var grid = {}
+	var midpoints = []
+	var final_grid = []
+
+	#create an entry for each puzzle piece
+	for x in range(PuzzleVar.global_num_pieces):
+		grid[x] = [x]
+		
+	# compute the midpoint of all pieces
+	for x in range(PuzzleVar.global_num_pieces):
+		#compute the midpont of each piece
+		var node_bounding_box = PuzzleVar.global_coordinates_list[str(x)]
+		var midpoint = Vector2((node_bounding_box[2]+node_bounding_box[0])/2, (node_bounding_box[3]+node_bounding_box[1])/2)
+		midpoints.append(midpoint) # append the midpoint of each piece
+
+	var row_join_counter = 1
+	while row_join_counter != 0:
+		row_join_counter = 0
+		
+		for x in range(PuzzleVar.global_num_pieces): # run through all the piece groups
+			var cur_pieces_list = grid[x]
+			
+			if cur_pieces_list.size() > 0:
+				var adjacent_list = PuzzleVar.adjacent_pieces_list[str(cur_pieces_list[-1])] #get the adjacent list of the rightmost piece
+
+				var current_midpoint = midpoints[int(cur_pieces_list[-1])] # get the midpoint of the rightmost piece
+				
+				for a in adjacent_list:
+					#compute the difference in midpoint
+					#print (a)
+					#print("angle: " + str(current_midpoint.angle_to_point(midpoints[int(a)])))
+					var angle = current_midpoint.angle_to_point(midpoints[int(a)])
+					
+					#get adjacent bounding box
+					var node_bounding_box = PuzzleVar.global_coordinates_list[str(cur_pieces_list[-1])]
+					
+					if midpoints[int(a)][0] > node_bounding_box[2]: # adjacent is to the right
+						if grid[int(a)].size() > 0:
+							var temp_list = cur_pieces_list
+							temp_list += grid[int(a)]
+							grid[x] = temp_list
+							grid[int(a)] = [] # remove entries from this piece
+							row_join_counter += 1
+			
+	# print rows
+	for x in range(PuzzleVar.global_num_pieces):
+		if (grid[x]).size() > 0:
+			final_grid.append(grid[x])
+			#print (grid[x])
+			#if 251 in grid[x]:
+				#print ("---found upper left corner---")
+			#if 167 in grid[x]:
+				#print ("---found lower left corner---")
+			#if 895 in grid[x]:
+				#print ("---missing piece---")
+				
+	#TODO: need to sort the rows correctly
+	
+	# print the final grid
+	for x in range(final_grid.size()):
+		print (final_grid[x])
+	

@@ -101,7 +101,7 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				#print ("current group number: " + str(num))
 				var connection_found = false
 			
-				for node in all_pieces:
+				for node in all_pieces: 
 					if node.group_number == group_number:
 						var n_list = node.neighbor_list
 						#run through each of the pieces that should be adjacent to the selected piece
@@ -112,8 +112,6 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 							#print ("adjacent node:" + str(adjacent_node.ID))
 							if await check_connections(adjacent_node.ID) == true:
 								run_delay = true # run a delay afterward if there was a connection found
-
-				
 				
 				# the following loop is where the actual match checking occurs
 				for piece in all_pieces:
