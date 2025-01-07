@@ -47,6 +47,8 @@ func _ready():
 		#sets the texture of the sprite to the image
 		var sprite = piece.get_node("Sprite2D")
 		
+		sprite.centered = false
+		
 		# Set the texture rect for the sprite
 		# Load the image
 		var piece_image_path = PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]

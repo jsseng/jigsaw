@@ -313,7 +313,7 @@ func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group
 			# that it looks like it is connecting, this is also where
 			# the proper group number is associated with the piece so that it
 			# moves in tandem with the other joined pieces
-			nodes.set_global_position(nodes.get_global_position() - distance)
+			nodes.set_global_position(nodes.get_global_position() + distance)
 			nodes.group_number = new_group_number
 
 func check_connections(adjacent_piece_ID: int) -> bool:
@@ -326,7 +326,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	var current_bounding_box = PuzzleVar.global_coordinates_list[str(ID)]
 	var current_midpoint = Vector2((current_bounding_box[2] + current_bounding_box[0]) / 2, 
 	(current_bounding_box[3] + current_bounding_box[1]) / 2)
-	var current_global_position = get_global_position()
+	var current_global_position = self.global_position
 	
 	#get bounding board for adjacent piece
 	#var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
@@ -334,7 +334,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	var adjacent_midpoint = Vector2((adjacent_bounding_box[2] + adjacent_bounding_box[0]) / 2, 
 	(adjacent_bounding_box[3] + adjacent_bounding_box[1]) / 2)
 	var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
-	var adjacent_global_position = adjacent_node.get_global_position()
+	var adjacent_global_position = adjacent_node.global_position
 	
 	#print (current_midpoint)
 	#print (adjacent_midpoint)
@@ -356,7 +356,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	#compute the difference in the relative position between reference and actual bounding boxes
 	var snap_distance = calc_distance(ref_relative_position,current_relative_position)
 			
-	var snap_threshold = 100
+	var snap_threshold = 20
 	
 	if slope < 2 and slope > -2: #if the midpoints are on the same Y value
 		if current_midpoint[0] > adjacent_midpoint[0]: #if the current piece is to the right
@@ -364,6 +364,9 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 				print ("right to left snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
 				print("current_ref_upper_left: " + str(current_ref_upper_left))
 				print("adjacent_ref_upper_left: " + str(adjacent_ref_upper_left))
+				print ("current global position: " + str(current_global_position))
+				print ("adjacent global position: " + str(adjacent_global_position))
+				print ("current sprite rect: " + str($Sprite2D/Area2D/CollisionShape2D.shape.extents * 2))
 				print("snap_distance: " + str(snap_distance))
 				snap_and_connect('w', adjacent_piece_ID)
 				#print ("snap_distance: " + str(snap_distance))
@@ -374,6 +377,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 		if current_midpoint[1] > adjacent_midpoint[1]: #if the current piece is below
 			if (snap_distance < snap_threshold):
 				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
+				snap_and_connect('w', adjacent_piece_ID)
 		else: #if the current piece is above
 			if (snap_distance < snap_threshold):
 				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
