@@ -38,7 +38,7 @@ var WNode
 var Node_association_complete = false
 
 # distance that pieces will snap together within
-var snap_distance = 75
+var snap_threshold = 25
 
 var ID: int # The actual ID of the current puzzle piece
 
@@ -102,9 +102,9 @@ func _process(delta):
 @rpc("any_peer", "call_local")
 func move(distance: Vector2):
 	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	for nodes in group:
-		if nodes.group_number == group_number:
-			nodes.global_position += distance
+	for node in group:
+		if node.group_number == group_number:
+			node.global_position += distance
 
 #this is called whenever an event occurs within the area of the piece
 #	Example events include a key press within the area of the piece or
@@ -254,13 +254,6 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 	
 	connected = true
 	
-	# Calculate the midpoint between the two connecting sides
-	var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
-	# Pass the midpoint to show_image_on_snap() so the green checkmark appears
-	show_image_on_snap(green_check_midpoint)
-	
-	#play_sound()
-	
 	#var dist = calc_components(current_global_pos, adjacent_global_pos)
 	#calculate the amount to move the current piece to snap
 	var ref_upper_left_diff = Vector2(current_ref_coord[0]-adjacent_ref_coord[0], current_ref_coord[1]-adjacent_ref_coord[1])
@@ -278,6 +271,13 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 	var current_left_diff = Vector2(adjusted_current_upper_left - adjusted_adjacent_upper_left)
 	var dist = current_left_diff - ref_upper_left_diff
 	print ("dist: " + str(dist))
+	
+	if dist[0] != 0.0:
+		# Calculate the midpoint between the two connecting sides
+		var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
+		# Pass the midpoint to show_image_on_snap() so the green checkmark appears
+		show_image_on_snap(green_check_midpoint)
+		play_sound()
 	
 	# here is the code to decide which group to move
 	# this code will have it so that the smaller group will always
@@ -321,15 +321,23 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 @rpc("any_peer", "call_local")
 func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group_number: int):
 	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	for nodes in group:
+	var show_check_mark = false
+	for node in group:
 		
-		if nodes.group_number == prev_group_number:
+		if node.group_number == prev_group_number:
 			# this is where the piece is actually moved so
 			# that it looks like it is connecting, this is also where
 			# the proper group number is associated with the piece so that it
 			# moves in tandem with the other joined pieces
-			nodes.set_global_position(nodes.get_global_position() + distance)
-			nodes.group_number = new_group_number
+			node.set_global_position(node.get_global_position() + distance)
+			node.group_number = new_group_number
+			show_check_mark = true
+			
+	#if show_check_mark == true:
+		## Calculate the midpoint between the two connecting sides
+		#var green_check_midpoint = self.get_global_position()
+		## Pass the midpoint to show_image_on_snap() so the green checkmark appears
+		#show_image_on_snap(green_check_midpoint)
 
 func check_connections(adjacent_piece_ID: int) -> bool:
 	# this if statement below is so that the piece stops moving so that the
@@ -404,6 +412,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 		else: #if the current piece is to the left
 			if (snap_distance < snap_threshold):
 				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
+				snap_and_connect('w', adjacent_piece_ID)
 	else: #if the midpoints are on the same X value
 		if current_ref_midpoint[1] > adjacent_ref_midpoint[1]: #if the current piece is below
 			if (snap_distance < snap_threshold):
@@ -412,6 +421,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 		else: #if the current piece is above
 			if (snap_distance < snap_threshold):
 				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
+				snap_and_connect('w', adjacent_piece_ID)
 			
 	return false
 
