@@ -146,6 +146,8 @@ func _input(event):
 			print("load pieces")
 			pass # load the puzzle pieces here from the database
 		
+# This function parses pieces.json which contains the bounding boxes around each piece.  The
+# bounding box coordinates are given as pixel coordinates in the global image.
 func parse_pieces_json():
 	print("Calling parse_pieces_json")
 	
@@ -163,17 +165,17 @@ func parse_pieces_json():
 		# Parse the JSON data
 		var json_parser = JSON.new()
 		var data = json_parser.parse(json)
-		print("starting reading pieces.json")
-		if data == OK:
+		
+		if data == OK: # if the data is valid, go ahead and parse
 			var temp_id = 0
 			var num_pieces = json_parser.data.size()
 			print ("Number of pieces" + str(num_pieces))
-			for n in num_pieces:
-				#print (str(n) + ":   " + str(json_parser.data[str(n)]))
+			
+			for n in num_pieces: # for each piece, add it to the global coordinates list
 				PuzzleVar.global_coordinates_list[str(n)] =  json_parser.data[str(n)]
 			
-			#print (global_coordinates_list)
-			
+# This function parses adjacent.json which contains information about which pieces are 
+# adjacent to a given piece
 func parse_adjacent_json():
 	print("Calling parse_adjacent_json")
 	
@@ -194,8 +196,5 @@ func parse_adjacent_json():
 			var num_pieces = json_parser.data.size()
 			PuzzleVar.global_num_pieces = num_pieces
 			print ("Number of pieces" + str(num_pieces))
-			for n in num_pieces:
-				#print (str(n) + ":   " + str(json_parser.data[str(n)]))
+			for n in num_pieces: # for each piece, add the adjacent pieces to the list
 				PuzzleVar.adjacent_pieces_list[str(n)] =  json_parser.data[str(n)]
-			
-			#print (adjacent_pieces_list)			

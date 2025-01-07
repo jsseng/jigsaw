@@ -6,37 +6,6 @@ extends Node2D
 # neighbor list
 var neighbor_list = {} # This is the list of neighboring IDs for a piece.
 
-# these are the (x,y) coords of the midpoints of the four sides of the piece
-var NCoord: Vector2 # midpoint of the top side
-var SCoord: Vector2 # midpoint of the bottom side
-var ECoord: Vector2 # midpoint of the right side
-var WCoord: Vector2 # midpoint of the left side
-
-# ID's that associate with the jigsaw puzzle piece
-# these are ID's that associate with each of the four sides of the piece
-# for example:
-#	the EID of a piece with an ID of 1 would be 2
-#	the WID of a piece with an ID of 2 would be 1
-#	the SID of a piece with an ID of 1 would be 9 assuming it is an 8x8 puzzle
-#	the NID of a piece with an ID of 4 would be 1 assuming it is a 3x3 puzzle
-#	the WID of a piece with an ID of 1 would be null as it is an edge piece
-var NID
-var SID
-var EID
-var WID
-
-# store the actual node that associates with the ID's listed above for matches
-#	if these are null then that means there is no matching piece for that side
-var NNode
-var SNode
-var ENode
-var WNode
-
-# Node_association_complete will become true when all the pieces have been
-#	initialized and the edges of each piece are associated properly with the
-#	other pieces for matching
-var Node_association_complete = false
-
 # distance that pieces will snap together within
 var snap_threshold = 25
 
@@ -65,37 +34,21 @@ var unmute_button : Button
 # Figure out if user finished the puzzle
 #var finished = false
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	#don't set the collision box to a grid
-	#$Sprite2D/Area2D/CollisionShape2D.shape.extents = Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight)/2 #collision box size set here
-	
 	PuzzleVar.active_piece = 0 # 0 is false, any other number is true
 	
-	# piece ID is set here
-	#ID = get_tree().get_nodes_in_group("puzzle_pieces").size() - 1
-	group_number = ID
-	#instantiate the associated ID matches with the function below
-	set_appropriate_node_id()
+	group_number = ID # group number is initially set to the piece ID
 	prev_position = position # this is to calculate velocity
-	update_coordinates_for_self() # initially update the coordinates
 	mute_sound()
 		
-	#print (str(ID) + ":  " + str(PuzzleVar.adjacent_pieces_list[str(ID)]))
-	neighbor_list = 	PuzzleVar.adjacent_pieces_list[str(ID)]
+	neighbor_list = 	PuzzleVar.adjacent_pieces_list[str(ID)] # set the list of adjacent pieces
 
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	velocity = (position - prev_position) / delta # velocity is calculated here
 	prev_position = position
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	# this if statement will only run once and is for when all the pieces
-	# are instantiated. When they are instantiated, they will be associated
-	# with each other so that they can snap to each other properly
-	if (Node_association_complete == false and group.size() == PuzzleVar.col * PuzzleVar.row):
-		set_appropriate_node()
 
 
 # this is the actual logic to move a piece when you select it
@@ -110,8 +63,6 @@ func move(distance: Vector2):
 #	Example events include a key press within the area of the piece or
 #	a piece being clicked or even mouse movement
 func _on_area_2d_input_event(viewport, event, shape_idx):
-	# get all nodes from puzzle pieces
-	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
 	# check if the event is a mouse button and see if it is pressed
 	if event is InputEventMouseButton and event.pressed:
 		# check if it was the left button pressed
@@ -120,6 +71,9 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 			if not PuzzleVar.active_piece:
 				# if this piece is currently not selected
 				if selected == false:
+					# get all nodes from puzzle pieces
+					var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+					
 					# grab all pieces in the same group number
 					for piece in all_pieces:
 						if piece.group_number == group_number:
@@ -148,12 +102,12 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					#print ("adjacent node:" + str(adjacent_node.ID))
 					check_connections(adjacent_node.ID)
 
+				# get all nodes from puzzle pieces
+				var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+				
 				# the following loop is where the actual match checking occurs
 				for piece in all_pieces:
-				
-					#piece.update_coordinates_for_self() # you only need to update the coordinates here to check
-				
-				# TODO: here check debug flag and then right the piece positions to the database
+					# TODO: here check debug flag and then write the piece positions to the database
 					if PuzzleVar.debug:
 					# write all piece positions in group to database here
 						print("write to database")
@@ -165,62 +119,11 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 			rpc("remove_transparency")
 
 
-#this is called whenever an event occurs within the area of the piece
-#	Example events include a key press within the area of the piece or
-#	a piece being clicked or even mouse movement
-func _on_area_2d_input_event_old(viewport, event, shape_idx):
-	# get all nodes from puzzle pieces
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	# check if the event is a mouse button and see if it is pressed
-	if event is InputEventMouseButton and event.pressed:
-		# check if it was the left button pressed
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			# if no other puzzle piece is currently active
-			if not PuzzleVar.active_piece:
-				# if this piece is currently not selected
-				if selected == false:
-					# grab all pieces in the same group number
-					for nodes in group:
-						if nodes.group_number == group_number:
-							nodes.bring_to_front()
-					# set this piece as the active puzzle piece
-					PuzzleVar.active_piece = self
-					# mark as selected
-					selected = true
-					
-			# if a piece is already selected
-			else:
-				if selected == true:
-					# deselect the current piece
-					selected = false
-					# clear active piece reference
-					PuzzleVar.active_piece = 0
-			
-				var num = group_number
-				var connection_found = false
-			
-				# the following loop is where the actual match checking occurs
-				for nodes in group:
-				
-					nodes.update_coordinates_for_self() # you only need to update the coordinates here to check
-				
-				# TODO: here check debug flag and then right the piece positions to the database
-					if PuzzleVar.debug:
-					# write all piece positions in group to database here
-						print("write to database")
-				
-					if nodes.group_number == num and connection_found == false:
-						connection_found = await nodes.check_connections(group)
-				
-			# Set to original color from gray/transparent movement for all players, Peter Nguyen
-			rpc("remove_transparency")
-
-
 # this is where the actual movement of the puzzle piece is handled
 # when the mouse moves
 func _input(event):
 	if event is InputEventMouseMotion and selected == true:
-		var group = get_tree().get_nodes_in_group("puzzle_pieces")
+		#var group = get_tree().get_nodes_in_group("puzzle_pieces")
 		
 		# Peter Nguyen adding transparent effect
 		rpc("apply_transparency")
@@ -272,12 +175,12 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 	var dist = current_left_diff - ref_upper_left_diff
 	print ("dist: " + str(dist))
 	
-	if dist[0] != 0.0:
+	if dist[0] > 0.5 or dist[0] < -0.5: # if there was a snapping movement, then play the sound and check
 		# Calculate the midpoint between the two connecting sides
 		var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
 		# Pass the midpoint to show_image_on_snap() so the green checkmark appears
 		show_image_on_snap(green_check_midpoint)
-		play_sound()
+		#play_sound()
 	
 	# here is the code to decide which group to move
 	# this code will have it so that the smaller group will always
@@ -285,10 +188,10 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 	var countprev = 0
 	var countcurr = 0
 	
-	for nodes in group:
-		if nodes.group_number == group_number:
+	for node in group:
+		if node.group_number == group_number:
 			countcurr += 1
-		elif nodes.group_number == prev_group_number:
+		elif node.group_number == prev_group_number:
 			countprev += 1
 			
 	#if countcurr < countprev:
@@ -304,8 +207,8 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 	
 	var finished = true
 	
-	for nodes in group:
-		if nodes.group_number != group_number:
+	for node in group:
+		if node.group_number != group_number:
 			finished = false
 			break
 	
@@ -332,12 +235,6 @@ func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group
 			node.set_global_position(node.get_global_position() + distance)
 			node.group_number = new_group_number
 			show_check_mark = true
-			
-	#if show_check_mark == true:
-		## Calculate the midpoint between the two connecting sides
-		#var green_check_midpoint = self.get_global_position()
-		## Pass the midpoint to show_image_on_snap() so the green checkmark appears
-		#show_image_on_snap(green_check_midpoint)
 
 func check_connections(adjacent_piece_ID: int) -> bool:
 	# this if statement below is so that the piece stops moving so that the
@@ -345,42 +242,39 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	if velocity != Vector2(0,0):
 		await get_tree().create_timer(.05).timeout
 		
-	#get reference bounding box for current piece
+	#get reference bounding box for current piece (in coordinate from the image)
 	var current_ref_bounding_box = PuzzleVar.global_coordinates_list[str(ID)]
 	var current_ref_midpoint = Vector2((current_ref_bounding_box[2] + current_ref_bounding_box[0]) / 2, 
 	(current_ref_bounding_box[3] + current_ref_bounding_box[1]) / 2)
 	
 	#compute dynamic positions
-	var current_global_position = self.global_position
-	var adjusted_current_left_x = current_global_position[0] - (piece_width/2)
-	var adjusted_current_left_y = current_global_position[1] - (piece_height/2)
+	var current_global_position = self.global_position # this is centered on the piece
+	var adjusted_current_left_x = current_global_position[0] - (piece_width/2) # adjust to upper left corner
+	var adjusted_current_left_y = current_global_position[1] - (piece_height/2) # adjust to upper left corner
 	var adjusted_current_upper_left = Vector2(adjusted_current_left_x, adjusted_current_left_y)
-	print ("adjusted current upper left: " + str(adjusted_current_upper_left))
+	#print ("adjusted current upper left: " + str(adjusted_current_upper_left))
 	
-	#get reference bounding box for adjacent piece
-	#var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
+	#get reference bounding box for adjacent piece (in coordinates from the image)
 	var adjacent_ref_bounding_box = PuzzleVar.global_coordinates_list[str(adjacent_piece_ID)]
 	var adjacent_ref_midpoint = Vector2((adjacent_ref_bounding_box[2] + adjacent_ref_bounding_box[0]) / 2, 
 	(adjacent_ref_bounding_box[3] + adjacent_ref_bounding_box[1]) / 2)
 	
 	#compute dynamic positions for adjacent piece
 	var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
-	var adjacent_global_position = adjacent_node.global_position
-	var adjusted_adjacent_left_x = adjacent_global_position[0] - (adjacent_node.piece_width/2)
-	var adjusted_adjacent_left_y = adjacent_global_position[1] - (adjacent_node.piece_height/2)
+	var adjacent_global_position = adjacent_node.global_position # these coordinates are centered on the piece
+	var adjusted_adjacent_left_x = adjacent_global_position[0] - (adjacent_node.piece_width/2) # adjust to the upper left corner
+	var adjusted_adjacent_left_y = adjacent_global_position[1] - (adjacent_node.piece_height/2) # adjust to the upper left corner
 	var adjusted_adjacent_upper_left = Vector2(adjusted_adjacent_left_x, adjusted_adjacent_left_y)
-	print ("adjusted adjacent upper left: " + str(adjusted_adjacent_upper_left))
-		
-	#print (current_midpoint)
-	#print (adjacent_midpoint)
+	#print ("adjusted adjacent upper left: " + str(adjusted_adjacent_upper_left))
 	
-	#compute slope of midpoints
+	#compute slope of midpoints - the slope of the midpoints is used to determine the direction of
+	#snapping to the adjacent piece (right,left,top,bottom) 
 	var slope = (adjacent_ref_midpoint[1] - current_ref_midpoint[1]) / (adjacent_ref_midpoint[0] - current_ref_midpoint[0])
 	#print (slope)
 	
-	#compute the relative position difference between the current piece and adjacent
+	#compute the relative position difference (of the center points) 
+	# between the current piece and adjacent
 	var current_relative_position = current_global_position - adjacent_global_position
-	#print ("current relative_position:" + str(current_relative_position))
 	
 	#compute the relative position difference between the matching pieces in the reference image
 	var current_ref_upper_left = Vector2(current_ref_bounding_box[0], current_ref_bounding_box[1])
@@ -389,12 +283,11 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	#print ("ref relative_position:" + str(ref_relative_position))
 	
 	#compute the difference in the relative position between reference and actual bounding boxes
-	#var snap_distance = calc_distance(ref_relative_position,current_relative_position)
+	#This snap distance is how much the piece needs to be moved to be in the correct location
 	var snap_distance =	 calc_distance(ref_relative_position, adjusted_current_upper_left-adjusted_adjacent_upper_left)
 	print("snap distance: " + str(snap_distance))
-			
-	var snap_threshold = 20
 	
+	# The following if-statement checks for snapping in 4 directions
 	if slope < 2 and slope > -2: #if the midpoints are on the same Y value
 		if current_ref_midpoint[0] > adjacent_ref_midpoint[0]: #if the current piece is to the right
 			if (snap_distance < snap_threshold):  #pieces are close, so connect
@@ -425,34 +318,6 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 			
 	return false
 
-# this function checks each of the four sides of the piece to determine
-# if there is a connection that can be made to another piece
-func check_connections_old(group: Array) -> bool:
-	# this if statement below is so that the piece stops moving so that the
-	# position remains constant when it checks for an available connection
-	if velocity != Vector2(0,0):
-		await get_tree().create_timer(.05).timeout
-	
-	var stop_checking = false
-	
-	#if NNode:
-		#stop_checking = snap_and_connect(group, "n")
-		#
-	#if SNode and stop_checking == false:
-		#stop_checking = snap_and_connect(group, "s")
-			#
-	#if ENode and stop_checking == false:
-		#stop_checking = snap_and_connect(group, "e")
-			#
-	#if WNode and stop_checking == false:
-		#stop_checking = snap_and_connect(group, "w")
-		
-	return stop_checking
-
-# Method to get the piece ID
-func get_piece_id() -> int:
-	return ID
-
 
 # this is the function that brings the piece to the front of the screen
 func bring_to_front():
@@ -471,54 +336,6 @@ func calc_distance(a: Vector2, b: Vector2) -> float:
 # distance as a vector
 func calc_components(a: Vector2, b: Vector2) -> Vector2:
 	return Vector2(b.x-a.x,b.y-a.y)
-	
-# this function sets the appropriate associated ID for each of the four sides
-# of a puzzle piece
-func set_appropriate_node_id():
-	NID = ID - PuzzleVar.row
-	if NID <= 0:
-		NID = null
-	
-	SID = ID + PuzzleVar.row
-	if SID > PuzzleVar.row * PuzzleVar.col:
-		SID = null
-	
-	EID = ID + 1
-	if EID > PuzzleVar.row * PuzzleVar.col:
-		EID = null
-	
-	WID = ID - 1
-	if WID <= 0:
-		WID = null
-
-
-# this function updates the coordinates of the midpoints of the four sides
-# of the puzzle piece so that they can be compared with other sides of another
-# puzzle piece
-func update_coordinates_for_self():
-	# coordinates are not updated until piece has stopped moving
-	if velocity != Vector2(0,0):
-		await get_tree().create_timer(.05).timeout
-	
-	NCoord = global_position + Vector2(PuzzleVar.pieceWidth/2,0)
-	SCoord = global_position + Vector2(PuzzleVar.pieceWidth/2,PuzzleVar.pieceHeight)
-	ECoord = global_position + Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight/2)
-	WCoord = global_position + Vector2(0,PuzzleVar.pieceHeight/2)
-
-# this function associates the proper node to each side of the piece
-# based on the ID 
-func set_appropriate_node():
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	Node_association_complete = true
-	if NID:
-		NNode = group[NID-1]
-	if SID:
-		SNode = group[SID-1]
-	if EID:
-		ENode = group[EID-1]
-	if WID:
-		WNode = group[WID-1]
-		
 
 func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	var popup = Sprite2D.new()
@@ -643,7 +460,7 @@ func reset_puzzle_state():
 	
 	# Reset global variables related to the puzzle
 	PuzzleVar.active_piece = 0
-	Node_association_complete = false
+	#Node_association_complete = false
 	prev_position = Vector2()
 	velocity = Vector2()
   
@@ -728,4 +545,4 @@ func on_mute_button_press():
 	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)  # Mute the audio
 		
 func on_unmute_button_press():
-	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), false)  # ute the audio
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), false)  # Mute the audio
