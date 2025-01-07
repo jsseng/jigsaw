@@ -47,7 +47,7 @@ func _ready():
 		#sets the texture of the sprite to the image
 		var sprite = piece.get_node("Sprite2D")
 		
-		sprite.centered = false
+		#sprite.centered = false
 		
 		# Set the texture rect for the sprite
 		# Load the image
@@ -58,6 +58,9 @@ func _ready():
 		piece.ID = x # set the piece ID here
 		#print ("piece_image_path: " + piece_image_path)
 		sprite.texture = load(piece_image_path)
+		
+		piece.piece_height = sprite.texture.get_height()
+		piece.piece_width = sprite.texture.get_width()
 		
 		#set the collision box for the sprite
 		var collision_box = piece.get_node("Sprite2D/Area2D/CollisionShape2D")

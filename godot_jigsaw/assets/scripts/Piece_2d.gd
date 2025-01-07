@@ -50,6 +50,10 @@ var selected = false
 #	all the pieces into groups so that they all move in tandem
 var group_number
 
+# height and width of this puzzle piece
+var piece_height
+var piece_width
+
 # to calculate velocity:
 var prev_position = Vector2()
 var velocity = Vector2()
@@ -251,16 +255,27 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 	connected = true
 	
 	# Calculate the midpoint between the two connecting sides
-	var midpoint = (current_global_pos + adjacent_global_pos) / 2
+	var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
 	# Pass the midpoint to show_image_on_snap() so the green checkmark appears
-	show_image_on_snap(midpoint)
+	show_image_on_snap(green_check_midpoint)
 	
 	#play_sound()
 	
 	#var dist = calc_components(current_global_pos, adjacent_global_pos)
 	#calculate the amount to move the current piece to snap
 	var ref_upper_left_diff = Vector2(current_ref_coord[0]-adjacent_ref_coord[0], current_ref_coord[1]-adjacent_ref_coord[1])
-	var current_left_diff = Vector2(current_global_pos - adjacent_global_pos)
+	
+	# compute the upper left position of the current piece
+	var adjusted_current_left_x = current_global_pos[0] - (piece_width/2)
+	var adjusted_current_left_y = current_global_pos[1] - (piece_height/2)
+	var adjusted_current_upper_left = Vector2(adjusted_current_left_x, adjusted_current_left_y)
+	
+	#compute the upper left position of the adjacent piece
+	var adjusted_adjacent_left_x = adjacent_global_pos[0] - (adjacent_node.piece_width/2)
+	var adjusted_adjacent_left_y = adjacent_global_pos[1] - (adjacent_node.piece_height/2)
+	var adjusted_adjacent_upper_left = Vector2(adjusted_adjacent_left_x, adjusted_adjacent_left_y)
+	
+	var current_left_diff = Vector2(adjusted_current_upper_left - adjusted_adjacent_upper_left)
 	var dist = current_left_diff - ref_upper_left_diff
 	print ("dist: " + str(dist))
 	
@@ -322,25 +337,37 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	if velocity != Vector2(0,0):
 		await get_tree().create_timer(.05).timeout
 		
-	#get bounding box for current piece
-	var current_bounding_box = PuzzleVar.global_coordinates_list[str(ID)]
-	var current_midpoint = Vector2((current_bounding_box[2] + current_bounding_box[0]) / 2, 
-	(current_bounding_box[3] + current_bounding_box[1]) / 2)
-	var current_global_position = self.global_position
+	#get reference bounding box for current piece
+	var current_ref_bounding_box = PuzzleVar.global_coordinates_list[str(ID)]
+	var current_ref_midpoint = Vector2((current_ref_bounding_box[2] + current_ref_bounding_box[0]) / 2, 
+	(current_ref_bounding_box[3] + current_ref_bounding_box[1]) / 2)
 	
-	#get bounding board for adjacent piece
+	#compute dynamic positions
+	var current_global_position = self.global_position
+	var adjusted_current_left_x = current_global_position[0] - (piece_width/2)
+	var adjusted_current_left_y = current_global_position[1] - (piece_height/2)
+	var adjusted_current_upper_left = Vector2(adjusted_current_left_x, adjusted_current_left_y)
+	print ("adjusted current upper left: " + str(adjusted_current_upper_left))
+	
+	#get reference bounding box for adjacent piece
 	#var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
-	var adjacent_bounding_box = PuzzleVar.global_coordinates_list[str(adjacent_piece_ID)]
-	var adjacent_midpoint = Vector2((adjacent_bounding_box[2] + adjacent_bounding_box[0]) / 2, 
-	(adjacent_bounding_box[3] + adjacent_bounding_box[1]) / 2)
+	var adjacent_ref_bounding_box = PuzzleVar.global_coordinates_list[str(adjacent_piece_ID)]
+	var adjacent_ref_midpoint = Vector2((adjacent_ref_bounding_box[2] + adjacent_ref_bounding_box[0]) / 2, 
+	(adjacent_ref_bounding_box[3] + adjacent_ref_bounding_box[1]) / 2)
+	
+	#compute dynamic positions for adjacent piece
 	var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
 	var adjacent_global_position = adjacent_node.global_position
-	
+	var adjusted_adjacent_left_x = adjacent_global_position[0] - (adjacent_node.piece_width/2)
+	var adjusted_adjacent_left_y = adjacent_global_position[1] - (adjacent_node.piece_height/2)
+	var adjusted_adjacent_upper_left = Vector2(adjusted_adjacent_left_x, adjusted_adjacent_left_y)
+	print ("adjusted adjacent upper left: " + str(adjusted_adjacent_upper_left))
+		
 	#print (current_midpoint)
 	#print (adjacent_midpoint)
 	
 	#compute slope of midpoints
-	var slope = (adjacent_midpoint[1] - current_midpoint[1]) / (adjacent_midpoint[0] - current_midpoint[0])
+	var slope = (adjacent_ref_midpoint[1] - current_ref_midpoint[1]) / (adjacent_ref_midpoint[0] - current_ref_midpoint[0])
 	#print (slope)
 	
 	#compute the relative position difference between the current piece and adjacent
@@ -348,33 +375,37 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	#print ("current relative_position:" + str(current_relative_position))
 	
 	#compute the relative position difference between the matching pieces in the reference image
-	var current_ref_upper_left = Vector2(current_bounding_box[0], current_bounding_box[1])
-	var adjacent_ref_upper_left = Vector2(adjacent_bounding_box[0], adjacent_bounding_box[1])
+	var current_ref_upper_left = Vector2(current_ref_bounding_box[0], current_ref_bounding_box[1])
+	var adjacent_ref_upper_left = Vector2(adjacent_ref_bounding_box[0], adjacent_ref_bounding_box[1])
 	var ref_relative_position = current_ref_upper_left - adjacent_ref_upper_left
 	#print ("ref relative_position:" + str(ref_relative_position))
 	
 	#compute the difference in the relative position between reference and actual bounding boxes
-	var snap_distance = calc_distance(ref_relative_position,current_relative_position)
+	#var snap_distance = calc_distance(ref_relative_position,current_relative_position)
+	var snap_distance =	 calc_distance(ref_relative_position, adjusted_current_upper_left-adjusted_adjacent_upper_left)
+	print("snap distance: " + str(snap_distance))
 			
 	var snap_threshold = 20
 	
 	if slope < 2 and slope > -2: #if the midpoints are on the same Y value
-		if current_midpoint[0] > adjacent_midpoint[0]: #if the current piece is to the right
+		if current_ref_midpoint[0] > adjacent_ref_midpoint[0]: #if the current piece is to the right
 			if (snap_distance < snap_threshold):  #pieces are close, so connect
+				print("----snapping----")
 				print ("right to left snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
 				print("current_ref_upper_left: " + str(current_ref_upper_left))
 				print("adjacent_ref_upper_left: " + str(adjacent_ref_upper_left))
-				print ("current global position: " + str(current_global_position))
-				print ("adjacent global position: " + str(adjacent_global_position))
+				print ("current global position: " + str(adjusted_current_upper_left))
+				print ("adjacent global position: " + str(adjusted_adjacent_upper_left))
 				print ("current sprite rect: " + str($Sprite2D/Area2D/CollisionShape2D.shape.extents * 2))
 				print("snap_distance: " + str(snap_distance))
 				snap_and_connect('w', adjacent_piece_ID)
+				print("----snapping----")
 				#print ("snap_distance: " + str(snap_distance))
 		else: #if the current piece is to the left
 			if (snap_distance < snap_threshold):
 				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
 	else: #if the midpoints are on the same X value
-		if current_midpoint[1] > adjacent_midpoint[1]: #if the current piece is below
+		if current_ref_midpoint[1] > adjacent_ref_midpoint[1]: #if the current piece is below
 			if (snap_distance < snap_threshold):
 				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect('w', adjacent_piece_ID)
