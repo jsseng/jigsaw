@@ -229,92 +229,75 @@ func _input(event):
 
 # this is a basic function to check if a side can snap to another side of a
 # puzzle piece
-func snap_and_connect(group: Array, direction: String) -> bool:
+func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
+	var group = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
 	var connected = false
-	var coord
-	var matching
 	var prev_group_number
 	
 	var new_group_number = group_number
 	
 	# Get the global position of the current node
 	var current_global_pos = self.get_global_position()
-	var matching_global_pos
+	var current_ref_coord = PuzzleVar.global_coordinates_list[str(ID)]
 	
-	if direction == "n":
-		coord = NCoord
-		matching = NNode.SCoord
-		prev_group_number = NNode.group_number
-		matching_global_pos = NNode.get_global_position()
-		
-	elif direction == "s":
-		coord = SCoord
-		matching = SNode.NCoord
-		prev_group_number = SNode.group_number
-		matching_global_pos = SNode.get_global_position()
-		
-	elif direction == "e":
-		coord = ECoord
-		matching = ENode.WCoord
-		prev_group_number = ENode.group_number
-		matching_global_pos = ENode.get_global_position()
-		
-	else: #if west
-		coord = WCoord
-		matching = WNode.ECoord
-		prev_group_number = WNode.group_number
-		matching_global_pos = WNode.get_global_position()
+	# get the global position of the adjacent node
+	var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_id]
+	var adjacent_global_pos = adjacent_node.get_global_position()
 	
-	# this if statement determines whether the appropriate
-	# sides are within the correct distance of each other to snap and connect
-	var dist = calc_distance(coord, matching)
-	if dist < snap_distance and dist != 0:
-		connected = true
-		
-		# Calculate the midpoint between the two connecting sides
-		var midpoint = (current_global_pos + matching_global_pos) / 2
-		# Pass the midpoint to show_image_on_snap() so the image appears at the connection
-		show_image_on_snap(midpoint)
-		
-		#$AudioStreamPlayer.play()
-		play_sound()
-		
-		dist = calc_components(coord, matching)
-		
-		# here is the code to decide which group to move
-		# this code will have it so that the smaller group will always
-		# move to the larger group to snap and connect
-		var countprev = 0
-		var countcurr = 0
-		
-		for nodes in group:
-			if nodes.group_number == group_number:
-				countcurr += 1
-			elif nodes.group_number == prev_group_number:
-				countprev += 1
-				
-		if countcurr < countprev:
-			new_group_number = prev_group_number
-			prev_group_number = group_number
-			dist *= -1
-		
-		# if it can actually snap and connect, the function below is called
-		# to physically move the piece and join it to the appropriate group
-		# this is an rpc call so that the movement and joining of the group
-		# is reflected for all players in a multiplayer game
-		move_pieces_to_connect.rpc(dist, prev_group_number, new_group_number)
-		
-		var finished = true
-		
-		for nodes in group:
-			if nodes.group_number != group_number:
-				finished = false
-				break
-		
-		if (finished):
-			show_win_screen()
-			FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
-		
+	var adjacent_ref_coord = PuzzleVar.global_coordinates_list[str(adjacent_piece_id)]
+	
+	prev_group_number = adjacent_node.group_number
+	
+	connected = true
+	
+	# Calculate the midpoint between the two connecting sides
+	var midpoint = (current_global_pos + adjacent_global_pos) / 2
+	# Pass the midpoint to show_image_on_snap() so the green checkmark appears
+	show_image_on_snap(midpoint)
+	
+	#play_sound()
+	
+	#var dist = calc_components(current_global_pos, adjacent_global_pos)
+	#calculate the amount to move the current piece to snap
+	var ref_upper_left_diff = Vector2(current_ref_coord[0]-adjacent_ref_coord[0], current_ref_coord[1]-adjacent_ref_coord[1])
+	var current_left_diff = Vector2(current_global_pos - adjacent_global_pos)
+	var dist = current_left_diff - ref_upper_left_diff
+	print ("dist: " + str(dist))
+	
+	# here is the code to decide which group to move
+	# this code will have it so that the smaller group will always
+	# move to the larger group to snap and connect
+	var countprev = 0
+	var countcurr = 0
+	
+	for nodes in group:
+		if nodes.group_number == group_number:
+			countcurr += 1
+		elif nodes.group_number == prev_group_number:
+			countprev += 1
+			
+	if countcurr < countprev:
+		new_group_number = prev_group_number
+		prev_group_number = group_number
+		dist *= -1
+	
+	# if it can actually snap and connect, the function below is called
+	# to physically move the piece and join it to the appropriate group
+	# this is an rpc call so that the movement and joining of the group
+	# is reflected for all players in a multiplayer game
+	move_pieces_to_connect.rpc(dist, prev_group_number, new_group_number)
+	
+	var finished = true
+	
+	for nodes in group:
+		if nodes.group_number != group_number:
+			finished = false
+			break
+	
+	if (finished):
+		show_win_screen()
+		FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
+	
 	return connected
 
 
@@ -378,6 +361,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 		if current_midpoint[0] > adjacent_midpoint[0]: #if the current piece is to the right
 			if (snap_distance < 20):  #pieces are close, so connect
 				print ("right to left snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
+				snap_and_connect('w', adjacent_piece_ID)
 				#print ("snap_distance: " + str(snap_distance))
 		else: #if the current piece is to the left
 			if (snap_distance < 20):
@@ -402,17 +386,17 @@ func check_connections_old(group: Array) -> bool:
 	
 	var stop_checking = false
 	
-	if NNode:
-		stop_checking = snap_and_connect(group, "n")
-		
-	if SNode and stop_checking == false:
-		stop_checking = snap_and_connect(group, "s")
-			
-	if ENode and stop_checking == false:
-		stop_checking = snap_and_connect(group, "e")
-			
-	if WNode and stop_checking == false:
-		stop_checking = snap_and_connect(group, "w")
+	#if NNode:
+		#stop_checking = snap_and_connect(group, "n")
+		#
+	#if SNode and stop_checking == false:
+		#stop_checking = snap_and_connect(group, "s")
+			#
+	#if ENode and stop_checking == false:
+		#stop_checking = snap_and_connect(group, "e")
+			#
+	#if WNode and stop_checking == false:
+		#stop_checking = snap_and_connect(group, "w")
 		
 	return stop_checking
 
