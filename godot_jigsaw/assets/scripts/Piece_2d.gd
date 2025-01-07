@@ -276,10 +276,10 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 		elif nodes.group_number == prev_group_number:
 			countprev += 1
 			
-	if countcurr < countprev:
-		new_group_number = prev_group_number
-		prev_group_number = group_number
-		dist *= -1
+	#if countcurr < countprev:
+		#new_group_number = prev_group_number
+		#prev_group_number = group_number
+		#dist *= -1
 	
 	# if it can actually snap and connect, the function below is called
 	# to physically move the piece and join it to the appropriate group
@@ -355,23 +355,27 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	
 	#compute the difference in the relative position between reference and actual bounding boxes
 	var snap_distance = calc_distance(ref_relative_position,current_relative_position)
-	#print(snap_distance)
 			
+	var snap_threshold = 100
+	
 	if slope < 2 and slope > -2: #if the midpoints are on the same Y value
 		if current_midpoint[0] > adjacent_midpoint[0]: #if the current piece is to the right
-			if (snap_distance < 20):  #pieces are close, so connect
+			if (snap_distance < snap_threshold):  #pieces are close, so connect
 				print ("right to left snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
+				print("current_ref_upper_left: " + str(current_ref_upper_left))
+				print("adjacent_ref_upper_left: " + str(adjacent_ref_upper_left))
+				print("snap_distance: " + str(snap_distance))
 				snap_and_connect('w', adjacent_piece_ID)
 				#print ("snap_distance: " + str(snap_distance))
 		else: #if the current piece is to the left
-			if (snap_distance < 20):
+			if (snap_distance < snap_threshold):
 				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
 	else: #if the midpoints are on the same X value
 		if current_midpoint[1] > adjacent_midpoint[1]: #if the current piece is below
-			if (snap_distance < 20):
+			if (snap_distance < snap_threshold):
 				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 		else: #if the current piece is above
-			if (snap_distance < 20):
+			if (snap_distance < snap_threshold):
 				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 			
 	return false
