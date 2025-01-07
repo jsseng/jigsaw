@@ -85,25 +85,35 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					
 			# if a piece is already selected
 			else:
+				var run_delay = false # if true, pause after so another mouse event is not detected
+				
 				if selected == true:
 					# deselect the current piece
 					selected = false
 					# clear active piece reference
 					PuzzleVar.active_piece = 0
+					
+					run_delay = true
 			
+				# get all nodes from puzzle pieces
+				var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
 				var num = group_number
 				#print ("current group number: " + str(num))
 				var connection_found = false
 			
-				#run through each of the pieces that should be adjacent to the selected piece
-				for adjacent_piece in neighbor_list:
-					#print (adjacent_piece)
-					var adjacent_node = PuzzleVar.ordered_pieces_array[int(adjacent_piece)]
-					#print ("adjacent node:" + str(adjacent_node.ID))
-					check_connections(adjacent_node.ID)
+				for node in all_pieces:
+					if node.group_number == group_number:
+						var n_list = node.neighbor_list
+						#run through each of the pieces that should be adjacent to the selected piece
+						#for adjacent_piece in neighbor_list:
+						for adjacent_piece in n_list:
+							#print (adjacent_piece)
+							var adjacent_node = PuzzleVar.ordered_pieces_array[int(adjacent_piece)]
+							#print ("adjacent node:" + str(adjacent_node.ID))
+							if await check_connections(adjacent_node.ID) == true:
+								run_delay = true # run a delay afterward if there was a connection found
 
-				# get all nodes from puzzle pieces
-				var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+				
 				
 				# the following loop is where the actual match checking occurs
 				for piece in all_pieces:
@@ -111,9 +121,6 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					if PuzzleVar.debug:
 					# write all piece positions in group to database here
 						print("write to database")
-				
-					#if piece.group_number == num and connection_found == false:
-					#	connection_found = await piece.check_connections(all_pieces)
 				
 			# Set to original color from gray/transparent movement for all players, Peter Nguyen
 			rpc("remove_transparency")
@@ -123,8 +130,6 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 # when the mouse moves
 func _input(event):
 	if event is InputEventMouseMotion and selected == true:
-		#var group = get_tree().get_nodes_in_group("puzzle_pieces")
-		
 		# Peter Nguyen adding transparent effect
 		rpc("apply_transparency")
 		
@@ -136,28 +141,24 @@ func _input(event):
 
 # this is a basic function to check if a side can snap to another side of a
 # puzzle piece
-func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
+func snap_and_connect(adjacent_piece_id: int):
 	var group = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
-	var connected = false
 	var prev_group_number
 	
 	var new_group_number = group_number
 	
 	# Get the global position of the current node
-	var current_global_pos = self.get_global_position()
+	var current_global_pos = self.get_global_position() # coordinates centered on the piece
 	var current_ref_coord = PuzzleVar.global_coordinates_list[str(ID)]
 	
 	# get the global position of the adjacent node
 	var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_id]
-	var adjacent_global_pos = adjacent_node.get_global_position()
+	var adjacent_global_pos = adjacent_node.get_global_position() # coordinates centered on the piece
 	
 	var adjacent_ref_coord = PuzzleVar.global_coordinates_list[str(adjacent_piece_id)]
 	
 	prev_group_number = adjacent_node.group_number
 	
-	connected = true
-	
-	#var dist = calc_components(current_global_pos, adjacent_global_pos)
 	#calculate the amount to move the current piece to snap
 	var ref_upper_left_diff = Vector2(current_ref_coord[0]-adjacent_ref_coord[0], current_ref_coord[1]-adjacent_ref_coord[1])
 	
@@ -175,12 +176,12 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 	var dist = current_left_diff - ref_upper_left_diff
 	print ("dist: " + str(dist))
 	
-	if dist[0] > 0.5 or dist[0] < -0.5: # if there was a snapping movement, then play the sound and check
+	if dist[0] > 0.001 or dist[0] < -0.001: # if there was a snapping movement, then play the sound and check
 		# Calculate the midpoint between the two connecting sides
 		var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
 		# Pass the midpoint to show_image_on_snap() so the green checkmark appears
 		show_image_on_snap(green_check_midpoint)
-		#play_sound()
+		play_sound()
 	
 	# here is the code to decide which group to move
 	# this code will have it so that the smaller group will always
@@ -199,10 +200,9 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 		#prev_group_number = group_number
 		#dist *= -1
 	
-	# if it can actually snap and connect, the function below is called
-	# to physically move the piece and join it to the appropriate group
-	# this is an rpc call so that the movement and joining of the group
-	# is reflected for all players in a multiplayer game
+	# The function below is called to physically move the piece and join it to the 
+	# appropriate group.  This is an rpc call so that the movement and joining of 
+	# the group is reflected for all players in a multiplayer game
 	move_pieces_to_connect.rpc(dist, prev_group_number, new_group_number)
 	
 	var finished = true
@@ -215,8 +215,6 @@ func snap_and_connect(direction: String, adjacent_piece_id: int) -> bool:
 	if (finished):
 		show_win_screen()
 		FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
-	
-	return connected
 
 
 # This is the function that actually moves the piece (in the current group)
@@ -237,6 +235,8 @@ func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group
 			show_check_mark = true
 
 func check_connections(adjacent_piece_ID: int) -> bool:
+	var snap_found = false
+	
 	# this if statement below is so that the piece stops moving so that the
 	# position remains constant when it checks for an available connection
 	if velocity != Vector2(0,0):
@@ -299,22 +299,29 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 				print ("adjacent global position: " + str(adjusted_adjacent_upper_left))
 				print ("current sprite rect: " + str($Sprite2D/Area2D/CollisionShape2D.shape.extents * 2))
 				print("snap_distance: " + str(snap_distance))
-				snap_and_connect('w', adjacent_piece_ID)
+				snap_and_connect(adjacent_piece_ID)
 				print("----snapping----")
+				snap_found = true
 				#print ("snap_distance: " + str(snap_distance))
 		else: #if the current piece is to the left
 			if (snap_distance < snap_threshold):
 				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
-				snap_and_connect('w', adjacent_piece_ID)
+				snap_and_connect(adjacent_piece_ID)
+				snap_found = true
 	else: #if the midpoints are on the same X value
 		if current_ref_midpoint[1] > adjacent_ref_midpoint[1]: #if the current piece is below
 			if (snap_distance < snap_threshold):
 				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
-				snap_and_connect('w', adjacent_piece_ID)
+				snap_and_connect(adjacent_piece_ID)
+				snap_found = true
 		else: #if the current piece is above
 			if (snap_distance < snap_threshold):
 				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
-				snap_and_connect('w', adjacent_piece_ID)
+				snap_and_connect(adjacent_piece_ID)
+				snap_found = true
+				
+	if snap_found == true:
+		return true
 			
 	return false
 

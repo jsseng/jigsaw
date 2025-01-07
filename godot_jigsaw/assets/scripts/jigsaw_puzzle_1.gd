@@ -32,10 +32,9 @@ func _ready():
 	
 	parse_pieces_json()
 	parse_adjacent_json()
-	print (PuzzleVar.image_file_names)
+	#print (PuzzleVar.image_file_names)
 	
 	# Iterate through and create puzzle pieces
-	print (PuzzleVar)
 	for x in range(PuzzleVar.global_num_pieces):
 		# Create a new sprite for each cell
 		var piece = sprite_scene.instantiate()
@@ -47,18 +46,16 @@ func _ready():
 		#sets the texture of the sprite to the image
 		var sprite = piece.get_node("Sprite2D")
 		
-		#sprite.centered = false
-		
 		# Set the texture rect for the sprite
-		# Load the image
 		var piece_image_path = PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]
 		#print ("full path:  " + piece_image_path)
 		piece_image_path = piece_image_path.split('.') # remove the trailing .jpg extension
 		piece_image_path = piece_image_path[0] + "/size-100/raster/" + str(x) + ".png" 
 		piece.ID = x # set the piece ID here
 		#print ("piece_image_path: " + piece_image_path)
-		sprite.texture = load(piece_image_path)
+		sprite.texture = load(piece_image_path) # load the image
 		
+		# set the height and width for each piece
 		piece.piece_height = sprite.texture.get_height()
 		piece.piece_width = sprite.texture.get_width()
 		
@@ -67,55 +64,15 @@ func _ready():
 
 		#set the collision box to the bounding box of the sprite
 		collision_box.shape.extents = Vector2(sprite.texture.get_width() / 2, sprite.texture.get_height() / 2)
-			
+	
 		var spawnarea = get_viewport_rect()
 
 		piece.position = Vector2(randi_range(50,spawnarea.size.x),randi_range(50,spawnarea.size.y))
-				
+		
 		# Add the sprite to the Grid node	
 		get_parent().call_deferred("add_child", piece)
 
-	if 1 == 0:
-		# Iterate through the grid to create the pieces
-		for y in range(GRID_WIDTH):
-			for x in range(GRID_HEIGHT):
-				# Create a new sprite for each cell
-				var piece = sprite_scene.instantiate()
-				# add the piece to the group puzzle_pieces so that connection logic
-				# can work
-				piece.add_to_group("puzzle_pieces")
-				
-				#sets the texture of the sprite to the image
-				var sprite = piece.get_node("Sprite2D")
-				sprite.texture = image_texture
-
-				# Needed for Rect 2
-				sprite.set_region_enabled(true)
-				
-				# Set the texture rect for the sprite
-				var rect = Rect2(x * cell_width, y * cell_height, cell_width, cell_height)
-				sprite.set_region_rect(rect)
-				# the above makes it so that it looks like a chunk of the image,
-				# like a piece of the puzzle
-				
-				# I currently set the collision of each piece within the scene
-				# Piece_2d using the global variables of PuzzleVar.pieceWidth and PuzzleVar.pieceHeight
-				# maybe someone can reconfigure the code using the code below as a template to set the
-				# collision box in here for more simplicity
-				
-				# Set the shape of the collision2D node for pieces
-				#var shape = RectangleShape2D.new() #will probably reuse this code
-				#shape.size = Vector2(cell_width, cell_height)
-				#collision.set_shape(shape)
-				
-				var spawnarea = get_viewport_rect()
-
-				piece.position = Vector2(randi_range(50,spawnarea.size.x),randi_range(50,spawnarea.size.y))
-				
-				# Add the sprite to the Grid node	
-				get_parent().call_deferred("add_child", piece)
-				
-		var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
+	var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
 
 	#FireAuth.add_active_puzzle(puzzleId, GRID_WIDTH, GRID_HEIGHT)
 	#FireAuth.add_favorite_puzzle(str(puzzleId))
