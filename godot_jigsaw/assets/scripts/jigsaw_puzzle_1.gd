@@ -145,6 +145,7 @@ func parse_pieces_json():
 	print("Calling parse_pieces_json")
 	
 	PuzzleVar.image_file_names["3"] = "peacock"
+	PuzzleVar.image_file_names["4"] = "peacock"
 	
 	# Load the JSON file for the pieces.json
 	var json_path = "res://assets/puzzles/jigsawpuzzleimages/" + PuzzleVar.image_file_names[str(PuzzleVar.choice)] + "/size-100/pieces.json"

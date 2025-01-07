@@ -134,14 +134,14 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					PuzzleVar.active_piece = 0
 			
 				var num = group_number
-				print ("current group number: " + str(num))
+				#print ("current group number: " + str(num))
 				var connection_found = false
 			
 				#run through each of the pieces that should be adjacent to the selected piece
 				for adjacent_piece in neighbor_list:
-					print (adjacent_piece)
+					#print (adjacent_piece)
 					var adjacent_node = PuzzleVar.ordered_pieces_array[int(adjacent_piece)]
-					print ("adjacent node:" + str(adjacent_node.ID))
+					#print ("adjacent node:" + str(adjacent_node.ID))
 					check_connections(adjacent_node.ID)
 
 				# the following loop is where the actual match checking occurs
@@ -341,11 +341,55 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 		
 	#get bounding box for current piece
 	var current_bounding_box = PuzzleVar.global_coordinates_list[str(ID)]
+	var current_midpoint = Vector2((current_bounding_box[2] + current_bounding_box[0]) / 2, 
+	(current_bounding_box[3] + current_bounding_box[1]) / 2)
+	var current_global_position = get_global_position()
 	
 	#get bounding board for adjacent piece
 	#var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
 	var adjacent_bounding_box = PuzzleVar.global_coordinates_list[str(adjacent_piece_ID)]
+	var adjacent_midpoint = Vector2((adjacent_bounding_box[2] + adjacent_bounding_box[0]) / 2, 
+	(adjacent_bounding_box[3] + adjacent_bounding_box[1]) / 2)
+	var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
+	var adjacent_global_position = adjacent_node.get_global_position()
 	
+	#print (current_midpoint)
+	#print (adjacent_midpoint)
+	
+	#compute slope of midpoints
+	var slope = (adjacent_midpoint[1] - current_midpoint[1]) / (adjacent_midpoint[0] - current_midpoint[0])
+	#print (slope)
+	
+	#compute the relative position difference between the current piece and adjacent
+	var current_relative_position = current_global_position - adjacent_global_position
+	#print ("current relative_position:" + str(current_relative_position))
+	
+	#compute the relative position difference between the matching pieces in the reference image
+	var current_ref_upper_left = Vector2(current_bounding_box[0], current_bounding_box[1])
+	var adjacent_ref_upper_left = Vector2(adjacent_bounding_box[0], adjacent_bounding_box[1])
+	var ref_relative_position = current_ref_upper_left - adjacent_ref_upper_left
+	#print ("ref relative_position:" + str(ref_relative_position))
+	
+	#compute the difference in the relative position between reference and actual bounding boxes
+	var snap_distance = calc_distance(ref_relative_position,current_relative_position)
+	#print(snap_distance)
+			
+	if slope < 2 and slope > -2: #if the midpoints are on the same Y value
+		if current_midpoint[0] > adjacent_midpoint[0]: #if the current piece is to the right
+			if (snap_distance < 20):  #pieces are close, so connect
+				print ("right to left snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
+				#print ("snap_distance: " + str(snap_distance))
+		else: #if the current piece is to the left
+			if (snap_distance < 20):
+				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
+	else: #if the midpoints are on the same X value
+		if current_midpoint[1] > adjacent_midpoint[1]: #if the current piece is below
+			if (snap_distance < 20):
+				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
+		else: #if the current piece is above
+			if (snap_distance < 20):
+				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
+			
 	return false
 
 # this function checks each of the four sides of the piece to determine
@@ -387,7 +431,7 @@ func bring_to_front():
 
 # this function calculates the distance between two points and returns the
 # distance as a scalar value
-func calc_distance(a: Vector2, b: Vector2) -> int:
+func calc_distance(a: Vector2, b: Vector2) -> float:
 	return ((b.y-a.y)**2 + (b.x-a.x)**2)**0.5
 	
 # this function calculates the distance between two points and returns the
