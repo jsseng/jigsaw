@@ -666,7 +666,7 @@ func arrange_grid():
 			var piece = PuzzleVar.ordered_pieces_array[piece_id]
 			
 			# Compute new position based on the grid cell
-			var new_position = Vector2(col * cell_width, row * cell_height)
+			var new_position = Vector2(col * cell_width * 1.05, row * cell_height * 1.05)
 			piece.move_to_position(new_position)
 
 # Function to smoothly move a piece to the new position

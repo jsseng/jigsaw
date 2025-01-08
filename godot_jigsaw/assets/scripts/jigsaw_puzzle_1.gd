@@ -60,6 +60,9 @@ func _ready():
 		piece.piece_height = sprite.texture.get_height()
 		piece.piece_width = sprite.texture.get_width()
 		
+		PuzzleVar.pieceWidth = piece.piece_width
+		PuzzleVar.pieceHeight = piece.piece_height
+		
 		#set the collision box for the sprite
 		var collision_box = piece.get_node("Sprite2D/Area2D/CollisionShape2D")
 
