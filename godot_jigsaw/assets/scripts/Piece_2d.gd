@@ -135,7 +135,13 @@ func _input(event):
 		# move is called as an rpc function so that both the host and client
 		# in a multiplayer game can see the movement
 		move.rpc(distance)
-		
+	
+	if event is InputEventKey:
+		if event.is_pressed():
+			if event.keycode == KEY_P:
+				# Arrange grid
+				arrange_grid()
+			
 
 # this is a basic function to check if a side can snap to another side of a
 # puzzle piece
@@ -553,3 +559,116 @@ func on_mute_button_press():
 		
 func on_unmute_button_press():
 	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), false)  # Mute the audio
+
+
+# The purpose of this function is to build a grid of the puzzle piece numbers
+func build_grid(): 
+	var grid = {}
+	var midpoints = []
+	var temp_grid = []
+	var final_grid = []
+
+	#create an entry for each puzzle piece
+	for x in range(PuzzleVar.global_num_pieces):
+		grid[x] = [x]
+		
+	# compute the midpoint of all pieces
+	for x in range(PuzzleVar.global_num_pieces):
+		#compute the midpont of each piece
+		var node_bounding_box = PuzzleVar.global_coordinates_list[str(x)]
+		var midpoint = Vector2((node_bounding_box[2]+node_bounding_box[0])/2, (node_bounding_box[3]+node_bounding_box[1])/2)
+		midpoints.append(midpoint) # append the midpoint of each piece
+
+	var row_join_counter = 1
+	while row_join_counter != 0:
+		row_join_counter = 0
+		
+		for x in range(PuzzleVar.global_num_pieces): # run through all the piece groups
+			var cur_pieces_list = grid[x]
+			
+			if cur_pieces_list.size() > 0:
+				var adjacent_list = PuzzleVar.adjacent_pieces_list[str(cur_pieces_list[-1])] #get the adjacent list of the rightmost piece
+
+				var current_midpoint = midpoints[int(cur_pieces_list[-1])] # get the midpoint of the rightmost piece
+				
+				for a in adjacent_list:
+					#compute the difference in midpoint
+					#print (a)
+					#print("angle: " + str(current_midpoint.angle_to_point(midpoints[int(a)])))
+					var angle = current_midpoint.angle_to_point(midpoints[int(a)])
+					
+					#get adjacent bounding box
+					var node_bounding_box = PuzzleVar.global_coordinates_list[str(cur_pieces_list[-1])]
+					
+					if midpoints[int(a)][0] > node_bounding_box[2]: # adjacent piece is to the right
+						if grid[int(a)].size() > 0:
+							var temp_list = cur_pieces_list
+							temp_list += grid[int(a)]
+							grid[x] = temp_list
+							grid[int(a)] = [] # remove entries from this piece
+							row_join_counter += 1
+			
+	# add the rows to a temporary grid
+	for x in range(PuzzleVar.global_num_pieces):
+		if (grid[x]).size() > 0:
+			temp_grid.append(grid[x])
+			#print (grid[x])
+			#if 251 in grid[x]:
+				#print ("---found upper left corner---")
+			#if 167 in grid[x]:
+				#print ("---found lower left corner---")
+			#if 895 in grid[x]:
+				#print ("---missing piece---")
+			
+	#find the top row
+	for row_num in range(temp_grid.size()):
+		var first_element = (temp_grid[row_num])[0] # get the first element of the row
+		if (PuzzleVar.global_coordinates_list[str(first_element)])[1] == 0:
+			#print("first row is:" + str(row_num))
+			final_grid.append(temp_grid[row_num]) # add the row to the final grid
+			temp_grid.remove_at(row_num) # remove the row from the temporary grid
+			break
+			
+	#sort the rows
+	var row_y_values = []
+	var unsorted_rows = {}
+	
+	# build an array of Y-values of the bounding boxes of the first element and
+	# build a corresponding dictionary 
+	for row_num in range(temp_grid.size()):
+		var first_element = (temp_grid[row_num])[0] # get the first element of the row
+		var y_value = (PuzzleVar.global_coordinates_list[str(first_element)])[1] # get the upper left Y coordinate
+		row_y_values.append(y_value)
+		unsorted_rows[y_value] = temp_grid[row_num]
+			
+	row_y_values.sort() # sort the y-values
+	for x in range(row_y_values.size()):
+		var row = unsorted_rows[row_y_values[x]]
+		final_grid.append(row) # add the rows in sorted order
+	
+	# print the final grid
+	for x in range(final_grid.size()):
+		print (final_grid[x])
+	return final_grid
+
+# Arrange puzzle pieces based on the 2D grid returned by build_grid , Peter Nguyen
+func arrange_grid():
+	print("Arranging grid...")
+	# Get the 2D grid from build_grid
+	var grid = build_grid()
+	var cell_width = PuzzleVar.pieceWidth
+	var cell_height = PuzzleVar.pieceHeight
+	
+	# Loop through the grid and arrange pieces
+	for row in range(grid.size()):
+		for col in range(grid[row].size()):
+			var piece_id = grid[row][col]
+			var piece = PuzzleVar.ordered_pieces_array[piece_id]
+			
+			# Compute new position based on the grid cell
+			var new_position = Vector2(col * cell_width, row * cell_height)
+			piece.move_to_position(new_position)
+
+# Function to smoothly move a piece to the new position
+func move_to_position(target_position: Vector2):
+	position = target_position
