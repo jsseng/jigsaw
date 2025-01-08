@@ -32,7 +32,7 @@ func _ready():
 	
 	parse_pieces_json()
 	parse_adjacent_json()
-	build_grid()
+	#build_grid()
 	#print (PuzzleVar.image_file_names)
 	
 	# Iterate through and create puzzle pieces
@@ -161,6 +161,7 @@ func parse_adjacent_json():
 func build_grid(): 
 	var grid = {}
 	var midpoints = []
+	var temp_grid = []
 	var final_grid = []
 
 	#create an entry for each puzzle piece
@@ -195,7 +196,7 @@ func build_grid():
 					#get adjacent bounding box
 					var node_bounding_box = PuzzleVar.global_coordinates_list[str(cur_pieces_list[-1])]
 					
-					if midpoints[int(a)][0] > node_bounding_box[2]: # adjacent is to the right
+					if midpoints[int(a)][0] > node_bounding_box[2]: # adjacent piece is to the right
 						if grid[int(a)].size() > 0:
 							var temp_list = cur_pieces_list
 							temp_list += grid[int(a)]
@@ -203,10 +204,10 @@ func build_grid():
 							grid[int(a)] = [] # remove entries from this piece
 							row_join_counter += 1
 			
-	# print rows
+	# add the rows to a temporary grid
 	for x in range(PuzzleVar.global_num_pieces):
 		if (grid[x]).size() > 0:
-			final_grid.append(grid[x])
+			temp_grid.append(grid[x])
 			#print (grid[x])
 			#if 251 in grid[x]:
 				#print ("---found upper left corner---")
@@ -214,8 +215,32 @@ func build_grid():
 				#print ("---found lower left corner---")
 			#if 895 in grid[x]:
 				#print ("---missing piece---")
-				
-	#TODO: need to sort the rows correctly
+			
+	#find the top row
+	for row_num in range(temp_grid.size()):
+		var first_element = (temp_grid[row_num])[0] # get the first element of the row
+		if (PuzzleVar.global_coordinates_list[str(first_element)])[1] == 0:
+			#print("first row is:" + str(row_num))
+			final_grid.append(temp_grid[row_num]) # add the row to the final grid
+			temp_grid.remove_at(row_num) # remove the row from the temporary grid
+			break
+			
+	#sort the rows
+	var row_y_values = []
+	var unsorted_rows = {}
+	
+	# build an array of Y-values of the bounding boxes of the first element and
+	# build a corresponding dictionary 
+	for row_num in range(temp_grid.size()):
+		var first_element = (temp_grid[row_num])[0] # get the first element of the row
+		var y_value = (PuzzleVar.global_coordinates_list[str(first_element)])[1] # get the upper left Y coordinate
+		row_y_values.append(y_value)
+		unsorted_rows[y_value] = temp_grid[row_num]
+			
+	row_y_values.sort() # sort the y-values
+	for x in range(row_y_values.size()):
+		var row = unsorted_rows[row_y_values[x]]
+		final_grid.append(row) # add the rows in sorted order
 	
 	# print the final grid
 	for x in range(final_grid.size()):
