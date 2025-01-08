@@ -48,6 +48,7 @@ func _process(delta):
 	pass
 
 func _on_start_random_pressed():
+	await FireAuth.addUserMode("Single Player")
 	$AudioStreamPlayer.play()
 	randomize() # initialize a random seed for the random number generator
 	# choose a random image from the list PuzzleVar.images
@@ -61,7 +62,6 @@ func _on_start_random_pressed():
 	var image_texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	var image_size = image_texture.get_size()
 	PuzzleVar.size = image_size
-	FireAuth.addUserMode("Single Player")
 	# change to actual game scene
 	get_tree().change_scene_to_file("res://assets/scenes/jigsaw_puzzle_1.tscn")
 
