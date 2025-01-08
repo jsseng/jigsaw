@@ -62,7 +62,6 @@ func _on_start_random_pressed():
 	var image_texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	var image_size = image_texture.get_size()
 	PuzzleVar.size = image_size
-	#await FireAuth.addUserMode("Single Player")
 	# change to actual game scene
 	get_tree().change_scene_to_file("res://assets/scenes/jigsaw_puzzle_1.tscn")
 
