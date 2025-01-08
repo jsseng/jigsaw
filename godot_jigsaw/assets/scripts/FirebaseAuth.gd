@@ -260,7 +260,6 @@ func add_favorite_puzzle(puzzleId: String) -> void:
 	
 # function to update whether or not user is playing multiplayer or single player
 func addUserMode(mode: String) -> void:
-	print("HIIIIII")
 	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
 	var userDoc = await userCollection.get_doc(FireAuth.get_user_id())
 	if mode == "Multiplayer" or mode == "Single Player":
