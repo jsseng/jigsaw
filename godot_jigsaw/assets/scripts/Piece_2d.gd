@@ -83,6 +83,8 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					# mark as selected
 					selected = true
 					
+					PuzzleVar.draw_green_check = false
+					
 			# if a piece is already selected
 			else:
 				var run_delay = false # if true, pause after so another mouse event is not detected
@@ -112,6 +114,7 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 							#print ("adjacent node:" + str(adjacent_node.ID))
 							if await check_connections(adjacent_node.ID) == true:
 								run_delay = true # run a delay afterward if there was a connection found
+				PuzzleVar.draw_green_check = false
 				
 				# the following loop is where the actual match checking occurs
 				for piece in all_pieces:
@@ -177,11 +180,13 @@ func snap_and_connect(adjacent_piece_id: int):
 	print ("dist: " + str(dist))
 	
 	if dist[0] > 0.001 or dist[0] < -0.001: # if there was a snapping movement, then play the sound and check
-		# Calculate the midpoint between the two connecting sides
-		var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
-		# Pass the midpoint to show_image_on_snap() so the green checkmark appears
-		show_image_on_snap(green_check_midpoint)
-		play_sound()
+		if PuzzleVar.draw_green_check == false:
+			# Calculate the midpoint between the two connecting sides
+			var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
+			# Pass the midpoint to show_image_on_snap() so the green checkmark appears
+			show_image_on_snap(green_check_midpoint)
+			play_sound()
+			PuzzleVar.draw_green_check = true
 	
 	# here is the code to decide which group to move
 	# this code will have it so that the smaller group will always
@@ -300,6 +305,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 				print ("current sprite rect: " + str($Sprite2D/Area2D/CollisionShape2D.shape.extents * 2))
 				print("snap_distance: " + str(snap_distance))
 				snap_and_connect(adjacent_piece_ID)
+				#PuzzleVar.draw_green_check = true
 				print("----snapping----")
 				snap_found = true
 				#print ("snap_distance: " + str(snap_distance))
@@ -307,17 +313,20 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 			if (snap_distance < snap_threshold):
 				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
+				#PuzzleVar.draw_green_check = true # set to draw the green check only once per snap
 				snap_found = true
 	else: #if the midpoints are on the same X value
 		if current_ref_midpoint[1] > adjacent_ref_midpoint[1]: #if the current piece is below
 			if (snap_distance < snap_threshold):
 				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
+				#PuzzleVar.draw_green_check = true
 				snap_found = true
 		else: #if the current piece is above
 			if (snap_distance < snap_threshold):
 				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
+				#PuzzleVar.draw_green_check = true
 				snap_found = true
 				
 	if snap_found == true:
@@ -364,7 +373,7 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	popup.z_index = 10
 	# Optional: Make the image disappear after a while
 	# Show image for 2 seconds
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(1.0).timeout
 	popup.queue_free()
 
 #Logic for showing the winning labels and buttons
