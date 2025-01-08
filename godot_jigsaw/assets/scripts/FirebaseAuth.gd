@@ -48,7 +48,7 @@ func _on_signup_succeeded(auth_info: Dictionary) -> void:
 	var favorite_puzzles = [{"puzzleId": "temp", "rank": 1, "timesPlayed": 0}]
 	# add user to firebase
 	var collection: FirestoreCollection = Firebase.Firestore.collection("users")
-	var document = await collection.add(user_id, {'activePuzzles': [{"puzzleId": "0", "timeStarted": "0"}], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': favorite_puzzles, 'completedPuzzles': ["temp"]})
+	var document = await collection.add(user_id, {'activePuzzles': [{"puzzleId": "0", "timeStarted": "0"}], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': favorite_puzzles, 'completedPuzzles': ["temp"], 'currentMode': 'temp'})
 	print("Anonymous login succeeded. User ID: ", user_id)
 		
 # write the current time to the db
@@ -257,4 +257,17 @@ func add_favorite_puzzle(puzzleId: String) -> void:
 	# update our list to firebase
 	userDoc.add_or_update_field("favoritePuzzles", favoritePuzzleList)
 	await userCollection.update(userDoc)
+	
+# function to update whether or not user is playing multiplayer or single player
+func addUserMode(mode: String) -> void:
+	var userCollection: FirestoreCollection = Firebase.Firestore.collection("users")
+	var userDoc = await userCollection.get_doc(FireAuth.get_user_id())
+	if mode == "Multiplayer" or mode == "Single Player":
+		userDoc.add_or_update_field("currentMode", mode)
+		await userCollection.update(userDoc)
+		
+	
+	
+	
+	
 	

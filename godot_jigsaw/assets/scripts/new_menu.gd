@@ -71,6 +71,7 @@ func _on_select_puzzle_pressed():
 	$AudioStreamPlayer.play() # doesn't work, switches scenes too fast
 	# switches to a new scene  that will ask you to
 	# actually select what image you want to solve
+	FireAuth.addUserMode("Single Player")
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
 
@@ -106,5 +107,6 @@ func _on_multiplayer_pressed():
 	var image_texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	var image_size = image_texture.get_size()
 	PuzzleVar.size = image_size
+	FireAuth.addUserMode("Multiplayer")
 	
 	get_tree().change_scene_to_file("res://assets/scenes/MultiplayerController.tscn")
