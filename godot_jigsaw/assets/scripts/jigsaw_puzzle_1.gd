@@ -75,8 +75,8 @@ func _ready():
 
 	var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
 
-	#FireAuth.add_active_puzzle(puzzleId, GRID_WIDTH, GRID_HEIGHT)
-	#FireAuth.add_favorite_puzzle(str(puzzleId))
+	FireAuth.add_active_puzzle(puzzleId, GRID_WIDTH, GRID_HEIGHT)
+	FireAuth.add_favorite_puzzle(str(puzzleId))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

@@ -465,6 +465,8 @@ func reset_puzzle_state():
 	
 	# Reset global variables related to the puzzle
 	PuzzleVar.active_piece = 0
+	PuzzleVar.ordered_pieces_array = [] # Peter added this
+	neighbor_list = {} # Peter added this
 	#Node_association_complete = false
 	prev_position = Vector2()
 	velocity = Vector2()
