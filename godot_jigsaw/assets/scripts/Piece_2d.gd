@@ -212,7 +212,7 @@ func snap_and_connect(adjacent_piece_id: int):
 	
 	if (finished):
 		show_win_screen()
-		FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
+		#FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
 
 
 # This is the function that actually moves the piece (in the current group)
