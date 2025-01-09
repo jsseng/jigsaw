@@ -5,8 +5,13 @@ extends Node2D
 var GRID_WIDTH = PuzzleVar.col
 var GRID_HEIGHT = PuzzleVar.row
 
+var is_muted
+var mute_button: Button
+var unmute_button : Button
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	name = "JigsawPuzzleNode"
 			
 	# load up reference image
 	$referenceImage.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
@@ -27,6 +32,8 @@ func _ready():
 	PuzzleVar.pieceWidth = cell_width
 	PuzzleVar.pieceHeight = cell_height
 	
+	mute_sound()
+
 	# preload the scenes
 	var sprite_scene = preload("res://assets/scenes/Piece_2d.tscn")
 	
@@ -112,6 +119,10 @@ func _input(event):
 			if event.keycode == KEY_P:
 				# Arrange grid
 				arrange_grid()
+				
+	if PuzzleVar.snap_found == true:
+		print ("snap found")
+		PuzzleVar.snap_found = false
 		
 # This function parses pieces.json which contains the bounding boxes around each piece.  The
 # bounding box coordinates are given as pixel coordinates in the global image.
@@ -274,3 +285,176 @@ func arrange_grid():
 			# Compute new position based on the grid cell
 			var new_position = Vector2(col * cell_width * 1.05, row * cell_height * 1.05)
 			piece.move_to_position(new_position)
+			
+func play_sound(): # Peter Nguyen
+	var snap_sound = preload("res://assets/sounds/ding.mp3")
+	var audio_player = AudioStreamPlayer.new()
+	audio_player.stream = snap_sound
+	add_child(audio_player)
+	audio_player.play()
+	# Manually queue_free after sound finishes
+	await audio_player.finished
+	audio_player.queue_free()
+
+	
+func mute_sound(): # Ray Lui
+	mute_button = Button.new()
+	mute_button.text = "Mute"
+	unmute_button = Button.new()
+	unmute_button.text = "Unmute"
+	# loading in the font to use for text
+	var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
+	# Set the font type for the Button
+	mute_button.add_theme_font_override("font", font)
+	# Setting the font size
+	mute_button.add_theme_font_size_override("font_size", 60)
+	
+	unmute_button.add_theme_font_override("font", font)
+	# Setting the font size
+	unmute_button.add_theme_font_size_override("font_size", 60)
+	# Load button texture
+	var button_texture = StyleBoxTexture.new()
+	var texture = preload("res://assets/images/wood_button_normal.png")
+	
+	# Adjust the content margins of the style box
+	button_texture.content_margin_left = 200  # Adjust left margin
+	button_texture.content_margin_top = 200   # Adjust top margin
+	button_texture.content_margin_right = 200  # Adjust right margin
+	button_texture.content_margin_bottom = 200  # Adjust bottom margin
+	#Apply the texture to the button and stylebox
+	button_texture.texture = texture
+	mute_button.add_theme_stylebox_override("normal", button_texture)
+	unmute_button.add_theme_stylebox_override("normal", button_texture)
+
+	# Load the button_pressed texture
+	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
+	# Configure hovered state style box
+	var hover_stylebox = StyleBoxTexture.new()
+	hover_stylebox.texture = hover_texture
+	hover_stylebox.content_margin_left = 200
+	hover_stylebox.content_margin_top = 200
+	hover_stylebox.content_margin_right = 200
+	hover_stylebox.content_margin_bottom = 200
+	mute_button.add_theme_stylebox_override("hover", hover_stylebox)
+	# Set text colors for normal and hover states
+	mute_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
+	mute_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
+	
+	unmute_button.add_theme_stylebox_override("hover", hover_stylebox)
+	# Set text colors for normal and hover states
+	unmute_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
+	unmute_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
+
+	var empty_stylebox = StyleBoxEmpty.new()
+	mute_button.add_theme_stylebox_override("focus", empty_stylebox)
+	mute_button.add_theme_stylebox_override("pressed", empty_stylebox)
+	mute_button.position = Vector2(-1650, 1700)
+	mute_button.scale = Vector2(1, 1)
+	
+	unmute_button.add_theme_stylebox_override("focus", empty_stylebox)
+	unmute_button.add_theme_stylebox_override("pressed", empty_stylebox)
+	unmute_button.position = Vector2(-1650, 1400)
+	unmute_button.scale = Vector2(1, 1)
+		
+	# Connect the button's pressed signal to the scene change function
+	mute_button.connect("pressed", Callable(self, "on_mute_button_press")) 
+	unmute_button.connect("pressed", Callable(self, "on_unmute_button_press")) 
+	#Add button to the scene
+	get_tree().current_scene.add_child(mute_button)
+	get_tree().current_scene.add_child(unmute_button)
+	
+func on_mute_button_press():
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)  # Mute the audio
+		
+func on_unmute_button_press():
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), false)  # Mute the audio
+
+#Logic for showing the winning labels and buttons
+func show_win_screen():
+	#-------------------------LABEL LOGIC------------------------#
+	var label = Label.new()
+	
+	# Set the text for the Label
+	label.text = "You've Finished the Puzzle!"
+	
+	# Set the font size as well as the color
+	label.add_theme_font_size_override("font_size", 200)
+	label.add_theme_color_override("font_color", Color(0, 204, 0))
+	
+	# Load the font file 
+	var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
+	label.add_theme_font_override("font", font)
+	
+	# Change label poistion and add the label to the current scene
+	label.position = Vector2(-1000, -400)
+	get_tree().current_scene.add_child(label)
+
+	#-------------------------BUTTON LOGIC-----------------------#
+	var button = Button.new()
+	# Change the position, size, text, and image of button
+	button.text = "Main Menu"
+	## Set the font type for the Button
+	button.add_theme_font_override("font", font)
+	button.add_theme_font_size_override("font_size", 150)
+	
+	#Load button texture
+	var button_texture = StyleBoxTexture.new()
+	var texture = preload("res://assets/images/wood_button_normal.png")
+	
+	# Adjust the content margins of the style box
+	button_texture.content_margin_left = 350  # Adjust left margin
+	button_texture.content_margin_top = 350   # Adjust top margin
+	button_texture.content_margin_right = 350  # Adjust right margin
+	button_texture.content_margin_bottom = 350  # Adjust bottom margin
+
+	# Load the button_pressed texture
+	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
+
+	# Configure hovered state style box
+	var hover_stylebox = StyleBoxTexture.new()
+	hover_stylebox.texture = hover_texture
+	hover_stylebox.content_margin_left = 350
+	hover_stylebox.content_margin_top = 350
+	hover_stylebox.content_margin_right = 350
+	hover_stylebox.content_margin_bottom = 350
+	button.add_theme_stylebox_override("hover", hover_stylebox)
+
+	#Apply the texture to the button and stylebox
+	button_texture.texture = texture
+	button.add_theme_stylebox_override("normal", button_texture)
+	button.position = Vector2(0, -200)
+	
+	var empty_stylebox = StyleBoxEmpty.new()
+	button.add_theme_stylebox_override("focus", empty_stylebox)
+	button.add_theme_stylebox_override("pressed", empty_stylebox)
+	
+	# Connect the button's pressed signal to the scene change function
+	button.connect("pressed", Callable(self, "on_button_pressed")) 
+	#Add button to the scene
+	get_tree().current_scene.add_child(button)
+ 
+# Function to change scenes when button is pressed
+func on_button_pressed():
+	# Load the new scene
+	await get_tree().create_timer(2.0).timeout
+	#_ready()
+	reset_puzzle_state()
+	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn")
+	get_tree().reload_current_scene()
+	
+	
+#This function clears all puzzle pieces and resets global variables
+func reset_puzzle_state():
+	# Get all puzzle pieces and remove them
+	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+	for node in all_pieces:
+		node.queue_free() # Removes puzzle pieces from the scene
+	
+	# Reset global variables related to the puzzle
+	PuzzleVar.active_piece = 0
+	PuzzleVar.ordered_pieces_array = [] # Peter added this
+	#neighbor_list = {} # Peter added this
+	#Node_association_complete = false
+	#prev_position = Vector2()
+	#velocity = Vector2()
+  

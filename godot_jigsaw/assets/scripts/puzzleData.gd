@@ -35,3 +35,5 @@ var image_file_names = {} #a dictionary containing a mapping of selection number
 var global_num_pieces = 0 #the number of pieces in the current puzzle
 var ordered_pieces_array = []
 var draw_green_check = false
+
+var snap_found = false

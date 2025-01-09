@@ -27,9 +27,7 @@ var piece_width
 var prev_position = Vector2()
 var velocity = Vector2()
 
-var is_muted
-var mute_button: Button
-var unmute_button : Button
+
 
 # Figure out if user finished the puzzle
 #var finished = false
@@ -40,7 +38,7 @@ func _ready():
 	
 	group_number = ID # group number is initially set to the piece ID
 	prev_position = position # this is to calculate velocity
-	mute_sound()
+	#mute_sound()
 		
 	neighbor_list = 	PuzzleVar.adjacent_pieces_list[str(ID)] # set the list of adjacent pieces
 
@@ -54,8 +52,8 @@ func _process(delta):
 # this is the actual logic to move a piece when you select it
 @rpc("any_peer", "call_local")
 func move(distance: Vector2):
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	for node in group:
+	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+	for node in all_pieces:
 		if node.group_number == group_number:
 			node.global_position += distance
 
@@ -140,12 +138,10 @@ func _input(event):
 		move.rpc(distance)
 	
 
-			
-
 # this is a basic function to check if a side can snap to another side of a
 # puzzle piece
 func snap_and_connect(adjacent_piece_id: int):
-	var group = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
+	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
 	var prev_group_number
 	
 	var new_group_number = group_number
@@ -177,16 +173,17 @@ func snap_and_connect(adjacent_piece_id: int):
 	
 	var current_left_diff = Vector2(adjusted_current_upper_left - adjusted_adjacent_upper_left)
 	var dist = current_left_diff - ref_upper_left_diff
-	print ("dist: " + str(dist))
+	#print ("dist: " + str(dist))
 	
-	if dist[0] > 0.001 or dist[0] < -0.001: # if there was a snapping movement, then play the sound and check
-		if PuzzleVar.draw_green_check == false:
-			# Calculate the midpoint between the two connecting sides
-			var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
-			# Pass the midpoint to show_image_on_snap() so the green checkmark appears
-			show_image_on_snap(green_check_midpoint)
-			play_sound()
-			PuzzleVar.draw_green_check = true
+	if PuzzleVar.draw_green_check == false:
+		# Calculate the midpoint between the two connecting sides
+		var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
+		# Pass the midpoint to show_image_on_snap() so the green checkmark appears
+		show_image_on_snap(green_check_midpoint)
+		var main_scene = get_node("../JigsawPuzzleNode")
+		main_scene.play_sound()
+		#play_sound()
+		PuzzleVar.draw_green_check = true
 	
 	# here is the code to decide which group to move
 	# this code will have it so that the smaller group will always
@@ -194,7 +191,7 @@ func snap_and_connect(adjacent_piece_id: int):
 	var countprev = 0
 	var countcurr = 0
 	
-	for node in group:
+	for node in all_pieces:
 		if node.group_number == group_number:
 			countcurr += 1
 		elif node.group_number == prev_group_number:
@@ -212,13 +209,14 @@ func snap_and_connect(adjacent_piece_id: int):
 	
 	var finished = true
 	
-	for node in group:
+	for node in all_pieces:
 		if node.group_number != group_number:
 			finished = false
 			break
 	
 	if (finished):
-		show_win_screen()
+		var main_scene = get_node("../JigsawPuzzleNode")
+		main_scene.show_win_screen()
 		#FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
 
 
@@ -237,7 +235,7 @@ func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group
 			# moves in tandem with the other joined pieces
 			node.set_global_position(node.get_global_position() + distance)
 			node.group_number = new_group_number
-			show_check_mark = true
+			PuzzleVar.snap_found = true
 
 func check_connections(adjacent_piece_ID: int) -> bool:
 	var snap_found = false
@@ -290,12 +288,12 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 	#compute the difference in the relative position between reference and actual bounding boxes
 	#This snap distance is how much the piece needs to be moved to be in the correct location
 	var snap_distance =	 calc_distance(ref_relative_position, adjusted_current_upper_left-adjusted_adjacent_upper_left)
-	print("snap distance: " + str(snap_distance))
+	#print("snap distance: " + str(snap_distance))
 	
 	# The following if-statement checks for snapping in 4 directions
 	if slope < 2 and slope > -2: #if the midpoints are on the same Y value
 		if current_ref_midpoint[0] > adjacent_ref_midpoint[0]: #if the current piece is to the right
-			if (snap_distance < snap_threshold):  #pieces are close, so connect
+			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):  #pieces are close, so connect
 				print("----snapping----")
 				print ("right to left snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
 				print("current_ref_upper_left: " + str(current_ref_upper_left))
@@ -310,20 +308,20 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 				snap_found = true
 				#print ("snap_distance: " + str(snap_distance))
 		else: #if the current piece is to the left
-			if (snap_distance < snap_threshold):
+			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
 				#PuzzleVar.draw_green_check = true # set to draw the green check only once per snap
 				snap_found = true
 	else: #if the midpoints are on the same X value
 		if current_ref_midpoint[1] > adjacent_ref_midpoint[1]: #if the current piece is below
-			if (snap_distance < snap_threshold):
+			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
 				#PuzzleVar.draw_green_check = true
 				snap_found = true
 		else: #if the current piece is above
-			if (snap_distance < snap_threshold):
+			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
 				#PuzzleVar.draw_green_check = true
@@ -348,11 +346,6 @@ func bring_to_front():
 func calc_distance(a: Vector2, b: Vector2) -> float:
 	return ((b.y-a.y)**2 + (b.x-a.x)**2)**0.5
 	
-# this function calculates the distance between two points and returns the
-# distance as a vector
-func calc_components(a: Vector2, b: Vector2) -> Vector2:
-	return Vector2(b.x-a.x,b.y-a.y)
-
 func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	var popup = Sprite2D.new()
 	# Load texture
@@ -373,81 +366,9 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	popup.z_index = 10
 	# Optional: Make the image disappear after a while
 	# Show image for 2 seconds
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(.5).timeout
 	popup.queue_free()
 
-#Logic for showing the winning labels and buttons
-func show_win_screen():
-	#-------------------------LABEL LOGIC------------------------#
-	var label = Label.new()
-	
-	# Set the text for the Label
-	label.text = "You've Finished the Puzzle!"
-	
-	# Set the font size as well as the color
-	label.add_theme_font_size_override("font_size", 200)
-	label.add_theme_color_override("font_color", Color(0, 204, 0))
-	
-	# Load the font file 
-	var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
-	label.add_theme_font_override("font", font)
-	
-	# Change label poistion and add the label to the current scene
-	label.position = Vector2(-1000, -400)
-	get_tree().current_scene.add_child(label)
-
-	#-------------------------BUTTON LOGIC-----------------------#
-	var button = Button.new()
-	# Change the position, size, text, and image of button
-	button.text = "Main Menu"
-	## Set the font type for the Button
-	button.add_theme_font_override("font", font)
-	button.add_theme_font_size_override("font_size", 150)
-	
-	#Load button texture
-	var button_texture = StyleBoxTexture.new()
-	var texture = preload("res://assets/images/wood_button_normal.png")
-	
-	# Adjust the content margins of the style box
-	button_texture.content_margin_left = 350  # Adjust left margin
-	button_texture.content_margin_top = 350   # Adjust top margin
-	button_texture.content_margin_right = 350  # Adjust right margin
-	button_texture.content_margin_bottom = 350  # Adjust bottom margin
-
-	# Load the button_pressed texture
-	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
-
-	# Configure hovered state style box
-	var hover_stylebox = StyleBoxTexture.new()
-	hover_stylebox.texture = hover_texture
-	hover_stylebox.content_margin_left = 350
-	hover_stylebox.content_margin_top = 350
-	hover_stylebox.content_margin_right = 350
-	hover_stylebox.content_margin_bottom = 350
-	button.add_theme_stylebox_override("hover", hover_stylebox)
-
-	#Apply the texture to the button and stylebox
-	button_texture.texture = texture
-	button.add_theme_stylebox_override("normal", button_texture)
-	button.position = Vector2(0, -200)
-	
-	var empty_stylebox = StyleBoxEmpty.new()
-	button.add_theme_stylebox_override("focus", empty_stylebox)
-	button.add_theme_stylebox_override("pressed", empty_stylebox)
-	
-	# Connect the button's pressed signal to the scene change function
-	button.connect("pressed", Callable(self, "on_button_pressed")) 
-	#Add button to the scene
-	get_tree().current_scene.add_child(button)
- 
-# Function to change scenes when button is pressed
-func on_button_pressed():
-	# Load the new scene
-	await get_tree().create_timer(2.0).timeout
-	#_ready()
-	reset_puzzle_state()
-	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn")
-	get_tree().reload_current_scene()
 
 # This function is called to apply the transparency effect to the pieces for all players to see
 # Written by Peter Nguyen
@@ -466,105 +387,6 @@ func remove_transparency():
 	for nodes in group:
 		if nodes.group_number == group_number:
 			nodes.modulate = Color(1, 1, 1, 1)
-
-#This function clears all puzzle pieces and resets global variables
-func reset_puzzle_state():
-	# Get all puzzle pieces and remove them
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	for nodes in group:
-		nodes.queue_free() # Removes puzzle pieces from the scene
-	
-	# Reset global variables related to the puzzle
-	PuzzleVar.active_piece = 0
-	PuzzleVar.ordered_pieces_array = [] # Peter added this
-	neighbor_list = {} # Peter added this
-	#Node_association_complete = false
-	prev_position = Vector2()
-	velocity = Vector2()
-  
-func play_sound(): # Peter Nguyen
-	var snap_sound = preload("res://assets/sounds/ding.mp3")
-	var audio_player = AudioStreamPlayer.new()
-	audio_player.stream = snap_sound
-	add_child(audio_player)
-	audio_player.play()
-	# Manually queue_free after sound finishes
-	await audio_player.finished
-	audio_player.queue_free()
-	
-func mute_sound(): # Ray Lui
-	
-	mute_button = Button.new()
-	mute_button.text = "Mute"
-	unmute_button = Button.new()
-	unmute_button.text = "Unmute"
-	# loading in the font to use for text
-	var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
-	# Set the font type for the Button
-	mute_button.add_theme_font_override("font", font)
-	# Setting the font size
-	mute_button.add_theme_font_size_override("font_size", 60)
-	
-	unmute_button.add_theme_font_override("font", font)
-	# Setting the font size
-	unmute_button.add_theme_font_size_override("font_size", 60)
-	# Load button texture
-	var button_texture = StyleBoxTexture.new()
-	var texture = preload("res://assets/images/wood_button_normal.png")
-	
-	# Adjust the content margins of the style box
-	button_texture.content_margin_left = 200  # Adjust left margin
-	button_texture.content_margin_top = 200   # Adjust top margin
-	button_texture.content_margin_right = 200  # Adjust right margin
-	button_texture.content_margin_bottom = 200  # Adjust bottom margin
-	#Apply the texture to the button and stylebox
-	button_texture.texture = texture
-	mute_button.add_theme_stylebox_override("normal", button_texture)
-	unmute_button.add_theme_stylebox_override("normal", button_texture)
-
-	# Load the button_pressed texture
-	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
-	# Configure hovered state style box
-	var hover_stylebox = StyleBoxTexture.new()
-	hover_stylebox.texture = hover_texture
-	hover_stylebox.content_margin_left = 200
-	hover_stylebox.content_margin_top = 200
-	hover_stylebox.content_margin_right = 200
-	hover_stylebox.content_margin_bottom = 200
-	mute_button.add_theme_stylebox_override("hover", hover_stylebox)
-	# Set text colors for normal and hover states
-	mute_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
-	mute_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
-	
-	unmute_button.add_theme_stylebox_override("hover", hover_stylebox)
-	# Set text colors for normal and hover states
-	unmute_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
-	unmute_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
-
-	var empty_stylebox = StyleBoxEmpty.new()
-	mute_button.add_theme_stylebox_override("focus", empty_stylebox)
-	mute_button.add_theme_stylebox_override("pressed", empty_stylebox)
-	mute_button.position = Vector2(-1650, 1700)
-	mute_button.scale = Vector2(1, 1)
-	
-	unmute_button.add_theme_stylebox_override("focus", empty_stylebox)
-	unmute_button.add_theme_stylebox_override("pressed", empty_stylebox)
-	unmute_button.position = Vector2(-1650, 1400)
-	unmute_button.scale = Vector2(1, 1)
-		
-	# Connect the button's pressed signal to the scene change function
-	mute_button.connect("pressed", Callable(self, "on_mute_button_press")) 
-	unmute_button.connect("pressed", Callable(self, "on_unmute_button_press")) 
-	#Add button to the scene
-	get_tree().current_scene.add_child(mute_button)
-	get_tree().current_scene.add_child(unmute_button)
-	
-func on_mute_button_press():
-	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)  # Mute the audio
-		
-func on_unmute_button_press():
-	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), false)  # Mute the audio
-
 
 
 # Function to smoothly move a piece to the new position
