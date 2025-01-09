@@ -1,7 +1,6 @@
 extends Node2D
 
-# this scene is each individual puzzle piece that can snap together to form
-# the jigsaw
+# this scene is for each individual puzzle piece
 
 # neighbor list
 var neighbor_list = {} # This is the list of neighboring IDs for a piece.
@@ -15,8 +14,9 @@ var ID: int # The actual ID of the current puzzle piece
 # this becomes false when the piece is set down by the player
 var selected = false
 
-# this is the number that will be used to organize
-#	all the pieces into groups so that they all move in tandem
+# This is the number that will be used to organize all the 
+# pieces into groups so that they all move in tandem.  Initially, each piece
+# has its own group number.
 var group_number
 
 # height and width of this puzzle piece
@@ -27,16 +27,12 @@ var piece_width
 var prev_position = Vector2()
 var velocity = Vector2()
 
-# Figure out if user finished the puzzle
-#var finished = false
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	PuzzleVar.active_piece = 0 # 0 is false, any other number is true
 	
 	group_number = ID # group number is initially set to the piece ID
 	prev_position = position # this is to calculate velocity
-	#mute_sound()
 		
 	neighbor_list = 	PuzzleVar.adjacent_pieces_list[str(ID)] # set the list of adjacent pieces
 
@@ -51,6 +47,8 @@ func _process(delta):
 @rpc("any_peer", "call_local")
 func move(distance: Vector2):
 	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+	
+	# for all the pieces in the same group, move them together
 	for node in all_pieces:
 		if node.group_number == group_number:
 			node.global_position += distance
@@ -83,15 +81,11 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					
 			# if a piece is already selected
 			else:
-				var run_delay = false # if true, pause after so another mouse event is not detected
-				
 				if selected == true:
 					# deselect the current piece
 					selected = false
 					# clear active piece reference
 					PuzzleVar.active_piece = 0
-					
-					run_delay = true
 			
 				# get all nodes from puzzle pieces
 				var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
@@ -105,11 +99,8 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 						#run through each of the pieces that should be adjacent to the selected piece
 						#for adjacent_piece in neighbor_list:
 						for adjacent_piece in n_list:
-							#print (adjacent_piece)
 							var adjacent_node = PuzzleVar.ordered_pieces_array[int(adjacent_piece)]
-							#print ("adjacent node:" + str(adjacent_node.ID))
-							if await check_connections(adjacent_node.ID) == true:
-								run_delay = true # run a delay afterward if there was a connection found
+							await check_connections(adjacent_node.ID)
 				PuzzleVar.draw_green_check = false
 				
 				# the following loop is where the actual match checking occurs
@@ -145,7 +136,7 @@ func _input(event):
 		# move is called as an rpc function so that both the host and client
 		# in a multiplayer game can see the movement
 		move.rpc(distance)
-	
+
 
 # this is a function to snap pieces to other pieces
 func snap_and_connect(adjacent_piece_id: int):
@@ -189,7 +180,7 @@ func snap_and_connect(adjacent_piece_id: int):
 		# Pass the midpoint to show_image_on_snap() so the green checkmark appears
 		show_image_on_snap(green_check_midpoint)
 		var main_scene = get_node("../JigsawPuzzleNode")
-		main_scene.play_sound()
+		main_scene.play_snap_sound()
 
 		PuzzleVar.draw_green_check = true
 	
@@ -311,7 +302,6 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 				print ("current sprite rect: " + str($Sprite2D/Area2D/CollisionShape2D.shape.extents * 2))
 				print("snap_distance: " + str(snap_distance))
 				snap_and_connect(adjacent_piece_ID)
-				#PuzzleVar.draw_green_check = true
 				print("----snapping----")
 				snap_found = true
 				#print ("snap_distance: " + str(snap_distance))
@@ -319,20 +309,17 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
-				#PuzzleVar.draw_green_check = true # set to draw the green check only once per snap
 				snap_found = true
 	else: #if the midpoints are on the same X value
 		if current_ref_midpoint[1] > adjacent_ref_midpoint[1]: #if the current piece is below
 			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
-				#PuzzleVar.draw_green_check = true
 				snap_found = true
 		else: #if the current piece is above
 			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
 				snap_and_connect(adjacent_piece_ID)
-				#PuzzleVar.draw_green_check = true
 				snap_found = true
 				
 	if snap_found == true:

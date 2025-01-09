@@ -2,9 +2,6 @@ extends Node2D
 
 # this is the main scene where the game actually occurs for the players to play
 
-var GRID_WIDTH = PuzzleVar.col
-var GRID_HEIGHT = PuzzleVar.row
-
 var is_muted
 var mute_button: Button
 var unmute_button : Button
@@ -12,6 +9,8 @@ var unmute_button : Button
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	name = "JigsawPuzzleNode"
+	
+	is_muted = false
 			
 	# load up reference image
 	$referenceImage.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
@@ -23,15 +22,6 @@ func _ready():
 	var image_texture = $Image.texture #will probably simplify later
 	var image_size = image_texture.get_size()
 	
-	# Calculate the size of each grid cell
-	var cell_width = image_size.x / GRID_WIDTH
-	var cell_height = image_size.y / GRID_HEIGHT
-	
-	# load the cell width and height into these global variables so that
-	# the collision box of each piece can be computed
-	#PuzzleVar.pieceWidth = cell_width
-	#PuzzleVar.pieceHeight = cell_height
-	
 	mute_sound()
 
 	# preload the scenes
@@ -39,8 +29,6 @@ func _ready():
 	
 	parse_pieces_json()
 	parse_adjacent_json()
-	#build_grid()
-	#print (PuzzleVar.image_file_names)
 	
 	# Iterate through and create puzzle pieces
 	for x in range(PuzzleVar.global_num_pieces):
@@ -67,9 +55,6 @@ func _ready():
 		piece.piece_height = sprite.texture.get_height()
 		piece.piece_width = sprite.texture.get_width()
 		
-		#PuzzleVar.pieceWidth = piece.piece_width
-		#PuzzleVar.pieceHeight = piece.piece_height
-		
 		#set the collision box for the sprite
 		var collision_box = piece.get_node("Sprite2D/Area2D/CollisionShape2D")
 
@@ -94,11 +79,6 @@ func _process(delta):
 	#TODO: add a win function
 	# ideally have it check if all the pieces are the part of the same group
 	# if so then have it display that they won
-	
-	#print(PuzzleVar.valid_count)
-	#if PuzzleVar.valid_count == GRID_WIDTH * GRID_HEIGHT:
-		#$Label.text = "YOU COMPLETED THE PUZZLE!!!"
-		
 	pass
 
 # Handle esc
@@ -119,6 +99,13 @@ func _input(event):
 			if event.keycode == KEY_P:
 				# Arrange grid
 				arrange_grid()
+			elif event.keycode == KEY_M:
+				if is_muted == false:
+					on_mute_button_press()
+					is_muted = true
+				else:
+					on_unmute_button_press()
+					is_muted = false
 				
 	if PuzzleVar.snap_found == true:
 		print ("snap found")
@@ -229,19 +216,11 @@ func build_grid():
 	for x in range(PuzzleVar.global_num_pieces):
 		if (grid[x]).size() > 0:
 			temp_grid.append(grid[x])
-			#print (grid[x])
-			#if 251 in grid[x]:
-				#print ("---found upper left corner---")
-			#if 167 in grid[x]:
-				#print ("---found lower left corner---")
-			#if 895 in grid[x]:
-				#print ("---missing piece---")
 			
 	#find the top row
 	for row_num in range(temp_grid.size()):
 		var first_element = (temp_grid[row_num])[0] # get the first element of the row
-		if (PuzzleVar.global_coordinates_list[str(first_element)])[1] == 0:
-			#print("first row is:" + str(row_num))
+		if (PuzzleVar.global_coordinates_list[str(first_element)])[1] == 0: # get y-coordinate of first element
 			final_grid.append(temp_grid[row_num]) # add the row to the final grid
 			temp_grid.remove_at(row_num) # remove the row from the temporary grid
 			break
@@ -270,7 +249,6 @@ func build_grid():
 
 # Arrange puzzle pieces based on the 2D grid returned by build_grid , Peter Nguyen
 func arrange_grid():
-	print("Arranging grid...")
 	# Get the 2D grid from build_grid
 	var grid = build_grid()
 	var cell_piece = PuzzleVar.ordered_pieces_array[0]
@@ -287,7 +265,7 @@ func arrange_grid():
 			var new_position = Vector2(col * cell_width * 1.05, row * cell_height * 1.05)
 			piece.move_to_position(new_position)
 			
-func play_sound(): # Peter Nguyen
+func play_snap_sound(): # Peter Nguyen
 	var snap_sound = preload("res://assets/sounds/ding.mp3")
 	var audio_player = AudioStreamPlayer.new()
 	audio_player.stream = snap_sound
@@ -430,19 +408,17 @@ func show_win_screen():
 	button.add_theme_stylebox_override("pressed", empty_stylebox)
 	
 	# Connect the button's pressed signal to the scene change function
-	button.connect("pressed", Callable(self, "on_button_pressed")) 
+	button.connect("pressed", Callable(self, "on_main_menu_button_pressed")) 
 	#Add button to the scene
 	get_tree().current_scene.add_child(button)
  
 # Function to change scenes when button is pressed
-func on_button_pressed():
+func on_main_menu_button_pressed():
 	# Load the new scene
 	await get_tree().create_timer(2.0).timeout
 	#_ready()
 	reset_puzzle_state()
 	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn")
-	#get_tree().reload_current_scene()
-	
 	
 #This function clears all puzzle pieces and resets global variables
 func reset_puzzle_state():
@@ -459,8 +435,4 @@ func reset_puzzle_state():
 	PuzzleVar.image_file_names = {} #a dictionary containing a mapping of selection numbers to image names
 	PuzzleVar.global_num_pieces = 0 #the number of pieces in the current puzzle
 	PuzzleVar.draw_green_check = false
-	#neighbor_list = {} # Peter added this
-	#Node_association_complete = false
-	#prev_position = Vector2()
-	#velocity = Vector2()
   
