@@ -196,10 +196,10 @@ func snap_and_connect(adjacent_piece_id: int):
 		elif node.group_number == prev_group_number:
 			countprev += 1
 			
-	#if countcurr < countprev:
-		#new_group_number = prev_group_number
-		#prev_group_number = group_number
-		#dist *= -1
+	if countcurr < countprev: # move the small group to attach to larger group
+		new_group_number = prev_group_number
+		prev_group_number = group_number
+		dist *= -1
 	
 	# The function below is called to physically move the piece and join it to the 
 	# appropriate group.  This is an rpc call so that the movement and joining of 
