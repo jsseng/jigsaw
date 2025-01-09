@@ -6,7 +6,7 @@ extends Node2D
 var neighbor_list = {} # This is the list of neighboring IDs for a piece.
 
 # distance that pieces will snap together within
-var snap_threshold = 25
+var snap_threshold
 
 var ID: int # The actual ID of the current puzzle piece
 
@@ -35,6 +35,8 @@ func _ready():
 	prev_position = position # this is to calculate velocity
 		
 	neighbor_list = 	PuzzleVar.adjacent_pieces_list[str(ID)] # set the list of adjacent pieces
+	
+	snap_threshold = ((piece_height + piece_width) / 2) * .4 # set the snap threshold to a fraction of the piece size
 
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
