@@ -388,7 +388,6 @@ func remove_transparency():
 		if nodes.group_number == group_number:
 			nodes.modulate = Color(1, 1, 1, 1)
 
-
 # Function to smoothly move a piece to the new position
 func move_to_position(target_position: Vector2):
 	position = target_position

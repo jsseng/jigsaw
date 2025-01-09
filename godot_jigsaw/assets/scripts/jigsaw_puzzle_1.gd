@@ -440,7 +440,7 @@ func on_button_pressed():
 	#_ready()
 	reset_puzzle_state()
 	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn")
-	get_tree().reload_current_scene()
+	#get_tree().reload_current_scene()
 	
 	
 #This function clears all puzzle pieces and resets global variables
@@ -451,8 +451,13 @@ func reset_puzzle_state():
 		node.queue_free() # Removes puzzle pieces from the scene
 	
 	# Reset global variables related to the puzzle
-	PuzzleVar.active_piece = 0
+	PuzzleVar.active_piece = -1
 	PuzzleVar.ordered_pieces_array = [] # Peter added this
+	PuzzleVar.global_coordinates_list = {} #a dictionary of global coordinates for each piece
+	PuzzleVar.adjacent_pieces_list = {} #a dictionary of adjacent pieces for each piece
+	PuzzleVar.image_file_names = {} #a dictionary containing a mapping of selection numbers to image names
+	PuzzleVar.global_num_pieces = 0 #the number of pieces in the current puzzle
+	PuzzleVar.draw_green_check = false
 	#neighbor_list = {} # Peter added this
 	#Node_association_complete = false
 	#prev_position = Vector2()
