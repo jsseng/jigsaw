@@ -80,6 +80,7 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					selected = true
 					
 					PuzzleVar.draw_green_check = false
+					rpc("apply_transparency")
 					
 			# if a piece is already selected
 			else:
@@ -92,7 +93,6 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				# get all nodes from puzzle pieces
 				var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
 				var num = group_number
-				#print ("current group number: " + str(num))
 				var connection_found = false
 			
 				for node in all_pieces: 
@@ -121,10 +121,10 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				print ("remaining: " + str(placed-1))
 				
 				#do not trigger any more events after putting the piece down
-				#get_viewport().set_input_as_handled()
+				get_viewport().set_input_as_handled()
 				
-			# Set to original color from gray/transparent movement for all players, Peter Nguyen
-			rpc("remove_transparency")
+				# Set to original color from gray/transparent movement for all players, Peter Nguyen
+				rpc("remove_transparency")
 
 
 # this is where the actual movement of the puzzle piece is handled
