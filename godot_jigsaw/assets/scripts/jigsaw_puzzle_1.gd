@@ -29,8 +29,8 @@ func _ready():
 	
 	# load the cell width and height into these global variables so that
 	# the collision box of each piece can be computed
-	PuzzleVar.pieceWidth = cell_width
-	PuzzleVar.pieceHeight = cell_height
+	#PuzzleVar.pieceWidth = cell_width
+	#PuzzleVar.pieceHeight = cell_height
 	
 	mute_sound()
 
@@ -67,8 +67,8 @@ func _ready():
 		piece.piece_height = sprite.texture.get_height()
 		piece.piece_width = sprite.texture.get_width()
 		
-		PuzzleVar.pieceWidth = piece.piece_width
-		PuzzleVar.pieceHeight = piece.piece_height
+		#PuzzleVar.pieceWidth = piece.piece_width
+		#PuzzleVar.pieceHeight = piece.piece_height
 		
 		#set the collision box for the sprite
 		var collision_box = piece.get_node("Sprite2D/Area2D/CollisionShape2D")
@@ -273,8 +273,9 @@ func arrange_grid():
 	print("Arranging grid...")
 	# Get the 2D grid from build_grid
 	var grid = build_grid()
-	var cell_width = PuzzleVar.pieceWidth
-	var cell_height = PuzzleVar.pieceHeight
+	var cell_piece = PuzzleVar.ordered_pieces_array[0]
+	var cell_width = cell_piece.piece_width
+	var cell_height = cell_piece.piece_height
 	
 	# Loop through the grid and arrange pieces
 	for row in range(grid.size()):

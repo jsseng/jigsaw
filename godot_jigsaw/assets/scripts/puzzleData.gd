@@ -23,8 +23,9 @@ var images = [] # this will be loaded up in the new menu scene
 
 # these are the actual size of the puzzle piece, I am putting them in here so
 # that piece_2d can access them and use them for sizing upon instantiation
-var pieceWidth
-var pieceHeight
+#var pieceWidth
+#var pieceHeight
+var number_correct = 0 # this is the number of pieces that have been placed
 
 # boolean value to trigger debug mode
 var debug = false
@@ -33,7 +34,7 @@ var global_coordinates_list = {} #a dictionary of global coordinates for each pi
 var adjacent_pieces_list = {} #a dictionary of adjacent pieces for each piece
 var image_file_names = {} #a dictionary containing a mapping of selection numbers to image names
 var global_num_pieces = 0 #the number of pieces in the current puzzle
-var ordered_pieces_array = []
+var ordered_pieces_array = [] # an ordered array (by ID) of all the pieces
 var draw_green_check = false
 
 var snap_found = false

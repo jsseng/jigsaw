@@ -23,6 +23,8 @@ func _process(delta):
 	# Restrict amount of zoom
 	zoom.x = clamp(zoom.x, zoom_min, zoom_max)
 	zoom.y = clamp(zoom.y, zoom_min, zoom_max)
+	
+	$Camera2D.position = get_global_mouse_position()
 
 func _input(event):
 	# Check for keypress

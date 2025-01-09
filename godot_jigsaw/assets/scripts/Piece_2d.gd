@@ -27,8 +27,6 @@ var piece_width
 var prev_position = Vector2()
 var velocity = Vector2()
 
-
-
 # Figure out if user finished the puzzle
 #var finished = false
 
@@ -121,6 +119,17 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					# write all piece positions in group to database here
 						print("write to database")
 				
+				# count the number of pieces not yet placed		
+				var placed = 0
+				for x in range(PuzzleVar.global_num_pieces):
+					if PuzzleVar.ordered_pieces_array[x].group_number == PuzzleVar.ordered_pieces_array[x].ID:
+						placed += 1
+						
+				print ("remaining: " + str(placed-1))
+				
+				#do not trigger any more events after putting the piece down
+				#get_viewport().set_input_as_handled()
+				
 			# Set to original color from gray/transparent movement for all players, Peter Nguyen
 			rpc("remove_transparency")
 
@@ -138,8 +147,7 @@ func _input(event):
 		move.rpc(distance)
 	
 
-# this is a basic function to check if a side can snap to another side of a
-# puzzle piece
+# this is a function to snap pieces to other pieces
 func snap_and_connect(adjacent_piece_id: int):
 	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
 	var prev_group_number
@@ -182,7 +190,7 @@ func snap_and_connect(adjacent_piece_id: int):
 		show_image_on_snap(green_check_midpoint)
 		var main_scene = get_node("../JigsawPuzzleNode")
 		main_scene.play_sound()
-		#play_sound()
+
 		PuzzleVar.draw_green_check = true
 	
 	# here is the code to decide which group to move
