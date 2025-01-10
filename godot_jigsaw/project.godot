@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 PuzzleVar="*res://assets/scripts/puzzleData.gd"
 FireAuth="*res://assets/scripts/FirebaseAuth.gd"
 GlobalTimer="*res://assets/scripts/Timer.gd"
+Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 
 [display]
 
@@ -29,7 +30,7 @@ window/stretch/mode="viewport"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/http-sse-client/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot-firebase/plugin.cfg", "res://addons/http-sse-client/plugin.cfg")
 
 [input]
 

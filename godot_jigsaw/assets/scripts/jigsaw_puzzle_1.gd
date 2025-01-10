@@ -116,8 +116,17 @@ func _input(event):
 func parse_pieces_json():
 	print("Calling parse_pieces_json")
 	
+	PuzzleVar.image_file_names["0"] = "mountain"
+	PuzzleVar.image_file_names["1"] = "seattle"
+	PuzzleVar.image_file_names["2"] = "nyc"
 	PuzzleVar.image_file_names["3"] = "peacock"
-	PuzzleVar.image_file_names["4"] = "peacock"
+	PuzzleVar.image_file_names["4"] = "gecko"
+	PuzzleVar.image_file_names["5"] = "rhino"
+	PuzzleVar.image_file_names["6"] = "tree"
+	PuzzleVar.image_file_names["7"] = "china"
+	PuzzleVar.image_file_names["8"] = "taxi"
+	PuzzleVar.image_file_names["9"] = "elephant"
+	PuzzleVar.image_file_names["10"] = "hippo"
 	
 	# Load the JSON file for the pieces.json
 	var json_path = "res://assets/puzzles/jigsawpuzzleimages/" + PuzzleVar.image_file_names[str(PuzzleVar.choice)] + "/size-100/pieces.json"
