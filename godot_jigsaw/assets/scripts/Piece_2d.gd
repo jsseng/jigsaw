@@ -103,14 +103,12 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 						for adjacent_piece in n_list:
 							var adjacent_node = PuzzleVar.ordered_pieces_array[int(adjacent_piece)]
 							await check_connections(adjacent_node.ID)
-				PuzzleVar.draw_green_check = false
-				
-				# the following loop is where the actual match checking occurs
-				for piece in all_pieces:
-					# TODO: here check debug flag and then write the piece positions to the database
-					if PuzzleVar.debug:
-					# write all piece positions in group to database here
-						print("write to database")
+							
+				if PuzzleVar.draw_green_check == true: # a puzzle snap occurred
+					# write all the puzzle positions to Firebase here
+					print ("write to database")
+					
+					PuzzleVar.draw_green_check = false
 				
 				# count the number of pieces not yet placed		
 				var placed = 0

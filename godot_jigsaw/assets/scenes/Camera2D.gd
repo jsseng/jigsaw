@@ -7,12 +7,12 @@ var zoom_min = 0.2
 var zoom_max = 1
 
 var zoom_pos = Vector2()
-var zoom_factor = 1.0
+var zoom_factor = .5
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
-
+	position_smoothing_enabled = true
+	limit_smoothed = true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -37,11 +37,15 @@ func _input(event):
 					zoom_factor -= 0.02
 				else:
 					zoom_factor -= 0.01
-				zoom_pos = get_global_mouse_position()
+					
+				#position = get_global_mouse_position()
+	
 			if event.keycode == KEY_K && zoom_factor < 1.01:
 				if (zoom_factor == 0.99):
 					zoom_factor += 0.02
 				else:
 					zoom_factor += 0.01
-				zoom_pos = get_global_mouse_position()
+				
+				#position = get_global_mouse_position()
+
 			

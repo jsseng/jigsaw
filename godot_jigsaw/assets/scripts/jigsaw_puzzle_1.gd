@@ -111,6 +111,9 @@ func _input(event):
 		print ("snap found")
 		PuzzleVar.snap_found = false
 		
+	if event is InputEventMouseButton and event.pressed:
+		print ("background clicked")
+		
 # This function parses pieces.json which contains the bounding boxes around each piece.  The
 # bounding box coordinates are given as pixel coordinates in the global image.
 func parse_pieces_json():
