@@ -1,11 +1,11 @@
 [gd_scene load_steps=9 format=3 uid="uid://0fgobd7a2aq5"]
 
-[ext_resource type="Script" path="res://assets/scripts/menu.gd" id="1_01fjk"]
+[ext_resource type="Script" uid="uid://xvoukrmwlxoa" path="res://assets/scripts/menu.gd" id="1_01fjk"]
 [ext_resource type="Texture2D" uid="uid://fdsqaxc6rx0h" path="res://assets/puzzles/seattle.jpg" id="2_062ah"]
 [ext_resource type="Texture2D" uid="uid://dx0jdku47mvhc" path="res://assets/puzzles/new_background.jpg" id="2_kmbdo"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="3_3yx2b"]
 [ext_resource type="Theme" uid="uid://0xk2aimn5x6r" path="res://assets/themes/main_menu_buttons.tres" id="3_6xw5d"]
-[ext_resource type="Script" path="res://assets/scripts/menu_slider.gd" id="3_ibxn4"]
+[ext_resource type="Script" uid="uid://bma586h65vs81" path="res://assets/scripts/menu_slider.gd" id="3_ibxn4"]
 [ext_resource type="Texture2D" uid="uid://bguk3dj4p6bhl" path="res://assets/images/slider_background.png" id="5_gufrn"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_e0ofx"]

@@ -1,42 +1,12 @@
 extends Node2D
 
-# this scene is each individual puzzle piece that can snap together to form
-# the jigsaw
+# this scene is for each individual puzzle piece
 
-# these are the (x,y) coords of the midpoints of the four sides of the piece
-var NCoord: Vector2 # midpoint of the top side
-var SCoord: Vector2 # midpoint of the bottom side
-var ECoord: Vector2 # midpoint of the right side
-var WCoord: Vector2 # midpoint of the left side
-
-# ID's that associate with the jigsaw puzzle piece
-# these are ID's that associate with each of the four sides of the piece
-# for example:
-#	the EID of a piece with an ID of 1 would be 2
-#	the WID of a piece with an ID of 2 would be 1
-#	the SID of a piece with an ID of 1 would be 9 assuming it is an 8x8 puzzle
-#	the NID of a piece with an ID of 4 would be 1 assuming it is a 3x3 puzzle
-#	the WID of a piece with an ID of 1 would be null as it is an edge piece
-var NID
-var SID
-var EID
-var WID
-
-# store the actual node that associates with the ID's listed above for matches
-#	if these are null then that means there is no matching piece for that side
-var NNode
-var SNode
-var ENode
-var WNode
-
-# Node_association_complete will become true when all the pieces have been
-#	initialized and the edges of each piece are associated properly with the
-#	other pieces for matching
-var Node_association_complete = false
-
+# neighbor list
+var neighbor_list = {} # This is the list of neighboring IDs for a piece.
 
 # distance that pieces will snap together within
-var snap_distance = 75
+var snap_threshold
 
 var ID: int # The actual ID of the current puzzle piece
 
@@ -44,62 +14,51 @@ var ID: int # The actual ID of the current puzzle piece
 # this becomes false when the piece is set down by the player
 var selected = false
 
-# this is the number that will be used to organize
-#	all the pieces into groups so that they all move in tandem
+# This is the number that will be used to organize all the 
+# pieces into groups so that they all move in tandem.  Initially, each piece
+# has its own group number.
 var group_number
+
+# height and width of this puzzle piece
+var piece_height
+var piece_width
 
 # to calculate velocity:
 var prev_position = Vector2()
 var velocity = Vector2()
 
-var is_muted
-var mute_button: Button
-var unmute_button : Button
-
-# Figure out if user finished the puzzle
-#var finished = false
-
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Sprite2D/Area2D/CollisionShape2D.shape.extents = Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight)/2 #collision box size set here
 	PuzzleVar.active_piece = 0 # 0 is false, any other number is true
-	# piece ID is set here
-	ID = get_tree().get_nodes_in_group("puzzle_pieces").size()
-	group_number = ID
-	#instantiate the associated ID matches with the function below
-	set_appropriate_node_id()
+	
+	group_number = ID # group number is initially set to the piece ID
 	prev_position = position # this is to calculate velocity
-	update_coordinates_for_self() # initially update the coordinates
-	mute_sound()
+		
+	neighbor_list = 	PuzzleVar.adjacent_pieces_list[str(ID)] # set the list of adjacent pieces
+	
+	snap_threshold = ((piece_height + piece_width) / 2) * .4 # set the snap threshold to a fraction of the piece size
+
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	velocity = (position - prev_position) / delta # velocity is calculated here
 	prev_position = position
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	# this if statement will only run once and is for when all the pieces
-	# are instantiated. When they are instantiated, they will be associated
-	# with each other so that they can snap to each other properly
-	if (Node_association_complete == false and group.size() == PuzzleVar.col * PuzzleVar.row):
-		set_appropriate_node()
 
 
 # this is the actual logic to move a piece when you select it
 @rpc("any_peer", "call_local")
 func move(distance: Vector2):
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	for nodes in group:
-		if nodes.group_number == group_number:
-			nodes.global_position += distance
-
+	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+	
+	# for all the pieces in the same group, move them together
+	for node in all_pieces:
+		if node.group_number == group_number:
+			node.global_position += distance
 
 #this is called whenever an event occurs within the area of the piece
 #	Example events include a key press within the area of the piece or
 #	a piece being clicked or even mouse movement
 func _on_area_2d_input_event(viewport, event, shape_idx):
-	# get all nodes from puzzle pieces
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
 	# check if the event is a mouse button and see if it is pressed
 	if event is InputEventMouseButton and event.pressed:
 		# check if it was the left button pressed
@@ -108,14 +67,20 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 			if not PuzzleVar.active_piece:
 				# if this piece is currently not selected
 				if selected == false:
+					# get all nodes from puzzle pieces
+					var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
+					
 					# grab all pieces in the same group number
-					for nodes in group:
-						if nodes.group_number == group_number:
-							nodes.bring_to_front()
+					for piece in all_pieces:
+						if piece.group_number == group_number:
+							piece.bring_to_front()
 					# set this piece as the active puzzle piece
 					PuzzleVar.active_piece = self
 					# mark as selected
 					selected = true
+					
+					PuzzleVar.draw_green_check = false
+					rpc("apply_transparency")
 					
 			# if a piece is already selected
 			else:
@@ -125,32 +90,47 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					# clear active piece reference
 					PuzzleVar.active_piece = 0
 			
+				# get all nodes from puzzle pieces
+				var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
 				var num = group_number
 				var connection_found = false
 			
+				for node in all_pieces: 
+					if node.group_number == group_number:
+						var n_list = node.neighbor_list
+						#run through each of the pieces that should be adjacent to the selected piece
+						#for adjacent_piece in neighbor_list:
+						for adjacent_piece in n_list:
+							var adjacent_node = PuzzleVar.ordered_pieces_array[int(adjacent_piece)]
+							await check_connections(adjacent_node.ID)
+				PuzzleVar.draw_green_check = false
+				
 				# the following loop is where the actual match checking occurs
-				for nodes in group:
-				
-					nodes.update_coordinates_for_self() # you only need to update the coordinates here to check
-				
-				# TODO: here check debug flag and then right the piece positions to the database
+				for piece in all_pieces:
+					# TODO: here check debug flag and then write the piece positions to the database
 					if PuzzleVar.debug:
 					# write all piece positions in group to database here
 						print("write to database")
 				
-					if nodes.group_number == num and connection_found == false:
-						connection_found = await nodes.check_connections(group)
+				# count the number of pieces not yet placed		
+				var placed = 0
+				for x in range(PuzzleVar.global_num_pieces):
+					if PuzzleVar.ordered_pieces_array[x].group_number == PuzzleVar.ordered_pieces_array[x].ID:
+						placed += 1
+						
+				print ("remaining: " + str(placed-1))
 				
-			# Set to original color from gray/transparent movement for all players, Peter Nguyen
-			rpc("remove_transparency")
+				#do not trigger any more events after putting the piece down
+				get_viewport().set_input_as_handled()
+				
+				# Set to original color from gray/transparent movement for all players, Peter Nguyen
+				rpc("remove_transparency")
 
 
 # this is where the actual movement of the puzzle piece is handled
 # when the mouse moves
 func _input(event):
 	if event is InputEventMouseMotion and selected == true:
-		var group = get_tree().get_nodes_in_group("puzzle_pieces")
-		
 		# Peter Nguyen adding transparent effect
 		rpc("apply_transparency")
 		
@@ -160,96 +140,85 @@ func _input(event):
 		move.rpc(distance)
 
 
-# this is a basic function to check if a side can snap to another side of a
-# puzzle piece
-func snap_and_connect(group: Array, direction: String) -> bool:
-	var connected = false
-	var coord
-	var matching
+# this is a function to snap pieces to other pieces
+func snap_and_connect(adjacent_piece_id: int):
+	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
 	var prev_group_number
 	
 	var new_group_number = group_number
 	
 	# Get the global position of the current node
-	var current_global_pos = self.get_global_position()
-	var matching_global_pos
+	var current_global_pos = self.get_global_position() # coordinates centered on the piece
+	var current_ref_coord = PuzzleVar.global_coordinates_list[str(ID)]
 	
-	if direction == "n":
-		coord = NCoord
-		matching = NNode.SCoord
-		prev_group_number = NNode.group_number
-		matching_global_pos = NNode.get_global_position()
-		
-	elif direction == "s":
-		coord = SCoord
-		matching = SNode.NCoord
-		prev_group_number = SNode.group_number
-		matching_global_pos = SNode.get_global_position()
-		
-	elif direction == "e":
-		coord = ECoord
-		matching = ENode.WCoord
-		prev_group_number = ENode.group_number
-		matching_global_pos = ENode.get_global_position()
-		
-	else: #if west
-		coord = WCoord
-		matching = WNode.ECoord
-		prev_group_number = WNode.group_number
-		matching_global_pos = WNode.get_global_position()
+	# get the global position of the adjacent node
+	var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_id]
+	var adjacent_global_pos = adjacent_node.get_global_position() # coordinates centered on the piece
 	
-	# this if statement determines whether the appropriate
-	# sides are within the correct distance of each other to snap and connect
-	var dist = calc_distance(coord, matching)
-	if dist < snap_distance and dist != 0:
-		connected = true
-		
+	var adjacent_ref_coord = PuzzleVar.global_coordinates_list[str(adjacent_piece_id)]
+	
+	prev_group_number = adjacent_node.group_number
+	
+	#calculate the amount to move the current piece to snap
+	var ref_upper_left_diff = Vector2(current_ref_coord[0]-adjacent_ref_coord[0], current_ref_coord[1]-adjacent_ref_coord[1])
+	
+	# compute the upper left position of the current piece
+	var adjusted_current_left_x = current_global_pos[0] - (piece_width/2)
+	var adjusted_current_left_y = current_global_pos[1] - (piece_height/2)
+	var adjusted_current_upper_left = Vector2(adjusted_current_left_x, adjusted_current_left_y)
+	
+	#compute the upper left position of the adjacent piece
+	var adjusted_adjacent_left_x = adjacent_global_pos[0] - (adjacent_node.piece_width/2)
+	var adjusted_adjacent_left_y = adjacent_global_pos[1] - (adjacent_node.piece_height/2)
+	var adjusted_adjacent_upper_left = Vector2(adjusted_adjacent_left_x, adjusted_adjacent_left_y)
+	
+	var current_left_diff = Vector2(adjusted_current_upper_left - adjusted_adjacent_upper_left)
+	var dist = current_left_diff - ref_upper_left_diff
+	#print ("dist: " + str(dist))
+	
+	if PuzzleVar.draw_green_check == false:
 		# Calculate the midpoint between the two connecting sides
-		var midpoint = (current_global_pos + matching_global_pos) / 2
-		# Pass the midpoint to show_image_on_snap() so the image appears at the connection
-		show_image_on_snap(midpoint)
-		
-		#$AudioStreamPlayer.play()
-		play_sound()
-		
-		dist = calc_components(coord, matching)
-		
-		
-		# here is the code to decide which group to move
-		# this code will have it so that the smaller group will always
-		# move to the larger group to snap and connect
-		var countprev = 0
-		var countcurr = 0
-		
-		for nodes in group:
-			if nodes.group_number == group_number:
-				countcurr += 1
-			elif nodes.group_number == prev_group_number:
-				countprev += 1
-				
-		if countcurr < countprev:
-			new_group_number = prev_group_number
-			prev_group_number = group_number
-			dist *= -1
-		
-		# if it can actually snap and connect, the function below is called
-		# to physically move the piece and join it to the appropriate group
-		# this is an rpc call so that the movement and joining of the group
-		# is reflected for all players in a multiplayer game
-		move_pieces_to_connect.rpc(dist, prev_group_number, new_group_number)
-		
-		var finished = true
-		
-		for nodes in group:
-			if nodes.group_number != group_number:
-				finished = false
-				break
-		
-		if (finished):
-			show_win_screen()
-			FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
-		
-	return connected
+		var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
+		# Pass the midpoint to show_image_on_snap() so the green checkmark appears
+		show_image_on_snap(green_check_midpoint)
+		var main_scene = get_node("../JigsawPuzzleNode")
+		main_scene.play_snap_sound()
+
+		PuzzleVar.draw_green_check = true
+	
+	# here is the code to decide which group to move
+	# this code will have it so that the smaller group will always
+	# move to the larger group to snap and connect
+	var countprev = 0
+	var countcurr = 0
+	
+	for node in all_pieces:
+		if node.group_number == group_number:
+			countcurr += 1
+		elif node.group_number == prev_group_number:
+			countprev += 1
+			
+	if countcurr < countprev: # move the small group to attach to larger group
+		new_group_number = prev_group_number
+		prev_group_number = group_number
+		dist *= -1
+	
+	# The function below is called to physically move the piece and join it to the 
+	# appropriate group.  This is an rpc call so that the movement and joining of 
+	# the group is reflected for all players in a multiplayer game
+	move_pieces_to_connect.rpc(dist, prev_group_number, new_group_number)
+	
+	var finished = true
+	
+	for node in all_pieces:
+		if node.group_number != group_number:
+			finished = false
+			break
+	
+	if (finished):
+		var main_scene = get_node("../JigsawPuzzleNode")
+		main_scene.show_win_screen()
+		#FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
 
 
 # This is the function that actually moves the piece (in the current group)
@@ -257,44 +226,108 @@ func snap_and_connect(group: Array, direction: String) -> bool:
 @rpc("any_peer", "call_local")
 func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group_number: int):
 	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	for nodes in group:
+	var show_check_mark = false
+	for node in group:
 		
-		if nodes.group_number == prev_group_number:
+		if node.group_number == prev_group_number:
 			# this is where the piece is actually moved so
 			# that it looks like it is connecting, this is also where
 			# the proper group number is associated with the piece so that it
 			# moves in tandem with the other joined pieces
-			nodes.set_global_position(nodes.get_global_position() - distance)
-			nodes.group_number = new_group_number
+			node.set_global_position(node.get_global_position() + distance)
+			node.group_number = new_group_number
+			PuzzleVar.snap_found = true
 
-
-# this function checks each of the four sides of the piece to determine
-# if there is a connection that can be made to another piece
-func check_connections(group: Array) -> bool:
+func check_connections(adjacent_piece_ID: int) -> bool:
+	var snap_found = false
+	
 	# this if statement below is so that the piece stops moving so that the
 	# position remains constant when it checks for an available connection
 	if velocity != Vector2(0,0):
 		await get_tree().create_timer(.05).timeout
-	
-	var stop_checking = false
-	
-	if NNode:
-		stop_checking = snap_and_connect(group, "n")
 		
-	if SNode and stop_checking == false:
-		stop_checking = snap_and_connect(group, "s")
+	#get reference bounding box for current piece (in coordinate from the image)
+	var current_ref_bounding_box = PuzzleVar.global_coordinates_list[str(ID)]
+	var current_ref_midpoint = Vector2((current_ref_bounding_box[2] + current_ref_bounding_box[0]) / 2, 
+	(current_ref_bounding_box[3] + current_ref_bounding_box[1]) / 2)
+	
+	#compute dynamic positions
+	var current_global_position = self.global_position # this is centered on the piece
+	var adjusted_current_left_x = current_global_position[0] - (piece_width/2) # adjust to upper left corner
+	var adjusted_current_left_y = current_global_position[1] - (piece_height/2) # adjust to upper left corner
+	var adjusted_current_upper_left = Vector2(adjusted_current_left_x, adjusted_current_left_y)
+	#print ("adjusted current upper left: " + str(adjusted_current_upper_left))
+	
+	#get reference bounding box for adjacent piece (in coordinates from the image)
+	var adjacent_ref_bounding_box = PuzzleVar.global_coordinates_list[str(adjacent_piece_ID)]
+	var adjacent_ref_midpoint = Vector2((adjacent_ref_bounding_box[2] + adjacent_ref_bounding_box[0]) / 2, 
+	(adjacent_ref_bounding_box[3] + adjacent_ref_bounding_box[1]) / 2)
+	
+	#compute dynamic positions for adjacent piece
+	var adjacent_node = PuzzleVar.ordered_pieces_array[adjacent_piece_ID]
+	var adjacent_global_position = adjacent_node.global_position # these coordinates are centered on the piece
+	var adjusted_adjacent_left_x = adjacent_global_position[0] - (adjacent_node.piece_width/2) # adjust to the upper left corner
+	var adjusted_adjacent_left_y = adjacent_global_position[1] - (adjacent_node.piece_height/2) # adjust to the upper left corner
+	var adjusted_adjacent_upper_left = Vector2(adjusted_adjacent_left_x, adjusted_adjacent_left_y)
+	#print ("adjusted adjacent upper left: " + str(adjusted_adjacent_upper_left))
+	
+	#compute slope of midpoints - the slope of the midpoints is used to determine the direction of
+	#snapping to the adjacent piece (right,left,top,bottom) 
+	var slope = (adjacent_ref_midpoint[1] - current_ref_midpoint[1]) / (adjacent_ref_midpoint[0] - current_ref_midpoint[0])
+	#print (slope)
+	
+	#compute the relative position difference (of the center points) 
+	# between the current piece and adjacent
+	var current_relative_position = current_global_position - adjacent_global_position
+	
+	#compute the relative position difference between the matching pieces in the reference image
+	var current_ref_upper_left = Vector2(current_ref_bounding_box[0], current_ref_bounding_box[1])
+	var adjacent_ref_upper_left = Vector2(adjacent_ref_bounding_box[0], adjacent_ref_bounding_box[1])
+	var ref_relative_position = current_ref_upper_left - adjacent_ref_upper_left
+	#print ("ref relative_position:" + str(ref_relative_position))
+	
+	#compute the difference in the relative position between reference and actual bounding boxes
+	#This snap distance is how much the piece needs to be moved to be in the correct location
+	var snap_distance =	 calc_distance(ref_relative_position, adjusted_current_upper_left-adjusted_adjacent_upper_left)
+	#print("snap distance: " + str(snap_distance))
+	
+	# The following if-statement checks for snapping in 4 directions
+	if slope < 2 and slope > -2: #if the midpoints are on the same Y value
+		if current_ref_midpoint[0] > adjacent_ref_midpoint[0]: #if the current piece is to the right
+			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):  #pieces are close, so connect
+				print("----snapping----")
+				print ("right to left snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
+				print("current_ref_upper_left: " + str(current_ref_upper_left))
+				print("adjacent_ref_upper_left: " + str(adjacent_ref_upper_left))
+				print ("current global position: " + str(adjusted_current_upper_left))
+				print ("adjacent global position: " + str(adjusted_adjacent_upper_left))
+				print ("current sprite rect: " + str($Sprite2D/Area2D/CollisionShape2D.shape.extents * 2))
+				print("snap_distance: " + str(snap_distance))
+				snap_and_connect(adjacent_piece_ID)
+				print("----snapping----")
+				snap_found = true
+				#print ("snap_distance: " + str(snap_distance))
+		else: #if the current piece is to the left
+			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
+				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
+				snap_and_connect(adjacent_piece_ID)
+				snap_found = true
+	else: #if the midpoints are on the same X value
+		if current_ref_midpoint[1] > adjacent_ref_midpoint[1]: #if the current piece is below
+			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
+				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
+				snap_and_connect(adjacent_piece_ID)
+				snap_found = true
+		else: #if the current piece is above
+			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
+				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
+				snap_and_connect(adjacent_piece_ID)
+				snap_found = true
+				
+	if snap_found == true:
+		return true
 			
-	if ENode and stop_checking == false:
-		stop_checking = snap_and_connect(group, "e")
-			
-	if WNode and stop_checking == false:
-		stop_checking = snap_and_connect(group, "w")
-		
-	return stop_checking
-
-# Method to get the piece ID
-func get_piece_id() -> int:
-	return ID
+	return false
 
 
 # this is the function that brings the piece to the front of the screen
@@ -307,62 +340,9 @@ func bring_to_front():
 
 # this function calculates the distance between two points and returns the
 # distance as a scalar value
-func calc_distance(a: Vector2, b: Vector2) -> int:
+func calc_distance(a: Vector2, b: Vector2) -> float:
 	return ((b.y-a.y)**2 + (b.x-a.x)**2)**0.5
 	
-# this function calculates the distance between two points and returns the
-# distance as a vector
-func calc_components(a: Vector2, b: Vector2) -> Vector2:
-	return Vector2(b.x-a.x,b.y-a.y)
-	
-# this function sets the appropriate associated ID for each of the four sides
-# of a puzzle piece
-func set_appropriate_node_id():
-	NID = ID - PuzzleVar.row
-	if NID <= 0:
-		NID = null
-	
-	SID = ID + PuzzleVar.row
-	if SID > PuzzleVar.row * PuzzleVar.col:
-		SID = null
-	
-	EID = ID + 1
-	if EID > PuzzleVar.row * PuzzleVar.col:
-		EID = null
-	
-	WID = ID - 1
-	if WID <= 0:
-		WID = null
-
-
-# this function updates the coordinates of the midpoints of the four sides
-# of the puzzle piece so that they can be compared with other sides of another
-# puzzle piece
-func update_coordinates_for_self():
-	# coordinates are not updated until piece has stopped moving
-	if velocity != Vector2(0,0):
-		await get_tree().create_timer(.05).timeout
-	
-	NCoord = global_position + Vector2(PuzzleVar.pieceWidth/2,0)
-	SCoord = global_position + Vector2(PuzzleVar.pieceWidth/2,PuzzleVar.pieceHeight)
-	ECoord = global_position + Vector2(PuzzleVar.pieceWidth,PuzzleVar.pieceHeight/2)
-	WCoord = global_position + Vector2(0,PuzzleVar.pieceHeight/2)
-
-# this function associates the proper node to each side of the piece
-# based on the ID 
-func set_appropriate_node():
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	Node_association_complete = true
-	if NID:
-		NNode = group[NID-1]
-	if SID:
-		SNode = group[SID-1]
-	if EID:
-		ENode = group[EID-1]
-	if WID:
-		WNode = group[WID-1]
-		
-
 func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	var popup = Sprite2D.new()
 	# Load texture
@@ -383,81 +363,9 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	popup.z_index = 10
 	# Optional: Make the image disappear after a while
 	# Show image for 2 seconds
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(.5).timeout
 	popup.queue_free()
 
-#Logic for showing the winning labels and buttons
-func show_win_screen():
-	#-------------------------LABEL LOGIC------------------------#
-	var label = Label.new()
-	
-	# Set the text for the Label
-	label.text = "You've Finished the Puzzle!"
-	
-	# Set the font size as well as the color
-	label.add_theme_font_size_override("font_size", 200)
-	label.add_theme_color_override("font_color", Color(0, 204, 0))
-	
-	# Load the font file 
-	var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
-	label.add_theme_font_override("font", font)
-	
-	# Change label poistion and add the label to the current scene
-	label.position = Vector2(-1000, -400)
-	get_tree().current_scene.add_child(label)
-
-	#-------------------------BUTTON LOGIC-----------------------#
-	var button = Button.new()
-	# Change the position, size, text, and image of button
-	button.text = "Main Menu"
-	## Set the font type for the Button
-	button.add_theme_font_override("font", font)
-	button.add_theme_font_size_override("font_size", 150)
-	
-	#Load button texture
-	var button_texture = StyleBoxTexture.new()
-	var texture = preload("res://assets/images/wood_button_normal.png")
-	
-	# Adjust the content margins of the style box
-	button_texture.content_margin_left = 350  # Adjust left margin
-	button_texture.content_margin_top = 350   # Adjust top margin
-	button_texture.content_margin_right = 350  # Adjust right margin
-	button_texture.content_margin_bottom = 350  # Adjust bottom margin
-
-	# Load the button_pressed texture
-	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
-
-	# Configure hovered state style box
-	var hover_stylebox = StyleBoxTexture.new()
-	hover_stylebox.texture = hover_texture
-	hover_stylebox.content_margin_left = 350
-	hover_stylebox.content_margin_top = 350
-	hover_stylebox.content_margin_right = 350
-	hover_stylebox.content_margin_bottom = 350
-	button.add_theme_stylebox_override("hover", hover_stylebox)
-
-	#Apply the texture to the button and stylebox
-	button_texture.texture = texture
-	button.add_theme_stylebox_override("normal", button_texture)
-	button.position = Vector2(0, -200)
-	
-	var empty_stylebox = StyleBoxEmpty.new()
-	button.add_theme_stylebox_override("focus", empty_stylebox)
-	button.add_theme_stylebox_override("pressed", empty_stylebox)
-	
-	# Connect the button's pressed signal to the scene change function
-	button.connect("pressed", Callable(self, "on_button_pressed")) 
-	#Add button to the scene
-	get_tree().current_scene.add_child(button)
- 
-# Function to change scenes when button is pressed
-func on_button_pressed():
-	# Load the new scene
-	await get_tree().create_timer(2.0).timeout
-	#_ready()
-	reset_puzzle_state()
-	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn")
-	get_tree().reload_current_scene()
 
 # This function is called to apply the transparency effect to the pieces for all players to see
 # Written by Peter Nguyen
@@ -477,98 +385,6 @@ func remove_transparency():
 		if nodes.group_number == group_number:
 			nodes.modulate = Color(1, 1, 1, 1)
 
-#This function clears all puzzle pieces and resets global variables
-func reset_puzzle_state():
-	# Get all puzzle pieces and remove them
-	var group = get_tree().get_nodes_in_group("puzzle_pieces")
-	for nodes in group:
-		nodes.queue_free() # Removes puzzle pieces from the scene
-	
-	# Reset global variables related to the puzzle
-	PuzzleVar.active_piece = 0
-	Node_association_complete = false
-	prev_position = Vector2()
-	velocity = Vector2()
-  
-func play_sound(): # Peter Nguyen
-	var snap_sound = preload("res://assets/sounds/ding.mp3")
-	var audio_player = AudioStreamPlayer.new()
-	audio_player.stream = snap_sound
-	add_child(audio_player)
-	audio_player.play()
-	# Manually queue_free after sound finishes
-	await audio_player.finished
-	audio_player.queue_free()
-	
-func mute_sound(): # Ray Lui
-	
-	mute_button = Button.new()
-	mute_button.text = "Mute"
-	unmute_button = Button.new()
-	unmute_button.text = "Unmute"
-	# loading in the font to use for text
-	var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
-	# Set the font type for the Button
-	mute_button.add_theme_font_override("font", font)
-	# Setting the font size
-	mute_button.add_theme_font_size_override("font_size", 60)
-	
-	unmute_button.add_theme_font_override("font", font)
-	# Setting the font size
-	unmute_button.add_theme_font_size_override("font_size", 60)
-	# Load button texture
-	var button_texture = StyleBoxTexture.new()
-	var texture = preload("res://assets/images/wood_button_normal.png")
-	
-	# Adjust the content margins of the style box
-	button_texture.content_margin_left = 200  # Adjust left margin
-	button_texture.content_margin_top = 200   # Adjust top margin
-	button_texture.content_margin_right = 200  # Adjust right margin
-	button_texture.content_margin_bottom = 200  # Adjust bottom margin
-	#Apply the texture to the button and stylebox
-	button_texture.texture = texture
-	mute_button.add_theme_stylebox_override("normal", button_texture)
-	unmute_button.add_theme_stylebox_override("normal", button_texture)
-
-	# Load the button_pressed texture
-	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
-	# Configure hovered state style box
-	var hover_stylebox = StyleBoxTexture.new()
-	hover_stylebox.texture = hover_texture
-	hover_stylebox.content_margin_left = 200
-	hover_stylebox.content_margin_top = 200
-	hover_stylebox.content_margin_right = 200
-	hover_stylebox.content_margin_bottom = 200
-	mute_button.add_theme_stylebox_override("hover", hover_stylebox)
-	# Set text colors for normal and hover states
-	mute_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
-	mute_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
-	
-	unmute_button.add_theme_stylebox_override("hover", hover_stylebox)
-	# Set text colors for normal and hover states
-	unmute_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
-	unmute_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
-
-	var empty_stylebox = StyleBoxEmpty.new()
-	mute_button.add_theme_stylebox_override("focus", empty_stylebox)
-	mute_button.add_theme_stylebox_override("pressed", empty_stylebox)
-	mute_button.position = Vector2(-1650, 1700)
-	mute_button.scale = Vector2(1, 1)
-	
-	unmute_button.add_theme_stylebox_override("focus", empty_stylebox)
-	unmute_button.add_theme_stylebox_override("pressed", empty_stylebox)
-	unmute_button.position = Vector2(-1650, 1400)
-	unmute_button.scale = Vector2(1, 1)
-		
-	# Connect the button's pressed signal to the scene change function
-	mute_button.connect("pressed", Callable(self, "on_mute_button_press")) 
-	unmute_button.connect("pressed", Callable(self, "on_unmute_button_press")) 
-	#Add button to the scene
-	get_tree().current_scene.add_child(mute_button)
-	get_tree().current_scene.add_child(unmute_button)
-	
-func on_mute_button_press():
-	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)  # Mute the audio
-		
-func on_unmute_button_press():
-	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), false)  # ute the audio
+# Function to smoothly move a piece to the new position
+func move_to_position(target_position: Vector2):
+	position = target_position
