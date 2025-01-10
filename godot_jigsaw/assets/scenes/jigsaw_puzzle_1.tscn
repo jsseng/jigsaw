@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://dr6qnsfg5v8bf"]
 
-[ext_resource type="Script" uid="uid://bpt45qfubsu0m" path="res://assets/scripts/jigsaw_puzzle_1.gd" id="1_p57kp"]
+[ext_resource type="Script" path="res://assets/scripts/jigsaw_puzzle_1.gd" id="1_p57kp"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="2_glgob"]
 [ext_resource type="Texture2D" uid="uid://fdsqaxc6rx0h" path="res://assets/puzzles/seattle.jpg" id="3_p7ub0"]
-[ext_resource type="Script" uid="uid://b7u04ghqlwpxt" path="res://assets/scenes/Camera2D.gd" id="4_823ux"]
+[ext_resource type="Script" path="res://assets/scenes/Camera2D.gd" id="4_823ux"]
 [ext_resource type="FontFile" uid="uid://dbfwm247cqnhw" path="res://assets/scripts/LinLibertine_I.otf" id="5_a27gv"]
-[ext_resource type="Texture2D" uid="uid://cbhvejn6803tj" path="res://assets/puzzles/jigsawpuzzleimages/Great-Wall-New-Pic-228551391689622.jpg" id="6_ndos2"]
+[ext_resource type="Texture2D" uid="uid://cbhvejn6803tj" path="res://assets/puzzles/jigsawpuzzleimages/china.jpg" id="6_ndos2"]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_p57kp")

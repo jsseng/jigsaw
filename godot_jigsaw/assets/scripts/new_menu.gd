@@ -33,6 +33,8 @@ func _ready():
 					# apend the image into the image list
 					PuzzleVar.images.append(file_name.replace(".import",""))
 				file_name = dir.get_next()
+			PuzzleVar.images.sort()
+			print(PuzzleVar.images)
 			
 		else:
 			print("An error occured trying to access the path")
@@ -69,7 +71,7 @@ func _on_select_puzzle_pressed():
 	$AudioStreamPlayer.play() # doesn't work, switches scenes too fast
 	# switches to a new scene  that will ask you to
 	# actually select what image you want to solve
-	FireAuth.addUserMode("Single Player")
+	#FireAuth.addUserMode("Single Player")
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
 

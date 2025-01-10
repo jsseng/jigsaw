@@ -1,0 +1,70 @@
+
+<!doctype html>
+<html>
+<head>
+<title>Cut Proof - 100</title>
+<link rel="stylesheet" media="all" href="sprite_p.css">
+<style>
+
+body {
+background: black;
+color: white;
+}
+.container {
+position: relative;
+display: flex;
+flex-wrap: wrap;
+}
+.p {
+transition: opacity linear 0.5s;
+background-image: none;
+}
+input[name=assembled]:checked + .container .p {
+position: absolute;
+}
+.p.is-highlight,
+.p:hover,
+.p:active {
+opacity: 0;
+}
+
+
+</style>
+</head>
+<body>
+<p>
+Piece count: 12<br>
+<button>
+<label for="assembled">Toggle Assembled State</label>
+</button>
+</p>
+
+<!-- All the piece div elements -->
+<input type="checkbox" checked id="assembled" name="assembled">
+<div class="container">
+<div id='p-0' class='p pc-0' style='left:461px;top:321px;'><img class='p-img' src='raster/0.png?1736529251' width='612' height='772'></div><div id='p-1' class='p pc-1' style='left:0px;top:828px;'><img class='p-img' src='raster/1.png?1736529251' width='480' height='588'></div><div id='p-2' class='p pc-2' style='left:1285px;top:795px;'><img class='p-img' src='raster/2.png?1736529251' width='605' height='622'></div><div id='p-3' class='p pc-3' style='left:941px;top:347px;'><img class='p-img' src='raster/3.png?1736529251' width='487' height='736'></div><div id='p-4' class='p pc-4' style='left:0px;top:0px;'><img class='p-img' src='raster/4.png?1736529251' width='486' height='622'></div><div id='p-5' class='p pc-5' style='left:828px;top:940px;'><img class='p-img' src='raster/5.png?1736529251' width='629' height='476'></div><div id='p-6' class='p pc-6' style='left:786px;top:0px;'><img class='p-img' src='raster/6.png?1736529251' width='656' height='476'></div><div id='p-7' class='p pc-7' style='left:1284px;top:427px;'><img class='p-img' src='raster/7.png?1736529251' width='606' height='526'></div><div id='p-8' class='p pc-8' style='left:1278px;top:0px;'><img class='p-img' src='raster/8.png?1736529251' width='611' height='606'></div><div id='p-9' class='p pc-9' style='left:0px;top:428px;'><img class='p-img' src='raster/9.png?1736529251' width='608' height='536'></div><div id='p-10' class='p pc-10' style='left:331px;top:0px;'><img class='p-img' src='raster/10.png?1736529251' width='617' height='509'></div><div id='p-11' class='p pc-11' style='left:322px;top:902px;'><img class='p-img' src='raster/11.png?1736529251' width='660' height='514'></div>
+</div>
+
+<script>
+/* Toggle the adjacent pieces next to the one that is clicked. */
+fetch("/adjacent.json")
+.then(response => response.json())
+.then(adjacent => {
+    document.addEventListener('click', (event) => {
+        for (let target = event.target; target && target != this; target = target.parentNode) {
+            if (target.classList && target.classList.contains('p')) {
+                const $piece = target;
+                const piece_id = $piece.getAttribute("id").replace("p-", "");
+                const adjacent_piece_ids = adjacent[piece_id];
+                adjacent_piece_ids
+                    .map(pc => {return document.getElementById("p-"+pc)})
+                    .map(el => el.classList.toggle('is-highlight'))
+                break;
+            }
+        }
+    }, false);
+});
+</script>
+
+</body>
+</html>
