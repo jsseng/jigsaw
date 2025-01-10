@@ -1,0 +1,59 @@
+
+<!doctype html>
+<html>
+<head>
+<title>Table Proof - 100</title>
+<style>
+
+body {
+background: rgb(20,20,20);
+color: white;
+margin: 0;
+padding: 0;
+}
+.piece-count {
+}
+.container {
+width: 100vw;
+height: 100vh;
+overflow: hidden;
+}
+.controls {
+display: flex;
+}
+.piecemaker-table {
+image-rendering: -moz-crisp-edges;
+image-rendering: -webkit-crisp-edges;
+image-rendering: pixelated;
+image-rendering: crisp-edges;
+}
+
+</style>
+</head>
+<body>
+<p class="piece-count">
+Piece count: 108<br>
+</p>
+<div class="controls">
+<button>
+<label for="assembled">Toggle Assembled State</label>
+</button>
+<input type="checkbox" id="assembled" name="assembled">
+<button id="zoom-in">+</button>
+<button id="zoom-out">-</button>
+</div>
+
+<div class="container">
+    <canvas class="piecemaker-table" id="piecemaker-table" data-size="100">
+        <img id="piecemaker-sprite_without_padding" style="image-rendering:crisp-edges;" width="2598" height="2222" src="size-100/sprite_without_padding.png">
+
+        <!-- TODO: Option to switch to clip paths
+        <img id="piecemaker-sprite_with_padding" style="image-rendering:crisp-edges;" width="2622" height="2242" src="size-100/sprite_with_padding.jpg">
+        
+        -->
+    </canvas>
+</div>
+
+    <script src="table_proof_canvas.js"></script>
+</body>
+</html>
