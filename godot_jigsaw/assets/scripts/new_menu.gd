@@ -6,14 +6,15 @@ func _ready():
 	# below is where the user anonymous login happens	
 	# if the user doesn't need to log in, check their stored auth data
 	
-	#if not FireAuth.needs_login():		
-		#FireAuth.check_auth_file()
-		#print("\n Account Found: ", FireAuth.get_user_id())
-	#else:
+	if not FireAuth.needs_login():		
+		FireAuth.check_auth_file()
+		print("\n Account Found: ", FireAuth.get_user_id())
+	else:
 		## attempt anonymous login if login is required
-		#print("Making new account")
-		#FireAuth.attempt_anonymous_login()
-		#
+		print("Making new account")
+		FireAuth.attempt_anonymous_login()
+	
+	#Firebase.Auth.remove_auth()
 			
 	# this is where the images in the folder get put into the
 	# list PuzzleVar.images for reference

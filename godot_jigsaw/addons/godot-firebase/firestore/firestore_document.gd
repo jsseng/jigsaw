@@ -42,7 +42,7 @@ func replace(with : FirestoreDocument, is_listener := false) -> void:
 		else:
 			var new_value = Utilities.from_firebase_type(document[key])
 			var old_value = Utilities.from_firebase_type(current[key])
-			if new_value != old_value:
+			if str(new_value) != str(old_value):
 				if old_value == null:
 					changes.removed.push_back({ "key" : key }) # ??
 				else:
