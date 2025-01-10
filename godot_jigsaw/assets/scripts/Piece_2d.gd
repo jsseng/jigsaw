@@ -218,7 +218,7 @@ func snap_and_connect(adjacent_piece_id: int):
 	if (finished):
 		var main_scene = get_node("../JigsawPuzzleNode")
 		main_scene.show_win_screen()
-		#FireAuth.remove_current_user_from_activePuzzle(FireAuth.get_current_puzzle())
+		FireAuth.remove_current_user_from_activePuzzle(PuzzleVar.choice)
 
 
 # This is the function that actually moves the piece (in the current group)
