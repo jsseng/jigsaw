@@ -5,6 +5,7 @@ extends Node2D
 var is_muted
 var mute_button: Button
 var unmute_button : Button
+var offline_button: Button
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,6 +24,7 @@ func _ready():
 	var image_size = image_texture.get_size()
 	
 	mute_sound()
+	offline_button_show()
 
 	# preload the scenes
 	var sprite_scene = preload("res://assets/scenes/Piece_2d.tscn")
@@ -70,8 +72,9 @@ func _ready():
 
 	var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
 
-	FireAuth.add_active_puzzle(PuzzleVar.choice)
-	FireAuth.add_favorite_puzzle(PuzzleVar.choice)
+	if(FireAuth.offlineMode == 0):
+		FireAuth.add_active_puzzle(PuzzleVar.choice)
+		FireAuth.add_favorite_puzzle(PuzzleVar.choice)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -458,4 +461,41 @@ func reset_puzzle_state():
 	PuzzleVar.image_file_names = {} #a dictionary containing a mapping of selection numbers to image names
 	PuzzleVar.global_num_pieces = 0 #the number of pieces in the current puzzle
 	PuzzleVar.draw_green_check = false
+	
+func offline_button_show():
+	if FireAuth.offlineMode == 1:
+		offline_button = Button.new()
+		offline_button.text = "OFFLINE"
+		# loading in the font to use for text
+		var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
+		# Set the font type for the Button
+		offline_button.add_theme_font_override("font", font)
+		# Setting the font size
+		offline_button.add_theme_font_size_override("font_size", 60)
+		var button_texture = StyleBoxTexture.new()
+		var texture = preload("res://assets/images/wood_button_normal.png")
+	
+		# Adjust the content margins of the style box
+		button_texture.content_margin_left = 200  # Adjust left margin
+		button_texture.content_margin_top = 200   # Adjust top margin
+		button_texture.content_margin_right = 200  # Adjust right margin
+		button_texture.content_margin_bottom = 200  # Adjust bottom margin
+		#Apply the texture to the button and stylebox
+		button_texture.texture = texture
+		offline_button.add_theme_stylebox_override("normal", button_texture)
+		
+		var hover_stylebox = StyleBoxTexture.new()
+		var hover_texture = preload("res://assets/images/wood_button_pressed.png")
+		hover_stylebox.texture = hover_texture
+		hover_stylebox.content_margin_left = 200
+		hover_stylebox.content_margin_top = 200
+		hover_stylebox.content_margin_right = 200
+		hover_stylebox.content_margin_bottom = 200
+		offline_button.add_theme_stylebox_override("hover", hover_stylebox)
+		# Set text colors for normal and hover states
+		offline_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
+		offline_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
+		offline_button.position = Vector2(-1650, 700)
+		get_tree().current_scene.add_child(offline_button)
+	return
   
