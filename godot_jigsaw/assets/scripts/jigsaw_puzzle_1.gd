@@ -109,6 +109,10 @@ func _input(event):
 				else:
 					on_unmute_button_press()
 					is_muted = false
+			elif event.keycode == KEY_MINUS: # lower volume
+				adjust_volume(-4)
+			elif event.keycode == KEY_EQUAL: # raise volume
+				adjust_volume(4)
 				
 	if PuzzleVar.snap_found == true:
 		print ("snap found")
@@ -498,4 +502,12 @@ func offline_button_show():
 		offline_button.position = Vector2(-1650, 700)
 		get_tree().current_scene.add_child(offline_button)
 	return
+	
+func adjust_volume(change_in_db: float):
+	var current_volume = AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) # get current volume
+	
+	if current_volume >= 20: # limit maximum volume
+		return
+		
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), current_volume + change_in_db)
   
