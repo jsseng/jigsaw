@@ -5,14 +5,15 @@ extends Control
 func _ready():	
 	# below is where the user anonymous login happens	
 	# if the user doesn't need to log in, check their stored auth data
+	if(FireAuth.offlineMode == 0):
+		if not FireAuth.needs_login():		
+			FireAuth.check_auth_file()
+			print("\n Account Found: ", FireAuth.get_user_id())
+		else:
+			## attempt anonymous login if login is required
+			print("Making new account")
+			FireAuth.attempt_anonymous_login()
 	
-	if not FireAuth.needs_login():		
-		FireAuth.check_auth_file()
-		print("\n Account Found: ", FireAuth.get_user_id())
-	else:
-		## attempt anonymous login if login is required
-		print("Making new account")
-		FireAuth.attempt_anonymous_login()
 	
 	#Firebase.Auth.remove_auth()
 			
@@ -47,7 +48,8 @@ func _process(delta):
 	pass
 
 func _on_start_random_pressed():
-	await FireAuth.addUserMode("Single Player")
+	if(FireAuth.offlineMode == 0):
+		await FireAuth.addUserMode("Single Player")
 	$AudioStreamPlayer.play()
 	randomize() # initialize a random seed for the random number generator
 	# choose a random image from the list PuzzleVar.images
@@ -71,7 +73,8 @@ func _on_select_puzzle_pressed():
 	$AudioStreamPlayer.play() # doesn't work, switches scenes too fast
 	# switches to a new scene  that will ask you to
 	# actually select what image you want to solve
-	FireAuth.addUserMode("Single Player")
+	if(FireAuth.offlineMode == 0):
+		FireAuth.addUserMode("Single Player")
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
 
@@ -107,6 +110,7 @@ func _on_multiplayer_pressed():
 	var image_texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	var image_size = image_texture.get_size()
 	PuzzleVar.size = image_size
-	FireAuth.addUserMode("Multiplayer")
+	if(FireAuth.offlineMode == 0):
+		FireAuth.addUserMode("Multiplayer")
 	
 	get_tree().change_scene_to_file("res://assets/scenes/MultiplayerController.tscn")

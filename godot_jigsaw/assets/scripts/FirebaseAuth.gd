@@ -6,6 +6,7 @@ signal login_failed
 
 var user_id = ""
 var currentPuzzle = ""
+var offlineMode = 0
 
 var puzzleNames = {
 	0: ["china10", 10],
