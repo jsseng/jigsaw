@@ -9,9 +9,12 @@ var zoom_max = 1
 var zoom_pos = Vector2()
 var zoom_factor = 1.0
 
+var is_panning = false
+var last_mouse_position = Vector2()
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	position_smoothing_enabled = true
+	#position_smoothing_enabled = true
 	limit_smoothed = true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -38,6 +41,7 @@ func _input(event):
 				else:
 					zoom_factor -= 0.01
 					
+				# Adjust camera position to keep the mouse world position consistent
 				#position = get_global_mouse_position()
 	
 			if event.keycode == KEY_K && zoom_factor < 1.01:
@@ -47,5 +51,20 @@ func _input(event):
 					zoom_factor += 0.01
 				
 				#position = get_global_mouse_position()
+				
+	#panning test
+	#if event is InputEventMouseButton:
+		#if event.button_index == MOUSE_BUTTON_LEFT:
+			#if event.is_pressed():
+				## Start panning
+				#is_panning = true
+				#last_mouse_position = event.position
+			#else:
+				## Stop panning
+				#is_panning = false
+	#elif event is InputEventMouseMotion and is_panning: # if currently panning
+		#var mouse_delta = event.position - last_mouse_position
+		#position -= mouse_delta / zoom # move the camera position based on how zoomed in
+		#last_mouse_position = event.position # set the last mouse position
 
 			
