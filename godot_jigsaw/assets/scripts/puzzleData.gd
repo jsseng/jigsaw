@@ -38,3 +38,5 @@ var ordered_pieces_array = [] # an ordered array (by ID) of all the pieces
 var draw_green_check = false
 
 var snap_found = false
+var piece_clicked = false
+var background_clicked = false

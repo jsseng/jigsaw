@@ -23,7 +23,7 @@ func _ready():
 	var image_texture = $Image.texture #will probably simplify later
 	var image_size = image_texture.get_size()
 	
-	mute_sound()
+	
 	offline_button_show()
 
 	# preload the scenes
@@ -31,6 +31,8 @@ func _ready():
 	
 	parse_pieces_json()
 	parse_adjacent_json()
+	
+	z_index = 0
 	
 	# Iterate through and create puzzle pieces
 	for x in range(PuzzleVar.global_num_pieces):
@@ -50,6 +52,7 @@ func _ready():
 		piece_image_path = piece_image_path.split('.') # remove the trailing .jpg extension
 		piece_image_path = piece_image_path[0] + "/size-100/raster/" + str(x) + ".png" 
 		piece.ID = x # set the piece ID here
+		piece.z_index = 2
 		#print ("piece_image_path: " + piece_image_path)
 		sprite.texture = load(piece_image_path) # load the image
 		
@@ -69,7 +72,11 @@ func _ready():
 		
 		# Add the sprite to the Grid node	
 		get_parent().call_deferred("add_child", piece)
-
+		#add_child(piece)
+		
+	mute_sound()
+		
+	
 	var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
 
 	if(FireAuth.offlineMode == 0):
@@ -119,7 +126,10 @@ func _input(event):
 		PuzzleVar.snap_found = false
 		
 	if event is InputEventMouseButton and event.pressed:
-		print ("background clicked")
+		if PuzzleVar.background_clicked == false:
+			PuzzleVar.background_clicked = true
+		else:
+			PuzzleVar.background_clicked = false
 		
 # This function parses pieces.json which contains the bounding boxes around each piece.  The
 # bounding box coordinates are given as pixel coordinates in the global image.
@@ -369,8 +379,10 @@ func mute_sound(): # Ray Lui
 	mute_button.connect("pressed", Callable(self, "on_mute_button_press")) 
 	unmute_button.connect("pressed", Callable(self, "on_unmute_button_press")) 
 	#Add button to the scene
-	get_tree().current_scene.add_child(mute_button)
-	get_tree().current_scene.add_child(unmute_button)
+	#get_tree().current_scene.add_child(mute_button)
+	#get_tree().current_scene.add_child(unmute_button)
+	get_tree().root.add_child(mute_button)
+	get_tree().root.add_child(unmute_button)
 	
 func on_mute_button_press():
 	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)  # Mute the audio
@@ -503,7 +515,7 @@ func offline_button_show():
 		get_tree().current_scene.add_child(offline_button)
 	return
 	
-func adjust_volume(change_in_db: float):
+func adjust_volume(change_in_db):
 	var current_volume = AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) # get current volume
 	
 	if current_volume >= 20: # limit maximum volume
