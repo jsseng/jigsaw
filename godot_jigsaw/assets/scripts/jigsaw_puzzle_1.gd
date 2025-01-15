@@ -23,6 +23,8 @@ func _ready():
 	var image_texture = $Image.texture #will probably simplify later
 	var image_size = image_texture.get_size()
 	
+	PuzzleVar.background_clicked = false
+	PuzzleVar.piece_clicked = false
 	
 	offline_button_show()
 
