@@ -52,19 +52,26 @@ func _input(event):
 				
 				#position = get_global_mouse_position()
 				
-	#panning test
+	##panning test
 	#if event is InputEventMouseButton:
 		#if event.button_index == MOUSE_BUTTON_LEFT:
-			#if event.is_pressed():
+			#if event.is_pressed() and PuzzleVar.background_clicked == true:
 				## Start panning
 				#is_panning = true
 				#last_mouse_position = event.position
 			#else:
 				## Stop panning
 				#is_panning = false
-	#elif event is InputEventMouseMotion and is_panning: # if currently panning
+	##elif event is InputEventMouseMotion and is_panning: # if currently panning
+	#elif event is InputEventMouseMotion and PuzzleVar.background_clicked == true: # if currently panning
 		#var mouse_delta = event.position - last_mouse_position
 		#position -= mouse_delta / zoom # move the camera position based on how zoomed in
 		#last_mouse_position = event.position # set the last mouse position
 
+	#elif event is InputEventMouseMotion and is_panning: # if currently panning
+	if event is InputEventMouseMotion:
+		if PuzzleVar.background_clicked == true: # if currently panning
+			var mouse_delta = event.position - last_mouse_position
+			position -= mouse_delta / zoom # move the camera position based on how zoomed in
 			
+		last_mouse_position = event.position # set the last mouse position

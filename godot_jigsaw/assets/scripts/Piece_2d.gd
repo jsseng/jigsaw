@@ -80,6 +80,7 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 					selected = true
 					
 					PuzzleVar.draw_green_check = false
+
 					rpc("apply_transparency")
 					
 			# if a piece is already selected
@@ -123,6 +124,10 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				
 				# Set to original color from gray/transparent movement for all players, Peter Nguyen
 				rpc("remove_transparency")
+				
+			PuzzleVar.background_clicked = false
+			PuzzleVar.piece_clicked = true
+			
 
 
 # this is where the actual movement of the puzzle piece is handled
@@ -179,7 +184,7 @@ func snap_and_connect(adjacent_piece_id: int):
 		var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
 		# Pass the midpoint to show_image_on_snap() so the green checkmark appears
 		show_image_on_snap(green_check_midpoint)
-		var main_scene = get_node("../JigsawPuzzleNode")
+		var main_scene = get_node("/root/JigsawPuzzleNode")
 		main_scene.play_snap_sound()
 
 		PuzzleVar.draw_green_check = true
@@ -214,7 +219,7 @@ func snap_and_connect(adjacent_piece_id: int):
 			break
 	
 	if (finished):
-		var main_scene = get_node("../JigsawPuzzleNode")
+		var main_scene = get_node("/root/JigsawPuzzleNode")
 		main_scene.show_win_screen()
 		FireAuth.remove_current_user_from_activePuzzle(PuzzleVar.choice)
 
