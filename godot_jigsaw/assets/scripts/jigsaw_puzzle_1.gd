@@ -409,7 +409,7 @@ func show_win_screen():
 	label.add_theme_font_override("font", font)
 	
 	# Change label poistion and add the label to the current scene
-	label.position = Vector2(-1000, -400)
+	label.position = Vector2(-1000, -1200)
 	get_tree().current_scene.add_child(label)
 
 	#-------------------------BUTTON LOGIC-----------------------#
@@ -425,10 +425,10 @@ func show_win_screen():
 	var texture = preload("res://assets/images/wood_button_normal.png")
 	
 	# Adjust the content margins of the style box
-	button_texture.content_margin_left = 350  # Adjust left margin
-	button_texture.content_margin_top = 350   # Adjust top margin
-	button_texture.content_margin_right = 350  # Adjust right margin
-	button_texture.content_margin_bottom = 350  # Adjust bottom margin
+	button_texture.content_margin_left = 300  # Adjust left margin
+	button_texture.content_margin_top = 300   # Adjust top margin
+	button_texture.content_margin_right = 300  # Adjust right margin
+	button_texture.content_margin_bottom = 300  # Adjust bottom margin
 
 	# Load the button_pressed texture
 	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
@@ -436,16 +436,16 @@ func show_win_screen():
 	# Configure hovered state style box
 	var hover_stylebox = StyleBoxTexture.new()
 	hover_stylebox.texture = hover_texture
-	hover_stylebox.content_margin_left = 350
-	hover_stylebox.content_margin_top = 350
-	hover_stylebox.content_margin_right = 350
-	hover_stylebox.content_margin_bottom = 350
+	hover_stylebox.content_margin_left = 300
+	hover_stylebox.content_margin_top = 300
+	hover_stylebox.content_margin_right = 300
+	hover_stylebox.content_margin_bottom = 300
 	button.add_theme_stylebox_override("hover", hover_stylebox)
 
 	#Apply the texture to the button and stylebox
 	button_texture.texture = texture
 	button.add_theme_stylebox_override("normal", button_texture)
-	button.position = Vector2(0, -200)
+	button.position = Vector2(0, -1000)
 	
 	var empty_stylebox = StyleBoxEmpty.new()
 	button.add_theme_stylebox_override("focus", empty_stylebox)
