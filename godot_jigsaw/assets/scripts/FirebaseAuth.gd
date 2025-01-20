@@ -18,27 +18,30 @@ var puzzleNames = {
 	6: ["peacock10", 10],
 	7: ["peacock100", 100],
 	8: ["peacock1000", 1000],
-	9: ["hippo10", 10],
-	10: ["hippo100", 100],
-	11: ["hippo1000", 1000],
-	12: ["mountain10", 10],
-	13: ["mountain100", 100],
-	14: ["mountain1000", 1000],
-	15: ["nyc10", 10],
-	16: ["nyc100", 100],
-	17: ["nyc1000", 1000],
-	18: ["rhino10", 10],
-	19: ["rhino100", 100],
-	20: ["rhino1000", 1000],
-	21: ["seattle10", 10],
-	22: ["seattle100", 100],
-	23: ["seattle1000", 1000],
-	24: ["taxi10", 10],
-	25: ["taxi100", 100],
-	26: ["taxi1000", 1000],
-	27: ["tree10", 10],
-	28: ["tree100", 100],
-	29: ["tree1000", 1000],
+	9: ["chameleon10", 10],
+	10: ["chameleon100", 100],
+	11: ["chameleon1000", 100],
+	12: ["hippo10", 10],
+	13: ["hippo100", 100],
+	14: ["hippo1000", 1000],
+	15: ["mountain10", 10],
+	16: ["mountain100", 100],
+	17: ["mountain1000", 1000],
+	18: ["nyc10", 10],
+	19: ["nyc100", 100],
+	20: ["nyc1000", 1000],
+	21: ["rhino10", 10],
+	22: ["rhino100", 100],
+	23: ["rhino1000", 1000],
+	24: ["seattle10", 10],
+	25: ["seattle100", 100],
+	26: ["seattle1000", 1000],
+	27: ["taxi10", 10],
+	28: ["taxi100", 100],
+	29: ["taxi1000", 1000],
+	30: ["tree10", 10],
+	31: ["tree100", 100],
+	32: ["tree1000", 1000],
 };
 
 
@@ -83,9 +86,12 @@ func _on_signup_succeeded(auth_info: Dictionary) -> void:
 	logged_in.emit()
 	var favorite_puzzles = [{"puzzleId": "temp", "rank": 1, "timesPlayed": 0}]
 	var collection: FirestoreCollection = Firebase.Firestore.collection("users")
+	var progressCollection: FirestoreCollection = Firebase.Firestore.collection("progress")
+	
 	
 	# add user to firebase
 	var document = await collection.add(user_id, {'activePuzzles': [{"puzzleId": "0", "timeStarted": "0"}], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': favorite_puzzles, 'completedPuzzles': ["temp"], 'currentMode': 'temp'})
+	var progress_document = await progressCollection.add(user_id, {'china10' : [{"temp" : "temp"}], 'china100' : [{"temp" : "temp"}], 'china1000' : [{"temp" : "temp"}], 'elephant10' : [{"temp" : "temp"}], 'elephant100' : [{"temp" : "temp"}], 'elephant1000' : [{"temp" : "temp"}], 'peacock10' : [{"temp" : "temp"}], 'peacock100' : [{"temp" : "temp"}], 'peacock1000' : [{"temp" : "temp"}], 'chameleon10' : [{"temp" : "temp"}], 'chameleon100' : [{"temp" : "temp"}], 'chameleon1000' : [{"temp" : "temp"}]})
 	print("Anon Login Success: ", user_id)
 
 	
@@ -293,6 +299,23 @@ func addUserMode(mode: String) -> void:
 	if mode == "Multiplayer" or mode == "Single Player":
 		userDoc.add_or_update_field("currentMode", mode)
 		await userCollection.update(userDoc)
+		
+func save_puzzle_loc(ordered_arr : Array, puzzleId : int) -> void:
+	
+	var progressCollection: FirestoreCollection = Firebase.Firestore.collection("progress")
+	var progressDoc = await progressCollection.get_doc(FireAuth.get_user_id())
+	var PUZZLE_NAME = puzzleNames[puzzleId][0]
+	var puzzle_data = []
+	for i in range(len(ordered_arr)):
+		var piece = ordered_arr[i]
+		var piece_ID = piece.ID
+		var piece_group_number = piece.group_number
+		var global_pos = Vector2.ZERO  
+		global_pos = piece.global_position
+		var global_pos_dict = {"x": global_pos.x, "y": global_pos.y}
+		puzzle_data.append({"ID": piece_ID, "GroupID": piece_group_number, "CenterLocation": global_pos_dict})
+	await progressDoc.add_or_update_field(PUZZLE_NAME, puzzle_data)
+	await progressCollection.update(progressDoc)
 		
 		
 		
