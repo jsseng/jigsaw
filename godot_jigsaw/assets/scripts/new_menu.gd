@@ -35,7 +35,6 @@ func _ready():
 					PuzzleVar.images.append(file_name.replace(".import",""))
 				file_name = dir.get_next()
 			PuzzleVar.images.sort()
-			print(PuzzleVar.images)
 			
 		else:
 			print("An error occured trying to access the path")

@@ -12,7 +12,7 @@ func _ready():
 	name = "JigsawPuzzleNode"
 	
 	is_muted = false
-			
+	
 	# load up reference image
 	$referenceImage.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	print ("ref_image: " + (PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]))
@@ -134,18 +134,6 @@ func _input(event):
 # bounding box coordinates are given as pixel coordinates in the global image.
 func parse_pieces_json():
 	print("Calling parse_pieces_json")
-	
-	#PuzzleVar.image_file_names["0"] = "china"
-	#PuzzleVar.image_file_names["1"] = "elephant"
-	#PuzzleVar.image_file_names["2"] = "gecko"
-	#PuzzleVar.image_file_names["3"] = "hippo"
-	#PuzzleVar.image_file_names["4"] = "mountain"
-	#PuzzleVar.image_file_names["5"] = "nyc"
-	#PuzzleVar.image_file_names["6"] = "peacock"
-	#PuzzleVar.image_file_names["7"] = "rhino"
-	#PuzzleVar.image_file_names["8"] = "seattle"
-	#PuzzleVar.image_file_names["9"] = "taxi"
-	#PuzzleVar.image_file_names["10"] = "tree"
 	
 	PuzzleVar.image_file_names["0"] = "china_10"
 	PuzzleVar.image_file_names["1"] = "china_100"
@@ -337,58 +325,24 @@ func show_win_screen():
 	label.add_theme_font_override("font", font)
 	
 	# Change label poistion and add the label to the current scene
-	label.position = Vector2(-1000, -1200)
+	label.position = Vector2(-1000, -700)
 	get_tree().current_scene.add_child(label)
 
 	#-------------------------BUTTON LOGIC-----------------------#
-	var button = Button.new()
-	# Change the position, size, text, and image of button
-	button.text = "Main Menu"
-	## Set the font type for the Button
+	var button = $MainMenu
+	button.visible = true
+	# Change the font size
 	button.add_theme_font_override("font", font)
-	button.add_theme_font_size_override("font_size", 150)
-	
-	#Load button texture
-	var button_texture = StyleBoxTexture.new()
-	var texture = preload("res://assets/images/wood_button_normal.png")
-	
-	# Adjust the content margins of the style box
-	button_texture.content_margin_left = 300  # Adjust left margin
-	button_texture.content_margin_top = 300   # Adjust top margin
-	button_texture.content_margin_right = 300  # Adjust right margin
-	button_texture.content_margin_bottom = 300  # Adjust bottom margin
-
-	# Load the button_pressed texture
-	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
-
-	# Configure hovered state style box
-	var hover_stylebox = StyleBoxTexture.new()
-	hover_stylebox.texture = hover_texture
-	hover_stylebox.content_margin_left = 300
-	hover_stylebox.content_margin_top = 300
-	hover_stylebox.content_margin_right = 300
-	hover_stylebox.content_margin_bottom = 300
-	button.add_theme_stylebox_override("hover", hover_stylebox)
-
-	#Apply the texture to the button and stylebox
-	button_texture.texture = texture
-	button.add_theme_stylebox_override("normal", button_texture)
-	button.position = Vector2(0, -1000)
-	
-	var empty_stylebox = StyleBoxEmpty.new()
-	button.add_theme_stylebox_override("focus", empty_stylebox)
-	button.add_theme_stylebox_override("pressed", empty_stylebox)
-	
-	# Connect the button's pressed signal to the scene change function
+	button.add_theme_font_size_override("font_size", 120)
+	# Change the text color to white
+	var font_color = Color(1, 1, 1)  # RGB (1, 1, 1) = white
+	button.add_theme_color_override("font_color", font_color)
 	button.connect("pressed", Callable(self, "on_main_menu_button_pressed")) 
-	#Add button to the scene
-	get_tree().current_scene.add_child(button)
  
 # Function to change scenes when button is pressed
 func on_main_menu_button_pressed():
 	# Load the new scene
-	await get_tree().create_timer(2.0).timeout
-	#_ready()
+	#await get_tree().create_timer(2.0).timeout
 	reset_puzzle_state()
 	get_tree().change_scene_to_file("res://assets/scenes/new_menu.tscn")
 	
