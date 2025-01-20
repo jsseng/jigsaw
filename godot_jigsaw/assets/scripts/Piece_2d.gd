@@ -108,6 +108,9 @@ func _on_area_2d_input_event(viewport, event, shape_idx):
 				if PuzzleVar.draw_green_check == true: # a puzzle snap occurred
 					# write all the puzzle positions to Firebase here
 					print ("write to database")
+					# store in Firebase -> [[ID, GroupID, Center of piece location]]
+					FireAuth.save_puzzle_loc(PuzzleVar.ordered_pieces_array, PuzzleVar.choice)
+					
 					
 					PuzzleVar.draw_green_check = false
 				
