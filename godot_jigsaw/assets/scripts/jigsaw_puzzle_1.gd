@@ -76,9 +76,6 @@ func _ready():
 		get_parent().call_deferred("add_child", piece)
 		#add_child(piece)
 		
-	mute_sound()
-		
-	
 	var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
 
 	if(FireAuth.offlineMode == 0):
@@ -316,75 +313,6 @@ func play_snap_sound(): # Peter Nguyen
 	# Manually queue_free after sound finishes
 	await audio_player.finished
 	audio_player.queue_free()
-
-	
-func mute_sound(): # Ray Lui
-	mute_button = Button.new()
-	mute_button.text = "Mute"
-	unmute_button = Button.new()
-	unmute_button.text = "Unmute"
-	# loading in the font to use for text
-	var font = load("res://assets/fonts/KiriFont.ttf") as FontFile
-	# Set the font type for the Button
-	mute_button.add_theme_font_override("font", font)
-	# Setting the font size
-	mute_button.add_theme_font_size_override("font_size", 60)
-	
-	unmute_button.add_theme_font_override("font", font)
-	# Setting the font size
-	unmute_button.add_theme_font_size_override("font_size", 60)
-	# Load button texture
-	var button_texture = StyleBoxTexture.new()
-	var texture = preload("res://assets/images/wood_button_normal.png")
-	
-	# Adjust the content margins of the style box
-	button_texture.content_margin_left = 200  # Adjust left margin
-	button_texture.content_margin_top = 200   # Adjust top margin
-	button_texture.content_margin_right = 200  # Adjust right margin
-	button_texture.content_margin_bottom = 200  # Adjust bottom margin
-	#Apply the texture to the button and stylebox
-	button_texture.texture = texture
-	mute_button.add_theme_stylebox_override("normal", button_texture)
-	unmute_button.add_theme_stylebox_override("normal", button_texture)
-
-	# Load the button_pressed texture
-	var hover_texture = preload("res://assets/images/wood_button_pressed.png")
-	# Configure hovered state style box
-	var hover_stylebox = StyleBoxTexture.new()
-	hover_stylebox.texture = hover_texture
-	hover_stylebox.content_margin_left = 200
-	hover_stylebox.content_margin_top = 200
-	hover_stylebox.content_margin_right = 200
-	hover_stylebox.content_margin_bottom = 200
-	mute_button.add_theme_stylebox_override("hover", hover_stylebox)
-	# Set text colors for normal and hover states
-	mute_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
-	mute_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
-	
-	unmute_button.add_theme_stylebox_override("hover", hover_stylebox)
-	# Set text colors for normal and hover states
-	unmute_button.add_theme_color_override("font_color", Color(1, 1, 1))  # Normal state (white)
-	unmute_button.add_theme_color_override("font_color_hover", Color(0.8, 0.8, 0.0))  # Hover state (yellow)
-
-	var empty_stylebox = StyleBoxEmpty.new()
-	mute_button.add_theme_stylebox_override("focus", empty_stylebox)
-	mute_button.add_theme_stylebox_override("pressed", empty_stylebox)
-	mute_button.position = Vector2(-1650, 1700)
-	mute_button.scale = Vector2(1, 1)
-	
-	unmute_button.add_theme_stylebox_override("focus", empty_stylebox)
-	unmute_button.add_theme_stylebox_override("pressed", empty_stylebox)
-	unmute_button.position = Vector2(-1650, 1400)
-	unmute_button.scale = Vector2(1, 1)
-		
-	# Connect the button's pressed signal to the scene change function
-	mute_button.connect("pressed", Callable(self, "on_mute_button_press")) 
-	unmute_button.connect("pressed", Callable(self, "on_unmute_button_press")) 
-	#Add button to the scene
-	#get_tree().current_scene.add_child(mute_button)
-	#get_tree().current_scene.add_child(unmute_button)
-	get_tree().root.add_child(mute_button)
-	get_tree().root.add_child(unmute_button)
 	
 func on_mute_button_press():
 	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)  # Mute the audio
