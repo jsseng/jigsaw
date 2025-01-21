@@ -316,8 +316,22 @@ func save_puzzle_loc(ordered_arr : Array, puzzleId : int) -> void:
 		puzzle_data.append({"ID": piece_ID, "GroupID": piece_group_number, "CenterLocation": global_pos_dict})
 	await progressDoc.add_or_update_field(PUZZLE_NAME, puzzle_data)
 	await progressCollection.update(progressDoc)
-		
-		
-		
-		
-		
+	
+	
+func get_puzzle_loc(puzzleId: int) -> Array:
+	var PUZZLE_NAME = puzzleNames[puzzleId][0]
+	var progressCollection: FirestoreCollection = await Firebase.Firestore.collection("progress")
+	var userProgressDoc = await progressCollection.get_doc(FireAuth.get_user_id())
+	var puzzle_data = userProgressDoc.document.get(PUZZLE_NAME)
+
+	var simplified_data = []
+	if puzzle_data.has("arrayValue") and puzzle_data["arrayValue"].has("values"):
+		for item in puzzle_data["arrayValue"]["values"]:
+			var fields = item["mapValue"]["fields"]
+			var group_id = int(fields["GroupID"]["integerValue"])
+			var center_location = {
+				"x": float(fields["CenterLocation"]["mapValue"]["fields"]["x"]["doubleValue"]),
+				"y": float(fields["CenterLocation"]["mapValue"]["fields"]["y"]["doubleValue"])
+			}
+			simplified_data.append({"GroupID": group_id, "CenterLocation": center_location})
+	return simplified_data
