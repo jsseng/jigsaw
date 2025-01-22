@@ -323,6 +323,10 @@ func get_puzzle_loc(puzzleId: int) -> Array:
 	var progressCollection: FirestoreCollection = await Firebase.Firestore.collection("progress")
 	var userProgressDoc = await progressCollection.get_doc(FireAuth.get_user_id())
 	var puzzle_data = userProgressDoc.document.get(PUZZLE_NAME)
+	
+
+	if puzzle_data == { "arrayValue": { "values": [{ "mapValue": { "fields": { "temp": { "stringValue": "temp" } } } }] } }:
+		return []
 
 	var simplified_data = []
 	if puzzle_data.has("arrayValue") and puzzle_data["arrayValue"].has("values"):
@@ -335,3 +339,12 @@ func get_puzzle_loc(puzzleId: int) -> Array:
 			}
 			simplified_data.append({"GroupID": group_id, "CenterLocation": center_location})
 	return simplified_data
+
+func write_temp_to_location(puzzleId: int) -> void:
+	var PUZZLE_NAME = puzzleNames[puzzleId][0]
+	var progressCollection: FirestoreCollection = await Firebase.Firestore.collection("progress")
+	var userProgressDoc = await progressCollection.get_doc(FireAuth.get_user_id())
+
+	await userProgressDoc.add_or_update_field(PUZZLE_NAME, [{"temp" : "temp"}])	
+	await progressCollection.update(userProgressDoc)
+	
