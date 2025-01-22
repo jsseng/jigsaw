@@ -147,7 +147,7 @@ func _input(event):
 
 
 # this is a function to snap pieces to other pieces
-func snap_and_connect(adjacent_piece_id: int):
+func snap_and_connect(adjacent_piece_id: int, loadFlag = 0):
 	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
 	var prev_group_number
 	
@@ -182,7 +182,7 @@ func snap_and_connect(adjacent_piece_id: int):
 	var dist = current_left_diff - ref_upper_left_diff
 	#print ("dist: " + str(dist))
 	
-	if PuzzleVar.draw_green_check == false:
+	if PuzzleVar.draw_green_check == false and loadFlag == 0:
 		# Calculate the midpoint between the two connecting sides
 		var green_check_midpoint = (current_global_pos + adjacent_global_pos) / 2
 		# Pass the midpoint to show_image_on_snap() so the green checkmark appears

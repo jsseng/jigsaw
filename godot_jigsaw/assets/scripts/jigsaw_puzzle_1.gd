@@ -74,10 +74,60 @@ func _ready():
 		
 		# Add the sprite to the Grid node	
 		get_parent().call_deferred("add_child", piece)
+	
+	if (FireAuth.offlineMode == 0):
+		var saved_piece_data: Array = await FireAuth.get_puzzle_loc(PuzzleVar.choice)
+		var notComplete = 0
+		var groupArray = []
+		for idx in range(len(saved_piece_data)):
+			var data = saved_piece_data[idx]
+			var groupId = data["GroupID"]
+			if groupId not in groupArray:
+				groupArray.append(groupId)
+		
+			if len(groupArray) > 1:
+				notComplete = 1
+				break
+			
+		
+	
+		if(notComplete):
+		
+			# Adjust pieces to their saved positions and assign groups
+			for idx in range(len(saved_piece_data)):
+				var data = saved_piece_data[idx]
+				var piece = PuzzleVar.ordered_pieces_array[idx]
+	
+				# Set the position from the saved data
+				var center_location = data["CenterLocation"]
+				piece.position = Vector2(center_location["x"], center_location["y"])
+	
+				# Assign the group number
+				piece.group_number = data["GroupID"]
+
+			# Collect all unique group IDs from the saved data
+			var unique_group_ids = []
+			for data in saved_piece_data:
+				if data["GroupID"] not in unique_group_ids:
+					unique_group_ids.append(data["GroupID"])
+
+			# Re-group all pieces based on their group number
+			for group_id in unique_group_ids:
+				var group_pieces = []
+				for piece in PuzzleVar.ordered_pieces_array:
+					if piece.group_number == group_id:
+						group_pieces.append(piece)
+
+				if group_pieces.size() > 1:
+				# Snap and connect all pieces in this group
+					var reference_piece = group_pieces[0]
+					for other_piece in group_pieces.slice(1, group_pieces.size()):
+						reference_piece.snap_and_connect(other_piece.ID, 1)
+		
+		else:
+			FireAuth.write_temp_to_location(PuzzleVar.choice)
 		#add_child(piece)
 		
-	var puzzleId = hash(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]+str(PuzzleVar.col)+str(PuzzleVar.row))
-
 	if(FireAuth.offlineMode == 0):
 		FireAuth.add_active_puzzle(PuzzleVar.choice)
 		FireAuth.add_favorite_puzzle(PuzzleVar.choice)
