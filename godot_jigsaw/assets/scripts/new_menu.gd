@@ -16,7 +16,7 @@ func _ready():
 	
 	
 	#Firebase.Auth.remove_auth()
-			
+
 	# this is where the images in the folder get put into the
 	# list PuzzleVar.images for reference
 	

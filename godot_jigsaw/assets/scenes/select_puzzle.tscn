@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://doax16vbups3k"]
+[gd_scene load_steps=12 format=3 uid="uid://doax16vbups3k"]
 
 [ext_resource type="Script" path="res://assets/puzzles/jigsawpuzzleimages/mountain/select_puzzle.gd" id="1_lx4o5"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="2_xyg5e"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://5vvgw6t768m7" path="res://assets/images/left_arrow.png" id="5_2ca8n"]
 [ext_resource type="AudioStream" uid="uid://6nx6r171vxkd" path="res://assets/sounds/finger-snap-179180.mp3" id="5_7prs1"]
 [ext_resource type="Texture2D" uid="uid://bud73sy775w43" path="res://assets/images/Left_Arrow_Light copy.png" id="7_http0"]
+[ext_resource type="FontFile" uid="uid://cvnii1vc7befk" path="res://assets/fonts/KiriFont.ttf" id="9_3rueg"]
 [ext_resource type="Texture2D" uid="uid://dco3blqxkk7ue" path="res://assets/images/Right_Arrow_Light.png" id="9_i8mdc"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tswy4"]
@@ -33,6 +34,7 @@ offset_left = -2847.86
 offset_top = -1947.16
 offset_right = 2843.14
 offset_bottom = 1946.84
+scale = Vector2(0.998321, 1)
 texture = ExtResource("3_3k1lu")
 
 [node name="Title" type="Label" parent="."]
@@ -99,6 +101,14 @@ offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
 
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid0"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10"
+
 [node name="grid1" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -113,6 +123,14 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid1"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10 0
+"
 
 [node name="grid2" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
@@ -129,6 +147,15 @@ offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
 
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid2"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10 0 0
+
+"
+
 [node name="grid3" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -143,6 +170,14 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid3"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10 
+"
 
 [node name="grid4" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
@@ -159,6 +194,14 @@ offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
 
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid4"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10 0
+"
+
 [node name="grid5" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -173,6 +216,14 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid5"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10 0 0
+"
 
 [node name="grid6" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
@@ -189,6 +240,13 @@ offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
 
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid6"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10 "
+
 [node name="grid7" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -204,6 +262,14 @@ offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
 
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid7"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10 0
+"
+
 [node name="grid8" type="Button" parent="HBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -218,6 +284,14 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid8"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3.3413, 2.76357)
+theme_override_fonts/normal_font = ExtResource("9_3rueg")
+text = "10 0 0
+"
 
 [node name="right button" type="Button" parent="HBoxContainer"]
 layout_mode = 2
