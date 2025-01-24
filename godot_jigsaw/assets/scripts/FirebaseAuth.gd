@@ -316,8 +316,3 @@ func save_puzzle_loc(ordered_arr : Array, puzzleId : int) -> void:
 		puzzle_data.append({"ID": piece_ID, "GroupID": piece_group_number, "CenterLocation": global_pos_dict})
 	await progressDoc.add_or_update_field(PUZZLE_NAME, puzzle_data)
 	await progressCollection.update(progressDoc)
-		
-		
-		
-		
-		

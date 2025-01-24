@@ -11,15 +11,15 @@
 script = ExtResource("1_p57kp")
 
 [node name="TextureRect" type="TextureRect" parent="." groups=["dropable"]]
-offset_left = -4180.0
-offset_top = -3209.0
-offset_right = 5933.0
-offset_bottom = 4177.0
+offset_left = -11355.0
+offset_top = -6755.0
+offset_right = 12014.0
+offset_bottom = 8128.0
 texture = ExtResource("2_1s5nt")
 expand_mode = 1
 
 [node name="Image" type="Sprite2D" parent="." groups=["dropable"]]
-position = Vector2(-6824, 1056)
+position = Vector2(-17993, 1014)
 scale = Vector2(1.37158, 1.12207)
 texture = ExtResource("3_p7ub0")
 
