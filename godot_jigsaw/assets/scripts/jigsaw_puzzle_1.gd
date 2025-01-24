@@ -188,12 +188,15 @@ func parse_pieces_json():
 	PuzzleVar.image_file_names["0"] = "china_10"
 	PuzzleVar.image_file_names["1"] = "china_100"
 	PuzzleVar.image_file_names["2"] = "china_1000"
-	PuzzleVar.image_file_names["3"] = "elephant_10"
-	PuzzleVar.image_file_names["4"] = "elephant_100"
-	PuzzleVar.image_file_names["5"] = "elephant_1000"
-	PuzzleVar.image_file_names["6"] = "fpeacock_10"
-	PuzzleVar.image_file_names["7"] = "fpeacock_100"
-	PuzzleVar.image_file_names["8"] = "fpeacock_1000"
+	PuzzleVar.image_file_names["3"] = "dogs_10"
+	PuzzleVar.image_file_names["4"] = "dogs_100"
+	PuzzleVar.image_file_names["5"] = "dogs_1000"
+	PuzzleVar.image_file_names["6"] = "elephant_10"
+	PuzzleVar.image_file_names["7"] = "elephant_100"
+	PuzzleVar.image_file_names["8"] = "elephant_1000"
+	PuzzleVar.image_file_names["9"] = "fpeacock_10"
+	PuzzleVar.image_file_names["10"] = "fpeacock_100"
+	PuzzleVar.image_file_names["11"] = "fpeacock_1000"
 	
 	
 	# Load the JSON file for the pieces.json
