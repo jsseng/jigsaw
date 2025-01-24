@@ -14,14 +14,14 @@ func _ready():
 	is_muted = false
 	
 	# load up reference image
-	$referenceImage.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
+	#$referenceImage.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
 	print ("ref_image: " + (PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice]))
 	print ("image choice: " + str(PuzzleVar.choice))
 	
 	# Load the image
 	$Image.texture = load(PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
-	var image_texture = $Image.texture #will probably simplify later
-	var image_size = image_texture.get_size()
+	#var image_texture = $Image.texture #will probably simplify later
+	#var image_size = image_texture.get_size()
 	
 	PuzzleVar.background_clicked = false
 	PuzzleVar.piece_clicked = false

@@ -12,10 +12,42 @@ var zoom_factor = 1.0
 var is_panning = false
 var last_mouse_position = Vector2()
 
+# Bounds for constraining movement to background
+var camera_bounds = Rect2(Vector2(-3700, -2700), Vector2(6000, 4100))
+
+# Reference image path and texture loading
+var reference_image_path = (PuzzleVar.path+"/"+PuzzleVar.images[PuzzleVar.choice])
+var reference_texture = load(reference_image_path) 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#position_smoothing_enabled = true
 	limit_smoothed = true
+	# Add the CanvasLayer or Control node dynamically (if not already in the scene)
+	var canvas_layer = CanvasLayer.new()
+	add_child(canvas_layer)
+
+	# Create a TextureRect for the reference image
+	var reference_image = TextureRect.new()
+	reference_image.texture = load(reference_image_path) # Dynamically load the image
+	reference_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT # Keep aspect ratio
+	var texture_size = reference_image.texture.get_size()
+
+	
+	# Define the target size (in pixels) that you want all images to be
+	var target_size = Vector2(400, 400)  # Example target size: 200x200 pixels
+
+	# Calculate the scale factors to make the image fit the target size
+	var scale_x = target_size.x / texture_size.x
+	var scale_y = target_size.y / texture_size.y
+
+	# Use the smaller scale factor to maintain aspect ratio
+	var uniform_scale = min(scale_x, scale_y)
+	#var desired_width = texture_size.x * 0.001# Adjust as needed
+	#var desired_height = texture_size.y * 0.001# Adjust as needed
+	reference_image.set_scale(Vector2(uniform_scale, uniform_scale))
+	# Add the TextureRect to the CanvasLayer
+	canvas_layer.add_child(reference_image)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -73,5 +105,9 @@ func _input(event):
 		if PuzzleVar.background_clicked == true: # if currently panning
 			var mouse_delta = event.position - last_mouse_position
 			position -= mouse_delta / zoom # move the camera position based on how zoomed in
+			
+			# Clamp the camera position within the bounds
+			position.x = clamp(position.x, camera_bounds.position.x, camera_bounds.position.x + camera_bounds.size.x)
+			position.y = clamp(position.y, camera_bounds.position.y, camera_bounds.position.y + camera_bounds.size.y)
 			
 		last_mouse_position = event.position # set the last mouse position
