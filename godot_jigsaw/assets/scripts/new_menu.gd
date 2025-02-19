@@ -13,7 +13,9 @@ func _ready():
 			## attempt anonymous login if login is required
 			print("Making new account")
 			FireAuth.attempt_anonymous_login()
-	
+
+	if "--server" in OS.get_cmdline_args(): # if want to emulate a dedicated server using cmd line
+		get_tree().change_scene_to_file("res://assets/scenes/MultiplayerController.tscn")
 	
 	#Firebase.Auth.remove_auth()
 

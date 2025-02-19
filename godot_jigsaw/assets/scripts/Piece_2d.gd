@@ -44,6 +44,38 @@ func _process(delta):
 	velocity = (position - prev_position) / delta # velocity is calculated here
 	prev_position = position
 
+# This is for mulitplayer synchronization 
+# This will be called by a player everytime there is a change in the puzzle -JA
+#@rpc("any_peer", "call_local")
+#func update_game_state(all_pieces):
+	#for data in all_pieces:
+		#var piece = null
+		## Ensure the index exists in the array before accessing it
+		#if data.id < len(PuzzleVar.ordered_pieces_array):
+			#piece = PuzzleVar.ordered_pieces_array[data.id]
+#
+		## If the piece exists, update its position and group
+		#if piece:
+			#piece.global_position = data.position
+			#piece.group_number = data.group
+		#else:
+			#print("Error: Invalid piece ID:", data.id)
+#
+#
+## This is for mulitplayer synchronization 
+## This will be called by the server when there is a change in the puzzle -JA
+#@rpc("authority", "call_local")
+#func send_game_state():
+	#var all_pieces = []
+	#for piece in get_tree().get_nodes_in_group("puzzle_pieces"):
+		#all_pieces.append({
+			#"id": piece.ID,
+			#"position": piece.global_position,
+			#"group": piece.group_number
+		#})
+	## Send data to all clients
+	#update_game_state.rpc_id(0, all_pieces)
+
 
 # this is the actual logic to move a piece when you select it
 @rpc("any_peer", "call_local")
@@ -58,6 +90,7 @@ func move(distance: Vector2):
 #this is called whenever an event occurs within the area of the piece
 #	Example events include a key press within the area of the piece or
 #	a piece being clicked or even mouse movement
+@rpc("any_peer", "call_local")
 func _on_area_2d_input_event(viewport, event, shape_idx):
 	# check if the event is a mouse button and see if it is pressed
 	if event is InputEventMouseButton and event.pressed:
@@ -143,9 +176,9 @@ func _input(event):
 		var distance = get_global_mouse_position() - global_position
 		# move is called as an rpc function so that both the host and client
 		# in a multiplayer game can see the movement
-		move.rpc(distance)
+		move.rpc_id(0, distance) # 0 sends it to all clients including the host
 
-
+@rpc("any_peer", "call_local")
 # this is a function to snap pieces to other pieces
 func snap_and_connect(adjacent_piece_id: int, loadFlag = 0):
 	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
@@ -243,7 +276,10 @@ func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group
 			node.set_global_position(node.get_global_position() + distance)
 			node.group_number = new_group_number
 			PuzzleVar.snap_found = true
+			
 
+
+@rpc("any_peer", "call_local")
 func check_connections(adjacent_piece_ID: int) -> bool:
 	var snap_found = false
 	
@@ -309,25 +345,25 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 				print ("adjacent global position: " + str(adjusted_adjacent_upper_left))
 				print ("current sprite rect: " + str($Sprite2D/Area2D/CollisionShape2D.shape.extents * 2))
 				print("snap_distance: " + str(snap_distance))
-				snap_and_connect(adjacent_piece_ID)
+				snap_and_connect.rpc_id(0, adjacent_piece_ID)
 				print("----snapping----")
 				snap_found = true
 				#print ("snap_distance: " + str(snap_distance))
 		else: #if the current piece is to the left
 			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("left to right snap:" + str(ID) + "-->" + str(adjacent_piece_ID))
-				snap_and_connect(adjacent_piece_ID)
+				snap_and_connect.rpc_id(0, adjacent_piece_ID)
 				snap_found = true
 	else: #if the midpoints are on the same X value
 		if current_ref_midpoint[1] > adjacent_ref_midpoint[1]: #if the current piece is below
 			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("bottom to top snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
-				snap_and_connect(adjacent_piece_ID)
+				snap_and_connect.rpc_id(0, adjacent_piece_ID)
 				snap_found = true
 		else: #if the current piece is above
 			if (snap_distance < snap_threshold) and (adjacent_node.group_number != group_number):
 				print ("top to bottom snap: " + str(ID) + "-->" + str(adjacent_piece_ID))
-				snap_and_connect(adjacent_piece_ID)
+				snap_and_connect.rpc_id(0, adjacent_piece_ID)
 				snap_found = true
 				
 	if snap_found == true:
@@ -335,7 +371,7 @@ func check_connections(adjacent_piece_ID: int) -> bool:
 			
 	return false
 
-
+@rpc("any_peer", "call_local")
 # this is the function that brings the piece to the front of the screen
 func bring_to_front():
 	var parent = get_parent()
@@ -349,6 +385,7 @@ func bring_to_front():
 func calc_distance(a: Vector2, b: Vector2) -> float:
 	return ((b.y-a.y)**2 + (b.x-a.x)**2)**0.5
 	
+@rpc("any_peer", "call_local")
 func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	var popup = Sprite2D.new()
 	# Load texture
@@ -358,7 +395,6 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	popup.position = get_viewport().get_visible_rect().size / 2
 	# Using midpoint between connecting nodes
 	popup.position = position
-	
 	# Make the sprite larger
 	popup.scale = Vector2(1.5, 1.5) 
 	# Ensure visibility
@@ -373,8 +409,6 @@ func show_image_on_snap(position: Vector2): # Peter Nguyen wrote this function
 	popup.queue_free()
 
 
-# This function is called to apply the transparency effect to the pieces for all players to see
-# Written by Peter Nguyen
 @rpc("any_peer", "call_local")
 func apply_transparency():
 	var group = get_tree().get_nodes_in_group("puzzle_pieces")
@@ -392,5 +426,6 @@ func remove_transparency():
 			nodes.modulate = Color(1, 1, 1, 1)
 
 # Function to smoothly move a piece to the new position
+@rpc("any_peer", "call_local")
 func move_to_position(target_position: Vector2):
 	position = target_position

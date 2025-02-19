@@ -22,6 +22,7 @@ Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 FireAuth="*res://assets/scripts/FirebaseAuth.gd"
 GlobalTimer="*res://assets/scripts/Timer.gd"
 GlobalCursor="res://assets/scripts/globalCursor.gd"
+GameManager="*res://GameManager.gd"
 
 [display]
 
