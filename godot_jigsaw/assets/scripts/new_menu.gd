@@ -1,18 +1,22 @@
 extends Control
 
+
 # this menu is the start screen
 # Called when the node enters the scene tree for the first time.
+var progress_arr = []
 func _ready():	
 	# below is where the user anonymous login happens	
 	# if the user doesn't need to log in, check their stored auth data
 	if(FireAuth.offlineMode == 0):
 		if not FireAuth.needs_login():		
-			FireAuth.check_auth_file()
+			await FireAuth.check_auth_file()
 			print("\n Account Found: ", FireAuth.get_user_id())
 		else:
 			## attempt anonymous login if login is required
 			print("Making new account")
-			FireAuth.attempt_anonymous_login()
+			await FireAuth.attempt_anonymous_login()
+			
+	await FireAuth.get_progress();
 	
 	
 	#Firebase.Auth.remove_auth()
@@ -73,7 +77,7 @@ func _on_select_puzzle_pressed():
 	# switches to a new scene  that will ask you to
 	# actually select what image you want to solve
 	if(FireAuth.offlineMode == 0):
-		FireAuth.addUserMode("Single Player")
+		await FireAuth.addUserMode("Single Player")
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
 
 
