@@ -67,6 +67,10 @@ func _input(event):
 		
 	if event is InputEventKey:
 		if event.is_pressed():
+			# Check if both J and K are pressed
+			if Input.is_key_pressed(KEY_J) and Input.is_key_pressed(KEY_K):
+				return  # Skip zoom functionality when both are pressed
+				
 			if event.keycode == KEY_J && zoom_factor > 0.99:
 				if (zoom_factor == 1.01):
 					zoom_factor -= 0.02
