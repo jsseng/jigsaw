@@ -149,9 +149,46 @@ func populate_grid():
 				var res = load(PuzzleVar.path+"/"+PuzzleVar.images[index])
 				button.get_child(0).texture = res
 				button.get_child(0).size = button.size
+				add_custom_label(button)
 			else:
 				button.get_child(0).texture = null
 			# iterates the index to get the next image after the image is
 			# loaded in
 			index += 1
 			
+func add_custom_label(button):
+	# Create a Panel (Colored Background)
+	var panel = Panel.new()
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	panel.add_theme_stylebox_override("panel", StyleBoxFlat.new())  # Flat style
+
+	# Customize the Panel's appearance
+	var stylebox = panel.get_theme_stylebox("panel").duplicate()
+	stylebox.bg_color = Color(0, 0, 0, 0.7)  # Black with 70% opacity
+	panel.add_theme_stylebox_override("panel", stylebox)
+
+	# Set panel size and anchors (positioning)
+	panel.anchor_left = 0.0
+	panel.anchor_right = 1.0
+	panel.anchor_top = 0.8  # Keeps it at the bottom of the button
+	panel.anchor_bottom = 1.0
+
+	# Create Label (Text)
+	var label = Label.new()
+	label.text = "Progress: 25% completed"  # Customize text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	label.add_theme_font_size_override("font_size", 30)  # Adjust text size
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+	# Add Panel and Label to the Button
+	button.add_child(panel)  # Add the background first
+	button.add_child(label)  # Add the text label on top of the background
+
+	# Ensure Label is inside the Panel
+	label.anchor_left = 0.0
+	label.anchor_right = 1.0
+	label.anchor_top = 0.8
+	label.anchor_bottom = 1.0

@@ -75,6 +75,7 @@ func _on_select_puzzle_pressed():
 	if(FireAuth.offlineMode == 0):
 		FireAuth.addUserMode("Single Player")
 	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")
+	
 
 
 func _on_quit_pressed():
