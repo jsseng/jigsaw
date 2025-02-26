@@ -8,6 +8,8 @@ var progress_arr = []
 
 func _ready():	
 	
+	#await Firebase.Auth.remove_auth()
+	
 	# Prevents pieces from being loaded multiple times
 	if(PuzzleVar.open_first_time):
 		print("Adding Puzzles")
@@ -40,7 +42,7 @@ func _ready():
 	http_request.request_completed.connect(_on_request_completed)
 	
 	# Perform a GET request to a reliable URL
-	var error = http_request.request("https://www.google.com/")
+	var error = await http_request.request("https://www.google.com/")
 	
 	if error != OK:
 		print("Error sending HTTP request:", error)
@@ -49,16 +51,12 @@ func _ready():
 		if not FireAuth.needs_login():		
 			await FireAuth.check_auth_file()
 			print("\n Account Found: ", FireAuth.get_user_id())
+			await FireAuth.get_progress();
 		else:
 			## attempt anonymous login if login is required
 			print("Making new account")
 			await FireAuth.attempt_anonymous_login()
 	
-	if(FireAuth.offlineMode == 0):
-		await FireAuth.get_progress();
-	
-	
-	#Firebase.Auth.remove_auth()
 
 	# this is where the images in the folder get put into the
 	# list PuzzleVar.images for reference

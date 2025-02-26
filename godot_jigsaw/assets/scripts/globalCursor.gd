@@ -156,8 +156,8 @@ func _on_threshold_changed(value):
 func _input(event):
 	if event is InputEventMouseMotion:
 		
-		print(event.relative.x)
-		print(event.relative.y)
+		#print(event.relative.x)
+		#print(event.relative.y)
 		if abs(event.relative.x) < threshold and abs(event.relative.y) < threshold:
 			get_viewport().set_input_as_handled()
 			return  # Ignore very small movements
