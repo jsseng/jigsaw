@@ -7,6 +7,10 @@ var resized_cursor: ImageTexture
 var cursor_hotspot: Vector2
 var popup_window
 
+# Add threshold check for minimum movement
+#var threshold = 0.1  # Adjust this value as needed
+var threshold = 1
+
 # Sensitivity multiplier (adjustable)
 var cursor_sensitivity: float = 0.3
 
@@ -94,13 +98,36 @@ func create_sensitivity_popup():
 	slider.tick_count = 10  
 	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vbox.add_child(slider)
-
+	
 	# Create a single long label for all tick values
 	var long_label = Label.new()
 	long_label.text = "0.1       0.2       0.3       0.4        0.5       0.6       0.7       0.8         0.9       1.0"
 	long_label.horizontal_alignment = Label.PRESET_CENTER
 	long_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vbox.add_child(long_label)
+	
+	# Label for the title
+	var thresh_label = Label.new()
+	thresh_label.text = "Adjust Cursor Threshold"
+	thresh_label.horizontal_alignment = Label.PRESET_CENTER
+	vbox.add_child(thresh_label)
+	
+	# Slider for cursor threshold adjustment with tick marks
+	var threshold_slider = HSlider.new()
+	threshold_slider.min_value = 1.0
+	threshold_slider.max_value = 10.0
+	threshold_slider.step = 1.0
+	threshold_slider.value = threshold
+	threshold_slider.tick_count = 10  
+	threshold_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_child(threshold_slider)
+	
+	# Create a single long label for all tick values
+	var thresh_longlabel = Label.new()
+	thresh_longlabel.text = " 1           2           3          4           5           6           7           8           9        10"
+	thresh_longlabel.horizontal_alignment = Label.PRESET_CENTER
+	thresh_longlabel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_child(thresh_longlabel)
 
 	# Button to close the popup
 	var close_button = Button.new()
@@ -110,6 +137,7 @@ func create_sensitivity_popup():
 
 	# Connect slider to update cursor sensitivity
 	slider.connect("value_changed", Callable(self, "_on_sensitivity_changed"))
+	threshold_slider.connect("value_changed", Callable(self, "_on_threshold_changed"))
 
 	# Connect button to hide the popup
 	close_button.connect("pressed", Callable(popup_window, "hide"))
@@ -119,16 +147,27 @@ func _on_sensitivity_changed(value):
 	cursor_sensitivity = value
 	print("Cursor sensitivity set to: ", cursor_sensitivity)
 
+# Update threshold when the slider changes
+func _on_threshold_changed(value):
+	threshold = value
+	print("Cursor threshold set to: ", threshold)
 	
 # Cursor sensitivity
 func _input(event):
 	if event is InputEventMouseMotion:
 		
+		print(event.relative.x)
+		print(event.relative.y)
+		if abs(event.relative.x) < threshold and abs(event.relative.y) < threshold:
+			get_viewport().set_input_as_handled()
+			return  # Ignore very small movements
+		
 		# Scale the mouse movement by sensitivity
 		var adjusted_motion = event.relative * cursor_sensitivity
+
 		# Make movement to right stronger to even out
-		if event.relative.x > 0:
-			adjusted_motion += Vector2(2.5,0)
+		#if event.relative.x > 0:
+			#adjusted_motion += Vector2(2.5,0)
 			
 		# Get the current cursor position
 		var current_position = get_viewport().get_mouse_position()
