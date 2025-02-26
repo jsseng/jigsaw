@@ -9,18 +9,18 @@ var currentPuzzle = ""
 var offlineMode = 0
 
 var puzzleNames = {
-	0: ["china10", 10],
-	1: ["china100", 100],
-	2: ["china1000", 1000],
-	3: ["dog10", 10],
-	4: ["dog100", 100],
-	5: ["dog1000", 1000],
-	6: ["elephant10", 10],
-	7: ["elephant100", 100],
-	8: ["elephant1000", 1000],
-	9: ["peacock10", 10],
-	10: ["peacock100", 100],
-	11: ["peacock1000", 1000],
+	0: ["china10", 12],
+	1: ["china100", 108],
+	2: ["china1000", 1014],
+	3: ["dog10", 12],
+	4: ["dog100", 117],
+	5: ["dog1000", 1014],
+	6: ["elephant10", 15],
+	7: ["elephant100", 112],
+	8: ["elephant1000",836],
+	9: ["peacock10", 12],
+	10: ["peacock100", 117],
+	11: ["peacock1000", 1014],
 	12: ["chameleon10", 10],
 	13: ["chameleon100", 100],
 	14: ["chameleon1000", 100],
@@ -94,7 +94,32 @@ func _on_signup_succeeded(auth_info: Dictionary) -> void:
 	
 	# add user to firebase
 	var document = await collection.add(user_id, {'activePuzzles': [{"puzzleId": "0", "timeStarted": "0"}], 'lastLogin': Time.get_datetime_string_from_system(), "totalPlayingTime": 0, 'favoritePuzzles': favorite_puzzles, 'completedPuzzles': ["temp"], 'currentMode': 'temp'})
-	var progress_document = await progressCollection.add(user_id, {'china10' : [{"temp" : "temp"}], 'china100' : [{"temp" : "temp"}], 'china1000' : [{"temp" : "temp"}], 'elephant10' : [{"temp" : "temp"}], 'elephant100' : [{"temp" : "temp"}], 'elephant1000' : [{"temp" : "temp"}], 'peacock10' : [{"temp" : "temp"}], 'peacock100' : [{"temp" : "temp"}], 'peacock1000' : [{"temp" : "temp"}], 'dog10' : [{"temp" : "temp"}], 'dog100' : [{"temp" : "temp"}], 'dog1000' : [{"temp" : "temp"}]})
+	var progress_document = await progressCollection.add(user_id, {
+	'china10': [{"temp": "temp"}], 
+	'china10progress': 0, 
+	'china100': [{"temp": "temp"}], 
+	'china100progress': 0, 
+	'china1000': [{"temp": "temp"}], 
+	'china1000progress': 0, 
+	'elephant10': [{"temp": "temp"}], 
+	'elephant10progress': 0, 
+	'elephant100': [{"temp": "temp"}], 
+	'elephant100progress': 0, 
+	'elephant1000': [{"temp": "temp"}], 
+	'elephant1000progress': 0, 
+	'peacock10': [{"temp": "temp"}], 
+	'peacock10progress': 0, 
+	'peacock100': [{"temp": "temp"}], 
+	'peacock100progress': 0, 
+	'peacock1000': [{"temp": "temp"}], 
+	'peacock1000progress': 0, 
+	'dog10': [{"temp": "temp"}], 
+	'dog10progress': 0, 
+	'dog100': [{"temp": "temp"}], 
+	'dog100progress': 0, 
+	'dog1000': [{"temp": "temp"}], 
+	'dog1000progress': 0
+});
 	print("Anon Login Success: ", user_id)
 
 	
@@ -308,7 +333,9 @@ func save_puzzle_loc(ordered_arr : Array, puzzleId : int) -> void:
 	var progressCollection: FirestoreCollection = Firebase.Firestore.collection("progress")
 	var progressDoc = await progressCollection.get_doc(FireAuth.get_user_id())
 	var PUZZLE_NAME = puzzleNames[puzzleId][0]
+	
 	var puzzle_data = []
+	var puzzlePercentage = {}
 	for i in range(len(ordered_arr)):
 		var piece = ordered_arr[i]
 		var piece_ID = piece.ID
@@ -316,8 +343,12 @@ func save_puzzle_loc(ordered_arr : Array, puzzleId : int) -> void:
 		var global_pos = Vector2.ZERO  
 		global_pos = piece.global_position
 		var global_pos_dict = {"x": global_pos.x, "y": global_pos.y}
-		puzzle_data.append({"ID": piece_ID, "GroupID": piece_group_number, "CenterLocation": global_pos_dict})
+		puzzle_data.append({"ID": piece_ID, "GroupID": piece_group_number, "CenterLocation": global_pos_dict})	
+		puzzlePercentage[piece_group_number] = null;
+	
+	var percentage_done = (1 - (float(puzzlePercentage.keys().size()) / float(puzzleNames[puzzleId][1])) + (1 / float(puzzleNames[puzzleId][1])))* 100
 	await progressDoc.add_or_update_field(PUZZLE_NAME, puzzle_data)
+	await progressDoc.add_or_update_field(str(PUZZLE_NAME + "progress"), percentage_done)
 	await progressCollection.update(progressDoc)
 
 	
@@ -350,3 +381,18 @@ func write_temp_to_location(puzzleId: int) -> void:
 
 	await userProgressDoc.add_or_update_field(PUZZLE_NAME, [{"temp" : "temp"}])	
 	await progressCollection.update(userProgressDoc)
+	
+func get_progress() -> void:
+	var progressCollection: FirestoreCollection = await Firebase.Firestore.collection("progress")
+	var userProgressDoc = await progressCollection.get_doc(FireAuth.get_user_id())
+	for i in range(0,12):
+		var PUZZLE_NAME = puzzleNames[i][0]
+		var puzzle_data = userProgressDoc.document.get(str(PUZZLE_NAME + "progress"))
+		if puzzle_data and puzzle_data is Dictionary:
+			if "doubleValue" in puzzle_data:
+				GlobalProgress.progress_arr.append(int(puzzle_data["doubleValue"]))
+			elif "integerValue" in puzzle_data:
+				GlobalProgress.progress_arr.append(int(puzzle_data["integerValue"]))
+	
+	return
+	

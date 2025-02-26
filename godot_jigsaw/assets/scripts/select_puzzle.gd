@@ -26,6 +26,7 @@ var page_string = "%d out of %d"
 #for each page take the integer and add a multiple of 9
 @onready var grid = $"HBoxContainer/GridContainer"
 
+var list = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -56,12 +57,10 @@ func _ready():
 	# preview which puzzle you want to select
 	self.populate_grid()
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	# this code updates the display so that you know which page you are on
 	pageind.text = page_string %[page_num,total_pages]
-
 
 func _on_left_button_pressed():
 	$AudioStreamPlayer.play()
@@ -77,7 +76,6 @@ func _on_left_button_pressed():
 	
 	# repopulates the grid with a new selection of images
 	self.populate_grid()
-
 
 func _on_right_button_pressed():
 	$AudioStreamPlayer.play()
@@ -99,7 +97,6 @@ func _on_right_button_pressed():
 	
 	# repopulates the grid with a new selection of images
 	self.populate_grid()
-
 
 # this function selects the image that is previewed on the button for the puzzle
 func button_pressed(button):
@@ -132,16 +129,15 @@ func button_pressed(button):
 		PuzzleVar.choice = index + int(name[-1])
 		get_tree().change_scene_to_file("res://assets/scenes/menu.tscn")
 
-
 # this function is what populates the grid with images so that you can
 # preview which image you want to select
 func populate_grid():
 	# function starts by calculating the index of the image to start with
 	# when populating the grid with 9 images
 	var index = (page_num-1) * grid.get_child_count()
-	
 	# iterates through each child (button) of the grid and sets the buttons
 	# texture to the appropriate image
+	
 	for i in grid.get_children():
 		var button := i as BaseButton
 		if is_instance_valid(button):
@@ -149,43 +145,54 @@ func populate_grid():
 				var res = load(PuzzleVar.path+"/"+PuzzleVar.images[index])
 				button.get_child(0).texture = res
 				button.get_child(0).size = button.size
-				add_custom_label(button)
+				if FireAuth.offlineMode == 0:
+					add_custom_label(button, GlobalProgress.progress_arr[index])
+				else:
+					add_custom_label(button, 0)
+				
 			else:
 				button.get_child(0).texture = null
 			# iterates the index to get the next image after the image is
 			# loaded in
 			index += 1
 			
-func add_custom_label(button):
+			
+func add_custom_label(button, percentage):
 	# Create a Panel (Colored Background)
 	var panel = Panel.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	panel.add_theme_stylebox_override("panel", StyleBoxFlat.new())  # Flat style
-
+	# Flat style
+	panel.add_theme_stylebox_override("panel", StyleBoxFlat.new())
 	# Customize the Panel's appearance
+	
+	
 	var stylebox = panel.get_theme_stylebox("panel").duplicate()
-	stylebox.bg_color = Color(0, 0, 0, 0.7)  # Black with 70% opacity
+	stylebox.bg_color = Color(0, 0, 0, 0.7)# Black with 70% opacity
 	panel.add_theme_stylebox_override("panel", stylebox)
 
 	# Set panel size and anchors (positioning)
 	panel.anchor_left = 0.0
 	panel.anchor_right = 1.0
-	panel.anchor_top = 0.8  # Keeps it at the bottom of the button
+	# Keeps it at the bottom of the button
+	panel.anchor_top = 0.8
 	panel.anchor_bottom = 1.0
 
 	# Create Label (Text)
 	var label = Label.new()
-	label.text = "Progress: 25% completed"  # Customize text
+	label.text = "Progress: " + str(percentage) + "% completed" # Customize text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	label.add_theme_font_size_override("font_size", 30)  # Adjust text size
+	# Adjust text size
+	label.add_theme_font_size_override("font_size", 30)
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 	# Add Panel and Label to the Button
-	button.add_child(panel)  # Add the background first
-	button.add_child(label)  # Add the text label on top of the background
+	# Add the background first
+	button.add_child(panel)
+	# Add the text label on top of the background
+	button.add_child(label)
 
 	# Ensure Label is inside the Panel
 	label.anchor_left = 0.0
