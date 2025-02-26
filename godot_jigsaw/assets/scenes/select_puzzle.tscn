@@ -125,6 +125,7 @@ offset_bottom = 40.0
 expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid1"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3.3413, 2.76357)
@@ -148,6 +149,7 @@ offset_bottom = 40.0
 expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid2"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3.3413, 2.76357)
@@ -172,6 +174,7 @@ offset_bottom = 40.0
 expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid3"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3.3413, 2.76357)
@@ -195,6 +198,7 @@ offset_bottom = 40.0
 expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid4"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3.3413, 2.76357)
@@ -218,6 +222,7 @@ offset_bottom = 40.0
 expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid5"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3.3413, 2.76357)
@@ -241,6 +246,7 @@ offset_bottom = 40.0
 expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid6"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3.3413, 2.76357)
@@ -263,6 +269,7 @@ offset_bottom = 40.0
 expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid7"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3.3413, 2.76357)
@@ -286,6 +293,7 @@ offset_bottom = 40.0
 expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/GridContainer/grid8"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3.3413, 2.76357)
