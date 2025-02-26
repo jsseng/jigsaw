@@ -135,9 +135,9 @@ func populate_grid():
 	# function starts by calculating the index of the image to start with
 	# when populating the grid with 9 images
 	var index = (page_num-1) * grid.get_child_count()
-	
 	# iterates through each child (button) of the grid and sets the buttons
 	# texture to the appropriate image
+	
 	for i in grid.get_children():
 		var button := i as BaseButton
 		if is_instance_valid(button):
@@ -145,13 +145,17 @@ func populate_grid():
 				var res = load(PuzzleVar.path+"/"+PuzzleVar.images[index])
 				button.get_child(0).texture = res
 				button.get_child(0).size = button.size
-				add_custom_label(button, GlobalProgress.progress_arr[index])
+				if FireAuth.offlineMode == 0:
+					add_custom_label(button, GlobalProgress.progress_arr[index])
+				else:
+					add_custom_label(button, 0)
 				
 			else:
 				button.get_child(0).texture = null
 			# iterates the index to get the next image after the image is
 			# loaded in
 			index += 1
+			
 			
 func add_custom_label(button, percentage):
 	# Create a Panel (Colored Background)

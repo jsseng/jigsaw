@@ -4,31 +4,17 @@ extends Control
 # this menu is the start screen
 # Called when the node enters the scene tree for the first time.
 var progress_arr = []
-func _ready():	
-	# below is where the user anonymous login happens	
-	# if the user doesn't need to log in, check their stored auth data
-	if(FireAuth.offlineMode == 0):
-		if not FireAuth.needs_login():		
-			await FireAuth.check_auth_file()
-			print("\n Account Found: ", FireAuth.get_user_id())
-		else:
-			## attempt anonymous login if login is required
-			print("Making new account")
-			await FireAuth.attempt_anonymous_login()
-			
-	await FireAuth.get_progress();
-	
-	
-	#Firebase.Auth.remove_auth()
 
-	# this is where the images in the folder get put into the
-	# list PuzzleVar.images for reference
+
+func _ready():	
 	
 	# Prevents pieces from being loaded multiple times
 	if(PuzzleVar.open_first_time):
+		print("Adding Puzzles")
 		load(PuzzleVar.path)
 		var dir = DirAccess.open(PuzzleVar.path)
 		if dir:
+			
 			dir.list_dir_begin()
 			var file_name = dir.get_next()
 			# the below code is to parse through the image folder in order to put
@@ -44,7 +30,47 @@ func _ready():
 			print("An error occured trying to access the path")
 			
 		PuzzleVar.open_first_time = false
+	# below is where the user anonymous login happens	
+	# if the user doesn't need to log in, check their stored auth data
+	# Create an HTTP request node and connect its completion signal.
+	var http_request = HTTPRequest.new()
+	add_child(http_request)
 	
+	# Connect the request_completed signal properly
+	http_request.request_completed.connect(_on_request_completed)
+	
+	# Perform a GET request to a reliable URL
+	var error = http_request.request("https://www.google.com/")
+	
+	if error != OK:
+		print("Error sending HTTP request:", error)
+		
+	if(FireAuth.offlineMode == 0):
+		if not FireAuth.needs_login():		
+			await FireAuth.check_auth_file()
+			print("\n Account Found: ", FireAuth.get_user_id())
+		else:
+			## attempt anonymous login if login is required
+			print("Making new account")
+			await FireAuth.attempt_anonymous_login()
+	
+	if(FireAuth.offlineMode == 0):
+		await FireAuth.get_progress();
+	
+	
+	#Firebase.Auth.remove_auth()
+
+	# this is where the images in the folder get put into the
+	# list PuzzleVar.images for reference
+	
+	
+
+func _on_request_completed(result, response_code, headers, body):
+	if response_code == 200:
+		print("Internet connection available")
+	else:
+		print("No internet connection or bad response, code:", response_code)
+		FireAuth.offlineMode = 1
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
