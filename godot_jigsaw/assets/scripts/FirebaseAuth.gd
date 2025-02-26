@@ -58,7 +58,7 @@ func _ready() -> void:
 
 # attempt anonymous login
 func attempt_anonymous_login() -> void:
-	Firebase.Auth.login_anonymous()
+	await Firebase.Auth.login_anonymous()
 
 # check if there's an existing auth session
 func check_auth_file() -> void:
