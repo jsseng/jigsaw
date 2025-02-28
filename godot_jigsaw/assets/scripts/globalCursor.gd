@@ -8,8 +8,7 @@ var cursor_hotspot: Vector2
 var popup_window
 
 # Add threshold check for minimum movement
-#var threshold = 0.1  # Adjust this value as needed
-var threshold = 1
+var threshold = 5
 
 # Sensitivity multiplier (adjustable)
 var cursor_sensitivity: float = 0.3
@@ -155,28 +154,43 @@ func _on_threshold_changed(value):
 # Cursor sensitivity
 func _input(event):
 	if event is InputEventMouseMotion:
+		# Get the absolute values of movement for checking threshold
+		var abs_x = abs(event.relative.x)
+		var abs_y = abs(event.relative.y)
 		
-		#print(event.relative.x)
-		#print(event.relative.y)
-		if abs(event.relative.x) < threshold and abs(event.relative.y) < threshold:
+		# Check if motion is below threshold (both X AND Y)
+		if abs_x < threshold and abs_y < threshold:
+			# Mark the input as handled to prevent default behavior
 			get_viewport().set_input_as_handled()
-			return  # Ignore very small movements
+			return  # Exit the function early to prevent any movement
 		
+		# If we're here, at least one dimension is above threshold
 		# Scale the mouse movement by sensitivity
-		var adjusted_motion = event.relative * cursor_sensitivity
-
-		# Make movement to right stronger to even out
-		#if event.relative.x > 0:
-			#adjusted_motion += Vector2(2.5,0)
-			
-		# Get the current cursor position
-		var current_position = get_viewport().get_mouse_position()
-
-		# Update the cursor position based on sensitivity
-		var new_position = current_position + adjusted_motion
+		var adjusted_motion = Vector2.ZERO
 		
-		# Move the cursor to the new position
-		get_viewport().warp_mouse(new_position)
+		# Only apply sensitivity to dimensions that exceed threshold
+		if abs_x >= threshold:
+			adjusted_motion.x = event.relative.x * cursor_sensitivity
+			# Compensate rightward movement if needed
+			if event.relative.x > 0 and event.relative.x > threshold * 1.5:
+				adjusted_motion.x += 2.5
+		
+		if abs_y >= threshold:
+			adjusted_motion.y = event.relative.y * cursor_sensitivity
+		
+		# Only warp the mouse if we have some movement to apply
+		if adjusted_motion != Vector2.ZERO:
+			# Get the current cursor position
+			var current_position = get_viewport().get_mouse_position()
+			
+			# Update the cursor position based on sensitivity
+			var new_position = current_position + adjusted_motion
+			
+			# Move the cursor to the new position
+			get_viewport().warp_mouse(new_position)
+		
+		# Always mark the input as handled to ensure full control
+		get_viewport().set_input_as_handled()
 
 	# Check for keyboard input to adjust sensitivity
 	if event is InputEventKey and event.pressed:
