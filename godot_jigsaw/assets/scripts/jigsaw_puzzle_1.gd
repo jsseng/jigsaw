@@ -131,6 +131,10 @@ func _ready():
 	if(FireAuth.offlineMode == 0):
 		FireAuth.add_active_puzzle(PuzzleVar.choice)
 		FireAuth.add_favorite_puzzle(PuzzleVar.choice)
+	
+	# Connect the back button signal
+	var back_button = $UI_Button/Back
+	back_button.connect("pressed", Callable(self, "_on_back_button_pressed"))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -460,3 +464,8 @@ func adjust_volume(change_in_db):
 		
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), current_volume + change_in_db)
   
+# Function to handle back button press
+func _on_back_button_pressed():   
+	reset_puzzle_state()
+	# Change to the previous scene (in this case, the new menu)
+	get_tree().change_scene_to_file("res://assets/scenes/select_puzzle.tscn")

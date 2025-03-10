@@ -59,3 +59,21 @@ size_flags_vertical = 4
 theme = ExtResource("6_nllai")
 theme_override_font_sizes/font_size = 70
 text = "Main Menu"
+
+[node name="UI_Button" type="CanvasLayer" parent="."]
+
+[node name="Back" type="Button" parent="UI_Button"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = -105.0
+offset_right = 1069.0
+offset_bottom = 150.0
+grow_vertical = 0
+scale = Vector2(0.4, 0.4)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("6_nllai")
+theme_override_font_sizes/font_size = 70
+text = "Return to Select Puzzle"
