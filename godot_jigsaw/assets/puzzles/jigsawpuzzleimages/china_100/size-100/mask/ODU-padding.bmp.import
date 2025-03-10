@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdd3snd1jvre3"
-valid=false
+path="res://.godot/imported/ODU-padding.bmp-6c60f4d9c79dce164f43bd248c78301b.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/ODU-padding.bmp"
+dest_files=["res://.godot/imported/ODU-padding.bmp-6c60f4d9c79dce164f43bd248c78301b.ctex"]
 
 [params]
 

@@ -11,13 +11,13 @@ extends Control
 
 
 
-#Change value upon exporting build
+#CHANGE THIS VALUE BASED ON BUILD TYPE: (SERVER, CLIENT)
+
 #--- Use this IP for player build ---
-@export var Address = "54.176.155.241" #IP for connecting to AWS server 
-#@export var Address = "0.0.0.0"
-# We must use the line below when giving build to AWS server
+@export var Address = "54.176.155.241" #IP for CLIENT build
+
 #---Use this IP for Server build ---
-#IP for dedicated AWS server: "0.0.0.0"
+#@export var Address = "0.0.0.0"	   #IP for SERVER build
 
 @export var port = 8910
 

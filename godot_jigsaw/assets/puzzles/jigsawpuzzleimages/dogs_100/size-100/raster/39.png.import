@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qio0ej1vv87x"
-path="res://.godot/imported/39.png-38f1942844f1a020fda541429263f17b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/dogs_100/size-100/raster/39.png"
-dest_files=["res://.godot/imported/39.png-38f1942844f1a020fda541429263f17b.ctex"]
 
 [params]
 

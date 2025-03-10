@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bm5yfjwx4hdja"
-valid=false
+path="res://.godot/imported/MTU-padding.bmp-25196244b4638753466cd19eef62f7b9.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/fpeacock_100/size-100/mask/MTU-padding.bmp"
+dest_files=["res://.godot/imported/MTU-padding.bmp-25196244b4638753466cd19eef62f7b9.ctex"]
 
 [params]
 

@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgbbhxnb6fcrt"
-valid=false
+path="res://.godot/imported/MzQ.bmp-46475a86eed7b91f8389710073b36938.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/fpeacock_100/size-100/mask/MzQ.bmp"
+dest_files=["res://.godot/imported/MzQ.bmp-46475a86eed7b91f8389710073b36938.ctex"]
 
 [params]
 

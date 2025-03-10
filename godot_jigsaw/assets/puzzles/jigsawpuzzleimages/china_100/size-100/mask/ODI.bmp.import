@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cka0dw8jiiwjy"
-valid=false
+path="res://.godot/imported/ODI.bmp-563cbc907d4aa4f05baf971d41a3b560.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/ODI.bmp"
+dest_files=["res://.godot/imported/ODI.bmp-563cbc907d4aa4f05baf971d41a3b560.ctex"]
 
 [params]
 

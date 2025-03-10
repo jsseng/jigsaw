@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b054xy3ohjecg"
-valid=false
+path="res://.godot/imported/NjA-padding.bmp-5c9cb0f613865edf4689b4c64fabe8bc.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/fpeacock_100/size-100/mask/NjA-padding.bmp"
+dest_files=["res://.godot/imported/NjA-padding.bmp-5c9cb0f613865edf4689b4c64fabe8bc.ctex"]
 
 [params]
 

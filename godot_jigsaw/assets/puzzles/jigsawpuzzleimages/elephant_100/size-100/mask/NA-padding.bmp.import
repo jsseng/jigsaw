@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dyuol37xqx2iw"
-valid=false
+path="res://.godot/imported/NA-padding.bmp-8a7baeaef5a131d5cb1b55732d46c093.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/elephant_100/size-100/mask/NA-padding.bmp"
+dest_files=["res://.godot/imported/NA-padding.bmp-8a7baeaef5a131d5cb1b55732d46c093.ctex"]
 
 [params]
 

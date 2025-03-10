@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cf2ec1fctx30j"
-valid=false
+path="res://.godot/imported/MA.bmp-0b892d824de400773fd0c5053e2508ec.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/mountain/size-100/mask/MA.bmp"
+dest_files=["res://.godot/imported/MA.bmp-0b892d824de400773fd0c5053e2508ec.ctex"]
 
 [params]
 

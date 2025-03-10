@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cx5we5b1hu1lo"
-valid=false
+path="res://.godot/imported/NjE-padding.bmp-d977ff244e465dba55e1e5d62ef29372.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/NjE-padding.bmp"
+dest_files=["res://.godot/imported/NjE-padding.bmp-d977ff244e465dba55e1e5d62ef29372.ctex"]
 
 [params]
 

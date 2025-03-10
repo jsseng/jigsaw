@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceu233xjx4bgn"
-valid=false
+path="res://.godot/imported/MzQ-padding.bmp-2e586493ad8a7e1e29da0b9bdf24a283.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/MzQ-padding.bmp"
+dest_files=["res://.godot/imported/MzQ-padding.bmp-2e586493ad8a7e1e29da0b9bdf24a283.ctex"]
 
 [params]
 

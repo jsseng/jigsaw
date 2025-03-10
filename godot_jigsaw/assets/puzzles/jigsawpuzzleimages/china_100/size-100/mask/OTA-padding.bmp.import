@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dl0x2ykmlwtud"
-valid=false
+path="res://.godot/imported/OTA-padding.bmp-4a66619dcfbae2b2026727294fcb97d5.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/OTA-padding.bmp"
+dest_files=["res://.godot/imported/OTA-padding.bmp-4a66619dcfbae2b2026727294fcb97d5.ctex"]
 
 [params]
 

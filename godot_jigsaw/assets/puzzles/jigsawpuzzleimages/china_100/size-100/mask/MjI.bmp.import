@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8snbu3iy11d8"
-valid=false
+path="res://.godot/imported/MjI.bmp-16c54e4451e79bb3a7bed81b12718a63.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/MjI.bmp"
+dest_files=["res://.godot/imported/MjI.bmp-16c54e4451e79bb3a7bed81b12718a63.ctex"]
 
 [params]
 

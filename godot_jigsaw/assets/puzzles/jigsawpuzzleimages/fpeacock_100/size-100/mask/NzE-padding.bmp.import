@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7p5vra03dk1s"
-valid=false
+path="res://.godot/imported/NzE-padding.bmp-d74779d8e752c0bdd8d603a540be1bc9.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/fpeacock_100/size-100/mask/NzE-padding.bmp"
+dest_files=["res://.godot/imported/NzE-padding.bmp-d74779d8e752c0bdd8d603a540be1bc9.ctex"]
 
 [params]
 

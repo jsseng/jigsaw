@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7yg5fh32sfda"
-valid=false
+path="res://.godot/imported/OA-padding.bmp-735cbb2922c3039158116d133d891c56.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/mountain/size-100/mask/OA-padding.bmp"
+dest_files=["res://.godot/imported/OA-padding.bmp-735cbb2922c3039158116d133d891c56.ctex"]
 
 [params]
 

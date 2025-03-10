@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bgfaqjgw2mhop"
-valid=false
+path="res://.godot/imported/NTY-padding.bmp-f875d0ceb961912208e0a87f1cb1a109.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/elephant_100/size-100/mask/NTY-padding.bmp"
+dest_files=["res://.godot/imported/NTY-padding.bmp-f875d0ceb961912208e0a87f1cb1a109.ctex"]
 
 [params]
 

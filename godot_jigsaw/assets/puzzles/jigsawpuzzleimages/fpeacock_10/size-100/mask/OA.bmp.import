@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df0eb333s52aa"
-valid=false
+path="res://.godot/imported/OA.bmp-a86cbfe127a59c61995e6a3df716ebda.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/fpeacock_10/size-100/mask/OA.bmp"
+dest_files=["res://.godot/imported/OA.bmp-a86cbfe127a59c61995e6a3df716ebda.ctex"]
 
 [params]
 

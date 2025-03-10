@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2jp7he5lry0d"
-valid=false
+path="res://.godot/imported/MTA5-padding.bmp-c57139676359a5d5afab04f09535b4d8.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/fpeacock_100/size-100/mask/MTA5-padding.bmp"
+dest_files=["res://.godot/imported/MTA5-padding.bmp-c57139676359a5d5afab04f09535b4d8.ctex"]
 
 [params]
 

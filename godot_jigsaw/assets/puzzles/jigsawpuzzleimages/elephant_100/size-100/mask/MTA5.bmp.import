@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3vn0xy6nouv4"
-valid=false
+path="res://.godot/imported/MTA5.bmp-f9bc334815b270a1ef52a6317dd132c1.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/elephant_100/size-100/mask/MTA5.bmp"
+dest_files=["res://.godot/imported/MTA5.bmp-f9bc334815b270a1ef52a6317dd132c1.ctex"]
 
 [params]
 

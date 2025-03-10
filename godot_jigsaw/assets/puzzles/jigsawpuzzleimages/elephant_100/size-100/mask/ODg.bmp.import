@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://br2lg6sjul8l2"
-valid=false
+path="res://.godot/imported/ODg.bmp-ce6f82e8d25fb072fad581ab4a6df105.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/elephant_100/size-100/mask/ODg.bmp"
+dest_files=["res://.godot/imported/ODg.bmp-ce6f82e8d25fb072fad581ab4a6df105.ctex"]
 
 [params]
 

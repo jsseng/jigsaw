@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b324ninujxkt8"
-valid=false
+path="res://.godot/imported/NDQ.bmp-92d0c17f02baedffe2a24851a9497c33.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/NDQ.bmp"
+dest_files=["res://.godot/imported/NDQ.bmp-92d0c17f02baedffe2a24851a9497c33.ctex"]
 
 [params]
 

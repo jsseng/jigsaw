@@ -78,7 +78,7 @@ func _process(delta):
 
 
 # this is the actual logic to move a piece when you select it
-@rpc("any_peer", "call_local")
+@rpc("authority", "call_local")
 func move(distance: Vector2):
 	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces")
 	
@@ -178,7 +178,7 @@ func _input(event):
 		# in a multiplayer game can see the movement
 		move.rpc_id(0, distance) # 0 sends it to all clients including the host
 
-@rpc("any_peer", "call_local")
+@rpc("authority", "call_local")
 # this is a function to snap pieces to other pieces
 func snap_and_connect(adjacent_piece_id: int, loadFlag = 0):
 	var all_pieces = get_tree().get_nodes_in_group("puzzle_pieces") # group is all the pieces
@@ -262,7 +262,7 @@ func snap_and_connect(adjacent_piece_id: int, loadFlag = 0):
 
 # This is the function that actually moves the piece (in the current group)
 # to connect it and is called as an rpc so that it can be reflected for all players
-@rpc("any_peer", "call_local")
+@rpc("authority", "call_local")
 func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group_number: int):
 	var group = get_tree().get_nodes_in_group("puzzle_pieces")
 	var show_check_mark = false
@@ -279,10 +279,9 @@ func move_pieces_to_connect(distance: Vector2, prev_group_number: int, new_group
 			
 
 
-@rpc("any_peer", "call_local")
+@rpc("authority", "call_local")
 func check_connections(adjacent_piece_ID: int) -> bool:
 	var snap_found = false
-	
 	# this if statement below is so that the piece stops moving so that the
 	# position remains constant when it checks for an available connection
 	if velocity != Vector2(0,0):

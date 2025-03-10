@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1bpyqtxtg82o"
-valid=false
+path="res://.godot/imported/NTg-padding.bmp-16efb0188ad2281a8632cebde3099d1d.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/NTg-padding.bmp"
+dest_files=["res://.godot/imported/NTg-padding.bmp-16efb0188ad2281a8632cebde3099d1d.ctex"]
 
 [params]
 

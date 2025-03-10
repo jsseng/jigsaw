@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://dr6qnsfg5v8bf"]
 
-[ext_resource type="Script" path="res://assets/scripts/jigsaw_puzzle_1.gd" id="1_p57kp"]
+[ext_resource type="Script" uid="uid://vekisfwwidoo" path="res://assets/scripts/jigsaw_puzzle_1.gd" id="1_p57kp"]
 [ext_resource type="Texture2D" uid="uid://7d68ij6kdk3x" path="res://assets/images/puzzle_background.jpg" id="2_1s5nt"]
 [ext_resource type="Texture2D" uid="uid://fdsqaxc6rx0h" path="res://assets/puzzles/seattle.jpg" id="3_p7ub0"]
-[ext_resource type="Script" path="res://assets/scripts/Camera2D.gd" id="4_823ux"]
+[ext_resource type="Script" uid="uid://svs67071glk8" path="res://assets/scripts/Camera2D.gd" id="4_823ux"]
 [ext_resource type="FontFile" uid="uid://dbfwm247cqnhw" path="res://assets/scripts/LinLibertine_I.otf" id="5_a27gv"]
 [ext_resource type="Theme" uid="uid://0xk2aimn5x6r" path="res://assets/themes/main_menu_buttons.tres" id="6_nllai"]
 

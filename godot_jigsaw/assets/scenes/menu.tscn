@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://0fgobd7a2aq5"]
 
-[ext_resource type="Script" path="res://assets/scripts/menu.gd" id="1_01fjk"]
+[ext_resource type="Script" uid="uid://esprdv8myyo" path="res://assets/scripts/menu.gd" id="1_01fjk"]
 [ext_resource type="Texture2D" uid="uid://fdsqaxc6rx0h" path="res://assets/puzzles/seattle.jpg" id="2_062ah"]
 [ext_resource type="Texture2D" uid="uid://dx0jdku47mvhc" path="res://assets/puzzles/new_background.jpg" id="2_kmbdo"]
 [ext_resource type="Texture2D" uid="uid://bc1domrl5u1nj" path="res://assets/puzzles/AdobeStock_104619688.jpeg" id="3_3yx2b"]

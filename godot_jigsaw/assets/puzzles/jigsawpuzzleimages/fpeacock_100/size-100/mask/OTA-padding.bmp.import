@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdtagyltyd7u2"
-valid=false
+path="res://.godot/imported/OTA-padding.bmp-59bc583849167ac7f406800cb7c95b27.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/fpeacock_100/size-100/mask/OTA-padding.bmp"
+dest_files=["res://.godot/imported/OTA-padding.bmp-59bc583849167ac7f406800cb7c95b27.ctex"]
 
 [params]
 

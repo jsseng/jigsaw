@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://db3mat67onh14"
-path="res://.godot/imported/MzE.svg-24dd56c03255b33bd2759b71d505df2a.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/fpeacock_100/size-100/vector/MzE.svg"
-dest_files=["res://.godot/imported/MzE.svg-24dd56c03255b33bd2759b71d505df2a.ctex"]
 
 [params]
 

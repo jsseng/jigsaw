@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://y44hjxoj813w"
-valid=false
+path="res://.godot/imported/MzU.bmp-9946cc8999c1336341351bb7b0af3a6e.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/MzU.bmp"
+dest_files=["res://.godot/imported/MzU.bmp-9946cc8999c1336341351bb7b0af3a6e.ctex"]
 
 [params]
 

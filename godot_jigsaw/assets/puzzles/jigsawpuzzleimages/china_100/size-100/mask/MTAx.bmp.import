@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dl310mnoxwfww"
-valid=false
+path="res://.godot/imported/MTAx.bmp-3d2d4b87776d3c2e4a3e1973cdd6ce0f.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/MTAx.bmp"
+dest_files=["res://.godot/imported/MTAx.bmp-3d2d4b87776d3c2e4a3e1973cdd6ce0f.ctex"]
 
 [params]
 

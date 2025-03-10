@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfmwas8i1kumq"
-valid=false
+path="res://.godot/imported/NDI-padding.bmp-efce698b0255968316a8047d783a0668.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/puzzles/jigsawpuzzleimages/china_100/size-100/mask/NDI-padding.bmp"
+dest_files=["res://.godot/imported/NDI-padding.bmp-efce698b0255968316a8047d783a0668.ctex"]
 
 [params]
 
